@@ -48,34 +48,44 @@
   <!-- Mobile App Wrapper Frame -->
   <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
 
-    <!-- 1. VENDOR AUTH SCREEN (Multi-Vendor Login & PIN Setup) -->
+    <!-- 1. VENDOR AUTH SCREEN (Sign Up & Login Tabs) -->
     <section id="vendorAuthSection" class="p-6 flex-1 flex flex-col justify-center items-center bg-white">
       <div class="w-20 h-20 rounded-2xl overflow-hidden bg-teal-700 flex items-center justify-center mb-4 shadow-lg shadow-teal-600/20 border-2 border-teal-100">
         <img src="./vendor-logo.png" alt="MilkCount Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
         <i class="ph-fill ph-truck text-3xl text-amber-200 hidden-force"></i>
       </div>
       <h2 class="text-xl font-extrabold text-slate-900 text-center">MilkCount Vendor</h2>
-      <p class="text-xs text-slate-500 mb-6 text-center">పాల వ్యాపారి డెలివరీ, కలెక్షన్ & బిజినెస్ డాష్‌బోర్డ్</p>
+      <p class="text-xs text-slate-500 mb-5 text-center">పాల వ్యాపారి డెలివరీ, కలెక్షన్ & బిజినెస్ డాష్‌బోర్డ్</p>
+
+      <!-- Login / Sign Up Switcher Tabs -->
+      <div class="w-full grid grid-cols-2 bg-slate-100 p-1 rounded-xl mb-4 border border-slate-200">
+        <button id="authTabLogin" onclick="switchAuthMode('login')" class="py-2 rounded-lg text-xs font-extrabold bg-white text-teal-800 shadow-2xs transition-all">
+          లాగిన్ (Login)
+        </button>
+        <button id="authTabSignup" onclick="switchAuthMode('signup')" class="py-2 rounded-lg text-xs font-bold text-slate-500 transition-all">
+          కొత్త రిజిస్ట్రేషన్ (Sign Up)
+        </button>
+      </div>
 
       <div class="w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs space-y-3.5">
-        <div>
-          <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (కొత్త వారైతే తప్పనిసరి)</label>
+        <div id="signupNameGroup" class="hidden-force">
+          <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (Dairy Name) *</label>
           <input type="text" id="vendorNameInput" placeholder="ఉదా: శ్రీ లక్ష్మీ డెయిరీ" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ మొబైల్ నంబర్ (10 అంకెలు)</label>
+          <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ మొబైల్ నంబర్ (10 అంకెలు) *</label>
           <input type="tel" id="vendorPhoneInput" maxlength="10" placeholder="ఉదా: 9876543210" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ PIN (4 అంకెలు)</label>
+          <label id="vendorPinLabel" class="text-xs font-bold text-slate-600 block mb-1">మీ 4-అంకెల PIN *</label>
           <input type="password" id="vendorPinInput" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-black tracking-widest focus:outline-none focus:border-teal-600">
-          <p class="text-[10px] text-slate-500 mt-1">కొత్త వెండర్ అయితే మీరు ఎంటర్ చేసే 4-అంకెల PIN తో కొత్త అకౌంట్ క్రియేట్ అవుతుంది.</p>
+          <p id="vendorAuthHint" class="text-[10px] text-slate-500 mt-1">కొత్త వెండర్ అయితే పైన "కొత్త రిజిస్ట్రేషన్ (Sign Up)" నొక్కండి.</p>
         </div>
 
-        <button id="vendorLoginBtn" onclick="handleVendorLogin()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
-          వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి
+        <button id="vendorLoginBtn" onclick="handleVendorAuthSubmit()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
+          లాగిన్ చేయండి
         </button>
       </div>
     </section>
@@ -463,6 +473,7 @@
     const TELUGU_MONTHS = ["జనవరి", "ఫిబ్రవరి", "మార్చి", "ఏప్రిల్", "మే", "జూన్", "జూలై", "ఆగస్టు", "సెప్టెంబర్", "అక్టోబర్", "నవంబర్", "డిసెంబర్"];
     const ENGLISH_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+    let authMode = 'login'; // 'login' or 'signup'
     let vendorProfile = null;
     let activeTab = 'delivery';
     let selectedRouteDate = new Date();
@@ -498,8 +509,34 @@
       }
     };
 
-    // MULTI-VENDOR LOGIN & FIRST-TIME 4-DIGIT PIN SETUP
-    async function handleVendorLogin() {
+    function switchAuthMode(mode) {
+      authMode = mode;
+      const loginTab = document.getElementById('authTabLogin');
+      const signupTab = document.getElementById('authTabSignup');
+      const nameGroup = document.getElementById('signupNameGroup');
+      const pinLabel = document.getElementById('vendorPinLabel');
+      const hint = document.getElementById('vendorAuthHint');
+      const btn = document.getElementById('vendorLoginBtn');
+
+      if (mode === 'signup') {
+        signupTab.className = 'py-2 rounded-lg text-xs font-extrabold bg-white text-teal-800 shadow-2xs transition-all';
+        loginTab.className = 'py-2 rounded-lg text-xs font-bold text-slate-500 transition-all';
+        nameGroup.classList.remove('hidden-force');
+        pinLabel.innerText = 'కొత్త 4-అంకెల PIN సెట్ చేసుకోండి *';
+        hint.innerText = 'ఈ 4-అంకెల PIN ని గుర్తుంచుకోండి (తర్వాత మార్చుకోవచ్చు).';
+        btn.innerText = 'Sign Up & అకౌంట్ క్రియేట్ చేయండి';
+      } else {
+        loginTab.className = 'py-2 rounded-lg text-xs font-extrabold bg-white text-teal-800 shadow-2xs transition-all';
+        signupTab.className = 'py-2 rounded-lg text-xs font-bold text-slate-500 transition-all';
+        nameGroup.classList.add('hidden-force');
+        pinLabel.innerText = 'మీ 4-అంకెల PIN *';
+        hint.innerText = 'కొత్త వెండర్ అయితే పైన "కొత్త రిజిస్ట్రేషన్ (Sign Up)" నొక్కండి.';
+        btn.innerText = 'లాగిన్ చేయండి';
+      }
+    }
+
+    // MULTI-VENDOR SIGN UP & LOGIN WITH 4-DIGIT PIN
+    async function handleVendorAuthSubmit() {
       const nameInput = document.getElementById('vendorNameInput').value.trim();
       const phone = document.getElementById('vendorPhoneInput').value.trim();
       const pin = document.getElementById('vendorPinInput').value.trim();
@@ -508,10 +545,10 @@
       if (pin.length !== 4 || isNaN(pin)) return alert('దయచేసి 4 అంకెల PIN నమోదు చేయండి.');
 
       const btn = document.getElementById('vendorLoginBtn');
+      const origText = btn.innerText;
       btn.disabled = true;
       btn.innerText = 'తనిఖీ చేస్తోంది...';
 
-      // Check vendor in Supabase 'vendors' table
       const { data: existingVendor, error: fetchErr } = await db
         .from('vendors')
         .select('*')
@@ -520,15 +557,45 @@
 
       if (fetchErr) {
         btn.disabled = false;
-        btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+        btn.innerText = origText;
         return alert('Database Error: ' + fetchErr.message);
       }
 
-      if (existingVendor) {
-        // Existing vendor -> verify 4-digit PIN
+      if (authMode === 'signup') {
+        if (!nameInput) {
+          btn.disabled = false;
+          btn.innerText = origText;
+          return alert('దయచేసి మీ డెయిరీ / వెండర్ పేరు నమోదు చేయండి.');
+        }
+        if (existingVendor) {
+          btn.disabled = false;
+          btn.innerText = origText;
+          switchAuthMode('login');
+          return alert('ఈ మొబైల్ నంబర్ ఇప్పటికే రిజిస్టర్ అయి ఉంది! దయచేసి Login చేయండి.');
+        }
+
+        const { error: insErr } = await db
+          .from('vendors')
+          .insert([{ phone, name: nameInput, pin }]);
+
+        if (insErr) {
+          btn.disabled = false;
+          btn.innerText = origText;
+          return alert('Registration Error: ' + insErr.message);
+        }
+        vendorProfile = { name: nameInput, phone, pin };
+        showToast('Sign Up విజయవంతమైంది! స్వాగతం!');
+      } else {
+        // LOGIN MODE
+        if (!existingVendor) {
+          btn.disabled = false;
+          btn.innerText = origText;
+          switchAuthMode('signup');
+          return alert('ఈ నంబర్ ఇంకా రిజిస్టర్ అవ్వలేదు. దయచేసి ముందు Sign Up చేయండి!');
+        }
         if (existingVendor.pin !== pin) {
           btn.disabled = false;
-          btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+          btn.innerText = origText;
           return alert('మీ 4-అంకెల PIN తప్పుగా నమోదు చేశారు!');
         }
         vendorProfile = {
@@ -536,28 +603,10 @@
           phone: existingVendor.phone,
           pin: existingVendor.pin
         };
-      } else {
-        // New vendor -> register with chosen name & 4-digit PIN
-        if (!nameInput) {
-          btn.disabled = false;
-          btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
-          return alert('కొత్త వెండర్ రిజిస్ట్రేషన్ కోసం దయచేసి మీ డెయిరీ / వెండర్ పేరు నమోదు చేయండి.');
-        }
-        const { error: insErr } = await db
-          .from('vendors')
-          .insert([{ phone, name: nameInput, pin }]);
-
-        if (insErr) {
-          btn.disabled = false;
-          btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
-          return alert('Registration Error: ' + insErr.message);
-        }
-        vendorProfile = { name: nameInput, phone, pin };
-        showToast('కొత్త వెండర్ అకౌంట్ & PIN సెట్ అయ్యాయి!');
       }
 
       btn.disabled = false;
-      btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+      btn.innerText = origText;
       localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: vendorProfile.name, phone: vendorProfile.phone }));
       localStorage.setItem('milkcount_vendor_session', JSON.stringify(vendorProfile));
       showVendorDashboard();
