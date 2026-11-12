@@ -1,5 +1,5 @@
 {
-  "id": "/milk-tracker-vendor/"
+  "id": "/milk-tracker-vendor/",
   "name": "MilkCount Vendor - పాల వ్యాపారి",
   "short_name": "MilkVendor",
   "start_url": "./",
@@ -10,7 +10,8 @@
     {
       "src": "./vendor-logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
