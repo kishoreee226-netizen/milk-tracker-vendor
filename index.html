@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="./vendor-logo.png">
 
   <!-- PWA Web App Settings -->
- <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f766e">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -48,7 +48,7 @@
   <!-- Mobile App Wrapper Frame -->
   <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
 
-    <!-- 1. VENDOR AUTH SCREEN -->
+    <!-- 1. VENDOR AUTH SCREEN (Multi-Vendor Login & PIN Setup) -->
     <section id="vendorAuthSection" class="p-6 flex-1 flex flex-col justify-center items-center bg-white">
       <div class="w-20 h-20 rounded-2xl overflow-hidden bg-teal-700 flex items-center justify-center mb-4 shadow-lg shadow-teal-600/20 border-2 border-teal-100">
         <img src="./vendor-logo.png" alt="MilkCount Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
@@ -59,7 +59,7 @@
 
       <div class="w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs space-y-3.5">
         <div>
-          <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (Dairy Name)</label>
+          <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (కొత్త వారైతే తప్పనిసరి)</label>
           <input type="text" id="vendorNameInput" placeholder="ఉదా: శ్రీ లక్ష్మీ డెయిరీ" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
         </div>
 
@@ -69,12 +69,12 @@
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-600 block mb-1">అడ్మిన్ PIN (4 అంకెలు)</label>
+          <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ PIN (4 అంకెలు)</label>
           <input type="password" id="vendorPinInput" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-black tracking-widest focus:outline-none focus:border-teal-600">
-          <p class="text-[10px] text-slate-400 mt-1">మొదటిసారి మీరు సెట్ చేసుకున్న 4-అంకెల PIN సేవ్ అవుతుంది.</p>
+          <p class="text-[10px] text-slate-500 mt-1">కొత్త వెండర్ అయితే మీరు ఎంటర్ చేసే 4-అంకెల PIN తో కొత్త అకౌంట్ క్రియేట్ అవుతుంది.</p>
         </div>
 
-        <button onclick="handleVendorLogin()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
+        <button id="vendorLoginBtn" onclick="handleVendorLogin()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
           వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి
         </button>
       </div>
@@ -86,26 +86,27 @@
       <!-- TOP HEADER -->
       <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white p-4 sticky top-0 z-30 shadow-md">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
             <div class="w-10 h-10 rounded-xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/25 shadow-inner shrink-0">
               <img src="./vendor-logo.png" alt="Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
               <i class="ph-fill ph-truck text-2xl text-amber-200 hidden-force"></i>
             </div>
-            <div>
+            <div class="min-w-0">
               <h1 class="text-base font-extrabold tracking-tight leading-tight flex items-center gap-1.5">
-                <span id="headerVendorName">MilkCount Vendor</span>
-                <span class="text-[9px] bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-1.5 py-0.5 rounded-full font-bold flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span> LIVE
-                </span>
+                <span id="headerVendorName" class="truncate">MilkCount Vendor</span>
+                <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="p-1 rounded-lg bg-white/15 hover:bg-white/25 text-amber-200 shrink-0 active:scale-90">
+                  <i class="ph-bold ph-pencil-simple text-xs"></i>
+                </button>
               </h1>
               <div class="flex items-center gap-2 mt-0.5">
                 <span id="headerVendorPhone" class="text-[11px] text-teal-100 font-medium">9876543210</span>
+                <button onclick="openVendorProfileModal()" class="text-[10px] bg-amber-400/20 text-amber-200 border border-amber-300/30 px-1.5 py-0.5 rounded font-semibold">ప్రొఫైల్ / PIN</button>
                 <button onclick="logoutVendor()" class="text-[10px] bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded text-white">లాగౌట్</button>
               </div>
             </div>
           </div>
 
-          <button onclick="refreshAllVendorData()" class="flex items-center gap-1 bg-white/15 hover:bg-white/25 active:scale-95 text-xs px-2.5 py-1.5 rounded-lg border border-white/20 font-bold">
+          <button onclick="refreshAllVendorData()" class="flex items-center gap-1 bg-white/15 hover:bg-white/25 active:scale-95 text-xs px-2.5 py-1.5 rounded-lg border border-white/20 font-bold shrink-0">
             <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
             <span>సింక్</span>
           </button>
@@ -238,7 +239,7 @@
           <div class="flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
             <div>
               <h2 class="text-sm font-extrabold text-slate-800">కస్టమర్ల జాబితా (<span id="totalCustomersCount">0</span>)</h2>
-              <p class="text-[10px] text-slate-500">లైవ్ Supabase కస్టమర్లు & కొత్త కస్టమర్ యాడ్</p>
+              <p class="text-[10px] text-slate-500">మీ కస్టమర్లు & కొత్త కస్టమర్ యాడ్</p>
             </div>
             <button onclick="openAddCustomerModal()" class="bg-teal-700 hover:bg-teal-800 active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-xs">
               <i class="ph-bold ph-user-plus"></i> కొత్త కస్టమర్
@@ -302,10 +303,10 @@
           <!-- Share Customer App Card -->
           <div class="bg-teal-50 border border-teal-200 rounded-2xl p-4 space-y-2.5">
             <h3 class="text-xs font-bold text-teal-900 flex items-center gap-1.5">
-              <i class="ph-fill ph-share-network text-teal-700"></i> కొత్త కస్టమర్లను యాప్‌లో చేర్చండి
+              <i class="ph-fill ph-share-network text-teal-700"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
             </h3>
             <p class="text-[11px] text-teal-800/80 leading-relaxed">
-              మీ కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ ఫోన్‌లో రిజిస్టర్ అవ్వగానే ఆటోమేటిక్‌గా మీ వెండర్ లిస్ట్‌లో కనిపిస్తారు!
+              మీరు యాడ్ చేసిన కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ మొబైల్ నంబర్ & PIN తో లాగిన్ అయి రోజువారీ లెక్కలు చూసుకోవచ్చు!
             </p>
             <button onclick="shareCustomerAppLink()" class="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-95">
               <i class="ph-fill ph-whatsapp-logo text-base"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
@@ -340,6 +341,40 @@
     <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300 pointer-events-none opacity-0 translate-y-4 flex items-center gap-2">
       <i class="ph-bold ph-check text-emerald-400"></i>
       <span id="toastMsg">అప్‌డేట్ అయ్యింది!</span>
+    </div>
+
+    <!-- MODAL: EDIT VENDOR PROFILE (Name & 4-Digit PIN) -->
+    <div id="vendorProfileModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5">
+        <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
+          <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+            <i class="ph-fill ph-user-circle-gear text-teal-700 text-base"></i> వెండర్ ప్రొఫైల్ & PIN మార్చండి
+          </h4>
+          <button onclick="closeVendorProfileModal()" class="text-slate-400 hover:text-slate-600">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="text-[11px] font-bold text-slate-500 mb-1 block">వెండర్ మొబైల్ నంబర్ (ID):</label>
+            <input type="text" id="editVendorPhoneDisplay" disabled class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-500">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">డెయిరీ / వెండర్ పేరు (Name):</label>
+            <input type="text" id="editVendorNameInput" placeholder="డెయిరీ పేరు" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">కొత్త 4-డిజిట్ PIN:</label>
+            <input type="tel" id="editVendorPinInput" maxlength="4" inputmode="numeric" placeholder="4 అంకెల PIN" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-black tracking-widest focus:outline-none focus:border-teal-600">
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button onclick="closeVendorProfileModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">రద్దు</button>
+          <button id="saveVendorProfileBtn" onclick="saveVendorProfileChanges()" class="flex-1 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">అప్‌డేట్ చేయి</button>
+        </div>
+      </div>
     </div>
 
     <!-- MODAL: ADD / EDIT CUSTOMER (Vendor Side) -->
@@ -420,7 +455,7 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // 1. LIVE SUPABASE CLIENT (Same database as Customer App)
+    // 1. LIVE SUPABASE CLIENT
     const SUPABASE_URL = 'https://cbemchufrgcvzkbyvfrx.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiZW1jaHVmcmdjdnprYnl2ZnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDQzMTEsImV4cCI6MjEwOTg4MDMxMX0.UZOiRzdcIbjS0lWHosZNb9YkKVJ9FNDehNL1Q-JTEqI';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -436,7 +471,7 @@
     let billingFilter = 'all';
 
     let allCustomers = [];
-    let monthLogsByUser = {}; // { user_id: { 'YYYY-MM-DD': { status, quantity } } }
+    let monthLogsByUser = {};
     let selectedCustForDayEdit = null;
 
     window.onload = function() {
@@ -463,26 +498,113 @@
       }
     };
 
-    function handleVendorLogin() {
-      const name = document.getElementById('vendorNameInput').value.trim() || 'MilkCount Dairy';
+    // MULTI-VENDOR LOGIN & FIRST-TIME 4-DIGIT PIN SETUP
+    async function handleVendorLogin() {
+      const nameInput = document.getElementById('vendorNameInput').value.trim();
       const phone = document.getElementById('vendorPhoneInput').value.trim();
       const pin = document.getElementById('vendorPinInput').value.trim();
 
       if (phone.length !== 10 || isNaN(phone)) return alert('దయచేసి 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
       if (pin.length !== 4 || isNaN(pin)) return alert('దయచేసి 4 అంకెల PIN నమోదు చేయండి.');
 
-      const existingCreds = localStorage.getItem('milkcount_vendor_creds');
-      if (existingCreds) {
-        const parsed = JSON.parse(existingCreds);
-        if (parsed.phone === phone && parsed.pin !== pin) {
-          return alert('అడ్మిన్ PIN తప్పుగా నమోదు చేశారు!');
-        }
+      const btn = document.getElementById('vendorLoginBtn');
+      btn.disabled = true;
+      btn.innerText = 'తనిఖీ చేస్తోంది...';
+
+      // Check vendor in Supabase 'vendors' table
+      const { data: existingVendor, error: fetchErr } = await db
+        .from('vendors')
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle();
+
+      if (fetchErr) {
+        btn.disabled = false;
+        btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+        return alert('Database Error: ' + fetchErr.message);
       }
 
-      vendorProfile = { name, phone, pin };
-      localStorage.setItem('milkcount_vendor_creds', JSON.stringify(vendorProfile));
+      if (existingVendor) {
+        // Existing vendor -> verify 4-digit PIN
+        if (existingVendor.pin !== pin) {
+          btn.disabled = false;
+          btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+          return alert('మీ 4-అంకెల PIN తప్పుగా నమోదు చేశారు!');
+        }
+        vendorProfile = {
+          name: existingVendor.name,
+          phone: existingVendor.phone,
+          pin: existingVendor.pin
+        };
+      } else {
+        // New vendor -> register with chosen name & 4-digit PIN
+        if (!nameInput) {
+          btn.disabled = false;
+          btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+          return alert('కొత్త వెండర్ రిజిస్ట్రేషన్ కోసం దయచేసి మీ డెయిరీ / వెండర్ పేరు నమోదు చేయండి.');
+        }
+        const { error: insErr } = await db
+          .from('vendors')
+          .insert([{ phone, name: nameInput, pin }]);
+
+        if (insErr) {
+          btn.disabled = false;
+          btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+          return alert('Registration Error: ' + insErr.message);
+        }
+        vendorProfile = { name: nameInput, phone, pin };
+        showToast('కొత్త వెండర్ అకౌంట్ & PIN సెట్ అయ్యాయి!');
+      }
+
+      btn.disabled = false;
+      btn.innerText = 'వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి';
+      localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: vendorProfile.name, phone: vendorProfile.phone }));
       localStorage.setItem('milkcount_vendor_session', JSON.stringify(vendorProfile));
       showVendorDashboard();
+    }
+
+    // EDIT VENDOR NAME & 4-DIGIT PIN MODAL
+    function openVendorProfileModal() {
+      if (!vendorProfile) return;
+      document.getElementById('editVendorPhoneDisplay').value = vendorProfile.phone;
+      document.getElementById('editVendorNameInput').value = vendorProfile.name;
+      document.getElementById('editVendorPinInput').value = vendorProfile.pin;
+      document.getElementById('vendorProfileModal').classList.remove('hidden-force');
+    }
+
+    function closeVendorProfileModal() {
+      document.getElementById('vendorProfileModal').classList.add('hidden-force');
+    }
+
+    async function saveVendorProfileChanges() {
+      const newName = document.getElementById('editVendorNameInput').value.trim();
+      const newPin = document.getElementById('editVendorPinInput').value.trim();
+
+      if (!newName) return alert('దయచేసి డెయిరీ / వెండర్ పేరు నమోదు చేయండి.');
+      if (newPin.length !== 4 || isNaN(newPin)) return alert('PIN ఖచ్చితంగా 4 అంకెలు మాత్రమే ఉండాలి.');
+
+      const btn = document.getElementById('saveVendorProfileBtn');
+      btn.disabled = true;
+      btn.innerText = 'సేవ్ అవుతోంది...';
+
+      const { error } = await db
+        .from('vendors')
+        .update({ name: newName, pin: newPin })
+        .eq('phone', vendorProfile.phone);
+
+      btn.disabled = false;
+      btn.innerText = 'అప్‌డేట్ చేయి';
+
+      if (error) return alert('Update Error: ' + error.message);
+
+      vendorProfile.name = newName;
+      vendorProfile.pin = newPin;
+      localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: newName, phone: vendorProfile.phone }));
+      localStorage.setItem('milkcount_vendor_session', JSON.stringify(vendorProfile));
+
+      document.getElementById('headerVendorName').innerText = newName;
+      closeVendorProfileModal();
+      showToast('వెండర్ పేరు & PIN అప్‌డేట్ అయ్యాయి!');
     }
 
     function showVendorDashboard() {
@@ -496,6 +618,8 @@
     function logoutVendor() {
       localStorage.removeItem('milkcount_vendor_session');
       vendorProfile = null;
+      allCustomers = [];
+      monthLogsByUser = {};
       document.getElementById('vendorAppSection').classList.add('hidden-force');
       document.getElementById('vendorAuthSection').classList.remove('hidden-force');
       document.getElementById('vendorPinInput').value = '';
@@ -519,37 +643,47 @@
       return `${y}-${m}-${day}`;
     }
 
-    // 2. DATA SYNC FROM SUPABASE
+    // 2. DATA SYNC FROM SUPABASE (Filtered strictly by logged-in vendor_phone)
     async function refreshAllVendorData() {
+      if (!vendorProfile) return;
       const icon = document.getElementById('syncIcon');
       if (icon) icon.classList.add('animate-spin');
 
-      const { data: users } = await db.from('customer_users').select('*').order('name', { ascending: true });
+      const { data: users } = await db
+        .from('customer_users')
+        .select('*')
+        .eq('vendor_phone', vendorProfile.phone)
+        .order('name', { ascending: true });
+
       allCustomers = users || [];
 
       const refDate = activeTab === 'delivery' ? selectedRouteDate : selectedBillingMonth;
       const y = refDate.getFullYear();
       const m = refDate.getMonth();
-      // Fetch previous month start as well so 7-day chart across month boundaries works smoothly
       const prevM = new Date(y, m - 1, 1);
       const startDate = `${prevM.getFullYear()}-${String(prevM.getMonth() + 1).padStart(2, '0')}-01`;
       const nextM = new Date(y, m + 1, 1);
       const endDate = `${nextM.getFullYear()}-${String(nextM.getMonth() + 1).padStart(2, '0')}-01`;
 
-      const { data: logs } = await db.from('customer_milk_logs')
-        .select('*')
-        .gte('log_date', startDate)
-        .lt('log_date', endDate);
-
       monthLogsByUser = {};
-      if (logs) {
-        logs.forEach(l => {
-          if (!monthLogsByUser[l.user_id]) monthLogsByUser[l.user_id] = {};
-          monthLogsByUser[l.user_id][l.log_date] = {
-            status: l.status,
-            quantity: parseFloat(l.quantity)
-          };
-        });
+      const customerIds = allCustomers.map(c => c.id);
+
+      if (customerIds.length > 0) {
+        const { data: logs } = await db.from('customer_milk_logs')
+          .select('*')
+          .in('user_id', customerIds)
+          .gte('log_date', startDate)
+          .lt('log_date', endDate);
+
+        if (logs) {
+          logs.forEach(l => {
+            if (!monthLogsByUser[l.user_id]) monthLogsByUser[l.user_id] = {};
+            monthLogsByUser[l.user_id][l.log_date] = {
+              status: l.status,
+              quantity: parseFloat(l.quantity)
+            };
+          });
+        }
       }
 
       if (icon) icon.classList.remove('animate-spin');
@@ -642,7 +776,7 @@
 
     function getDeliveredDoneMap(isoDate) {
       try {
-        return JSON.parse(localStorage.getItem(`vendor_done_${isoDate}`)) || {};
+        return JSON.parse(localStorage.getItem(`vendor_done_${vendorProfile.phone}_${isoDate}`)) || {};
       } catch (e) {
         return {};
       }
@@ -652,7 +786,7 @@
       const iso = formatDateISO(selectedRouteDate);
       const doneMap = getDeliveredDoneMap(iso);
       doneMap[userId] = !doneMap[userId];
-      localStorage.setItem(`vendor_done_${iso}`, JSON.stringify(doneMap));
+      localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
       renderDeliveryTab();
     }
 
@@ -660,7 +794,7 @@
       const iso = formatDateISO(selectedRouteDate);
       const doneMap = getDeliveredDoneMap(iso);
       allCustomers.forEach(c => { doneMap[c.id] = true; });
-      localStorage.setItem(`vendor_done_${iso}`, JSON.stringify(doneMap));
+      localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
       renderDeliveryTab();
       showToast('ఈరోజు డెలివరీలన్నీ Done మార్క్ అయ్యాయి!');
     }
@@ -700,7 +834,12 @@
       listEl.innerHTML = '';
 
       if (allCustomers.length === 0) {
-        listEl.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">ఇంకా కస్టమర్లు ఎవరూ లేరు. "కస్టమర్లు" ట్యాబ్‌లో యాడ్ చేయండి.</div>`;
+        listEl.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">మీ అకౌంట్‌లో ఇంకా కస్టమర్లు ఎవరూ లేరు. "కస్టమర్లు" ట్యాబ్‌లో యాడ్ చేయండి.</div>`;
+        document.getElementById('totalLitersNeeded').innerText = '0.0';
+        document.getElementById('activeDeliveriesCount').innerText = '0';
+        document.getElementById('skippedDeliveriesCount').innerText = '0';
+        document.getElementById('deliveredProgressText').innerText = '0/0 Done (0%)';
+        document.getElementById('routeProgressBar').style.width = '0%';
         return;
       }
 
@@ -779,7 +918,7 @@
       const total = document.getElementById('totalLitersNeeded').innerText;
       const active = document.getElementById('activeDeliveriesCount').innerText;
       const skipped = document.getElementById('skippedDeliveriesCount').innerText;
-      const msg = encodeURIComponent(`🚚 *MilkCount డెలివరీ షీట్ (${iso})*
+      const msg = encodeURIComponent(`🚚 *${vendorProfile.name} డెలివరీ షీట్ (${iso})*
 • మొత్తం కావాల్సిన పాలు: *${total} L*
 • డెలివరీ ఇళ్లు: ${active}
 • సెలవులు (Skip): ${skipped}`);
@@ -877,7 +1016,7 @@
     }
 
     function getVendorPaidStatusMap(year, month) {
-      const key = `vendor_paid_${year}_${String(month + 1).padStart(2, '0')}`;
+      const key = `vendor_paid_${vendorProfile.phone}_${year}_${String(month + 1).padStart(2, '0')}`;
       try {
         return JSON.parse(localStorage.getItem(key)) || {};
       } catch (e) {
@@ -888,7 +1027,7 @@
     function toggleVendorCustomerPaid(userId) {
       const y = selectedBillingMonth.getFullYear();
       const m = selectedBillingMonth.getMonth();
-      const key = `vendor_paid_${y}_${String(m + 1).padStart(2, '0')}`;
+      const key = `vendor_paid_${vendorProfile.phone}_${y}_${String(m + 1).padStart(2, '0')}`;
       const map = getVendorPaidStatusMap(y, m);
       map[userId] = !map[userId];
       localStorage.setItem(key, JSON.stringify(map));
@@ -992,6 +1131,11 @@
       const listEl = document.getElementById('customersManageList');
       listEl.innerHTML = '';
 
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">కస్టమర్లు ఎవరూ కనిపించలేదు. పైన "కొత్త కస్టమర్" బటన్ నొక్కి యాడ్ చేయండి.</div>`;
+        return;
+      }
+
       filtered.forEach(cust => {
         const card = document.createElement('div');
         card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between shadow-2xs';
@@ -1062,7 +1206,8 @@
       if (editId) {
         const { error } = await db.from('customer_users')
           .update({ name, daily_qty, price_per_ltr })
-          .eq('id', editId);
+          .eq('id', editId)
+          .eq('vendor_phone', vendorProfile.phone);
         btn.disabled = false;
         btn.innerText = 'సేవ్ చేయండి';
         if (error) return alert('Error: ' + error.message);
@@ -1072,10 +1217,16 @@
         if (exist) {
           btn.disabled = false;
           btn.innerText = 'సేవ్ చేయండి';
-          return alert('ఈ మొబైల్ నంబర్ ఇప్పటికే లిస్ట్‌లో ఉంది!');
+          return alert('ఈ మొబైల్ నంబర్ ఇప్పటికే రిజిస్టర్ అయి ఉంది!');
         }
         const { error } = await db.from('customer_users').insert([{
-          name, phone, pin, daily_qty, price_per_ltr, auto_mode: true
+          name,
+          phone,
+          pin,
+          daily_qty,
+          price_per_ltr,
+          auto_mode: true,
+          vendor_phone: vendorProfile.phone
         }]);
         btn.disabled = false;
         btn.innerText = 'సేవ్ చేయండి';
