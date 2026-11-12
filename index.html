@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MilkCount Vendor - పాల వ్యాపారి డాష్‌బోర్డ్</title>
+
+  <!-- Favicon & Touch Icons -->
+  <link rel="icon" type="image/png" href="./vendor-logo.png">
+  <link rel="apple-touch-icon" href="./vendor-logo.png">
+
+  <!-- PWA Web App Settings -->
+  <link rel="manifest" href="./vendor-manifest.json?v=2">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    .custom-scroll::-webkit-scrollbar { display: none; }
+    .hidden-force { display: none !important; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex justify-center selection:bg-teal-100">
+
+  <!-- Mobile App Wrapper Frame -->
+  <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
+
+    <!-- 1. VENDOR AUTH SCREEN -->
+    <section id="vendorAuthSection" class="p-6 flex-1 flex flex-col justify-center items-center bg-white">
+      <div class="w-20 h-20 rounded-2xl overflow-hidden bg-teal-700 flex items-center justify-center mb-4 shadow-lg shadow-teal-600/20 border-2 border-teal-100">
+        <img src="./vendor-logo.png" alt="MilkCount Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
+        <i class="ph-fill ph-truck text-3xl text-amber-200 hidden-force"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-slate-900 text-center">MilkCount Vendor</h2>
+      <p class="text-xs text-slate-500 mb-6 text-center">పాల వ్యాపారి డెలివరీ, కలెక్షన్ & బిజినెస్ డాష్‌బోర్డ్</p>
+
+      <div class="w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs space-y-3.5">
+        <div>
+          <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (Dairy Name)</label>
+          <input type="text" id="vendorNameInput" placeholder="ఉదా: శ్రీ లక్ష్మీ డెయిరీ" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ మొబైల్ నంబర్ (10 అంకెలు)</label>
+          <input type="tel" id="vendorPhoneInput" maxlength="10" placeholder="ఉదా: 9876543210" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold text-slate-600 block mb-1">అడ్మిన్ PIN (4 అంకెలు)</label>
+          <input type="password" id="vendorPinInput" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-black tracking-widest focus:outline-none focus:border-teal-600">
+          <p class="text-[10px] text-slate-400 mt-1">మొదటిసారి మీరు సెట్ చేసుకున్న 4-అంకెల PIN సేవ్ అవుతుంది.</p>
+        </div>
+
+        <button onclick="handleVendorLogin()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
+          వెండర్ డాష్‌బోర్డ్ ఓపెన్ చేయండి
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. MAIN VENDOR APP -->
+    <div id="vendorAppSection" class="hidden-force flex-1 flex flex-col">
+
+      <!-- TOP HEADER -->
+      <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white p-4 sticky top-0 z-30 shadow-md">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/25 shadow-inner shrink-0">
+              <img src="./vendor-logo.png" alt="Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
+              <i class="ph-fill ph-truck text-2xl text-amber-200 hidden-force"></i>
+            </div>
+            <div>
+              <h1 class="text-base font-extrabold tracking-tight leading-tight flex items-center gap-1.5">
+                <span id="headerVendorName">MilkCount Vendor</span>
+                <span class="text-[9px] bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-1.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span> LIVE
+                </span>
+              </h1>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span id="headerVendorPhone" class="text-[11px] text-teal-100 font-medium">9876543210</span>
+                <button onclick="logoutVendor()" class="text-[10px] bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded text-white">లాగౌట్</button>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="refreshAllVendorData()" class="flex items-center gap-1 bg-white/15 hover:bg-white/25 active:scale-95 text-xs px-2.5 py-1.5 rounded-lg border border-white/20 font-bold">
+            <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
+            <span>సింక్</span>
+          </button>
+        </div>
+
+        <!-- Date / Month Selector Bar -->
+        <div id="dateSelectorBar" class="mt-3 flex items-center justify-between bg-black/20 backdrop-blur-md rounded-xl p-1.5 border border-white/10">
+          <button onclick="shiftSelectedDate(-1)" class="p-1.5 hover:bg-white/15 rounded-lg text-white active:scale-90">
+            <i class="ph-bold ph-caret-left text-base"></i>
+          </button>
+          <div class="text-center">
+            <span id="activePeriodTitle" class="text-sm font-bold tracking-wide text-white">ఈరోజు డెలివరీ</span>
+            <span id="activePeriodSub" class="text-[10px] block text-teal-200 -mt-0.5 font-medium">Today</span>
+          </div>
+          <button onclick="shiftSelectedDate(1)" class="p-1.5 hover:bg-white/15 rounded-lg text-white active:scale-90">
+            <i class="ph-bold ph-caret-right text-base"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MAIN SCROLLABLE CONTENT -->
+      <main class="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
+
+        <!-- TAB 1: DAILY DELIVERY ROUTE -->
+        <div id="tabDelivery" class="space-y-3.5">
+
+          <!-- Hero Total Milk & Quick Actions Card -->
+          <div class="bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 text-white rounded-2xl p-4 shadow-md relative overflow-hidden">
+            <div class="flex items-start justify-between relative z-10">
+              <div>
+                <p class="text-[11px] text-teal-100 font-semibold uppercase tracking-wider">మొత్తం కావాల్సిన పాలు (Milk Load)</p>
+                <div class="text-3xl font-black tracking-tight mt-0.5 flex items-baseline gap-1.5">
+                  <span id="totalLitersNeeded">0.0</span> <span class="text-sm font-bold text-teal-200">లీటర్లు</span>
+                </div>
+                <div class="flex items-center gap-3 mt-1.5 text-[11px] text-teal-100">
+                  <span class="flex items-center gap-1"><i class="ph-fill ph-house text-amber-300"></i> డెలివరీ: <strong id="activeDeliveriesCount" class="text-white">0</strong></span>
+                  <span class="flex items-center gap-1"><i class="ph-fill ph-prohibit text-rose-300"></i> ఆపినవి: <strong id="skippedDeliveriesCount" class="text-white">0</strong></span>
+                </div>
+              </div>
+
+              <div class="text-right space-y-1.5 shrink-0">
+                <button onclick="jumpToTomorrowDelivery()" class="text-[11px] bg-white text-teal-900 hover:bg-teal-50 px-3 py-1.5 rounded-xl font-extrabold shadow-xs block w-full active:scale-95 transition-all">
+                  రేపటి షీట్ →
+                </button>
+                <button onclick="shareRouteSummaryWhatsApp()" class="text-[10px] bg-black/25 hover:bg-black/35 text-white px-2.5 py-1.5 rounded-xl font-bold flex items-center justify-center gap-1 w-full active:scale-95">
+                  <i class="ph-fill ph-whatsapp-logo text-emerald-300"></i> రూట్ షేర్
+                </button>
+              </div>
+            </div>
+
+            <!-- Route Completion Progress Bar -->
+            <div class="mt-3.5 pt-2.5 border-t border-white/15">
+              <div class="flex justify-between text-[10px] font-bold text-teal-100 mb-1">
+                <span>డెలివరీ పురోగతి (Route Progress)</span>
+                <span id="deliveredProgressText">0/0 Done (0%)</span>
+              </div>
+              <div class="w-full h-2 bg-black/25 rounded-full overflow-hidden">
+                <div id="routeProgressBar" class="h-full bg-amber-300 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Pills -->
+          <div class="space-y-2">
+            <div class="relative">
+              <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+              <input type="text" id="routeSearchInput" onkeyup="renderDeliveryTab()" placeholder="కస్టమర్ పేరు లేదా నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600 shadow-2xs">
+            </div>
+
+            <div class="flex items-center justify-between gap-1.5">
+              <div class="flex gap-1.5 text-[11px] font-bold">
+                <button onclick="setDeliveryFilter('all')" id="filterAllBtn" class="px-3 py-1 rounded-full bg-teal-700 text-white shadow-2xs">అందరూ</button>
+                <button onclick="setDeliveryFilter('pending')" id="filterPendingBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">పోయాల్సినవి</button>
+                <button onclick="setDeliveryFilter('skipped')" id="filterSkippedBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">వద్దు (Skip)</button>
+              </div>
+              <button onclick="markAllRouteDelivered()" class="text-[10px] font-bold text-teal-700 hover:underline">
+                అన్నీ Done చేయి ✓
+              </button>
+            </div>
+          </div>
+
+          <!-- Customer Route Cards List -->
+          <div id="deliveryRouteList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- TAB 2: MONTHLY BILLING & COLLECTIONS -->
+        <div id="tabBilling" class="hidden-force space-y-3.5">
+          <!-- Collection KPI Cards -->
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="bg-white border border-emerald-200 rounded-2xl p-3.5 shadow-2xs">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-emerald-700 uppercase">వసూలైనది (Collected)</span>
+                <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="ph-fill ph-check-circle text-sm"></i></span>
+              </div>
+              <div class="text-xl font-black text-emerald-800 mt-1">₹<span id="billingCollectedTotal">0</span></div>
+            </div>
+
+            <div class="bg-white border border-rose-200 rounded-2xl p-3.5 shadow-2xs">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-rose-700 uppercase">రావాల్సిన బాకీ (Pending)</span>
+                <span class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><i class="ph-fill ph-clock text-sm"></i></span>
+              </div>
+              <div class="text-xl font-black text-rose-700 mt-1">₹<span id="billingPendingTotal">0</span></div>
+            </div>
+          </div>
+
+          <!-- Collection Progress Bar -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
+            <div class="flex justify-between text-xs font-bold text-slate-700 mb-1.5">
+              <span>నెలవారీ బిల్లు వసూలు శాతం (Collection Rate)</span>
+              <span id="collectionPercentLabel" class="text-teal-700">0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+              <div id="collectionProgressBar" class="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Billing Filter -->
+          <div class="flex gap-1.5 text-[11px] font-bold">
+            <button onclick="setBillingFilter('all')" id="billFilterAllBtn" class="px-3 py-1 rounded-full bg-teal-700 text-white">అందరూ</button>
+            <button onclick="setBillingFilter('unpaid')" id="billFilterUnpaidBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">బాకీ ఉన్నవారు (Unpaid)</button>
+            <button onclick="setBillingFilter('paid')" id="billFilterPaidBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">కట్టినవారు (Paid)</button>
+          </div>
+
+          <div id="billingCustomerList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- TAB 3: CUSTOMERS MANAGEMENT -->
+        <div id="tabCustomers" class="hidden-force space-y-3.5">
+          <div class="flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
+            <div>
+              <h2 class="text-sm font-extrabold text-slate-800">కస్టమర్ల జాబితా (<span id="totalCustomersCount">0</span>)</h2>
+              <p class="text-[10px] text-slate-500">లైవ్ Supabase కస్టమర్లు & కొత్త కస్టమర్ యాడ్</p>
+            </div>
+            <button onclick="openAddCustomerModal()" class="bg-teal-700 hover:bg-teal-800 active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-xs">
+              <i class="ph-bold ph-user-plus"></i> కొత్త కస్టమర్
+            </button>
+          </div>
+
+          <!-- Search Box -->
+          <div class="relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+            <input type="text" id="customerSearchInput" onkeyup="renderCustomersTab()" placeholder="పేరు లేదా ఫోన్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600">
+          </div>
+
+          <div id="customersManageList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- TAB 4: BUSINESS ANALYTICS & INSIGHTS -->
+        <div id="tabSummary" class="hidden-force space-y-3.5">
+          <!-- Main Revenue & Liters Card -->
+          <div class="bg-gradient-to-br from-slate-800 via-slate-900 to-teal-950 text-white rounded-2xl p-4 shadow-md space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-teal-300 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="ph-fill ph-trend-up"></i> నెలవారీ వ్యాపార సారాంశం
+              </span>
+              <span id="summaryMonthTag" class="text-[10px] bg-white/15 px-2.5 py-0.5 rounded-full font-semibold">Month</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3">
+                <span class="text-[10px] text-slate-400 block">మొత్తం పాల అమ్మకం</span>
+                <span class="text-2xl font-black text-white mt-0.5 block"><span id="sumTotalLiters">0.0</span> <span class="text-xs font-bold text-teal-300">L</span></span>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3">
+                <span class="text-[10px] text-slate-400 block">మొత్తం ఆదాయం (Revenue)</span>
+                <span class="text-2xl font-black text-emerald-400 mt-0.5 block">₹<span id="sumTotalRevenue">0</span></span>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-white/10 flex justify-between text-xs">
+              <span class="text-slate-300">సగటు రోజువారీ సరఫరా:</span>
+              <span class="font-bold text-amber-300"><span id="sumDailyAvg">0.0</span> లీటర్లు / రోజు</span>
+            </div>
+          </div>
+
+          <!-- Visual Bar Chart: Last 7 Days Supply Trend -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <i class="ph-fill ph-chart-bar text-teal-600"></i> గత 7 రోజుల పాల సరఫరా గ్రాఫ్ (Liters)
+              </h3>
+              <span class="text-[10px] text-slate-400 font-semibold">7-Day Trend</span>
+            </div>
+            <div id="sevenDayBarChart" class="grid grid-cols-7 gap-2 items-end h-28 pt-4 px-1 border-b border-slate-100"></div>
+          </div>
+
+          <!-- Top Customers Ranking -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-2.5">
+            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="ph-fill ph-crown text-amber-500"></i> టాప్ కస్టమర్లు (Highest Volume)
+            </h3>
+            <div id="topCustomersList" class="space-y-2"></div>
+          </div>
+
+          <!-- Share Customer App Card -->
+          <div class="bg-teal-50 border border-teal-200 rounded-2xl p-4 space-y-2.5">
+            <h3 class="text-xs font-bold text-teal-900 flex items-center gap-1.5">
+              <i class="ph-fill ph-share-network text-teal-700"></i> కొత్త కస్టమర్లను యాప్‌లో చేర్చండి
+            </h3>
+            <p class="text-[11px] text-teal-800/80 leading-relaxed">
+              మీ కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ ఫోన్‌లో రిజిస్టర్ అవ్వగానే ఆటోమేటిక్‌గా మీ వెండర్ లిస్ట్‌లో కనిపిస్తారు!
+            </p>
+            <button onclick="shareCustomerAppLink()" class="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-95">
+              <i class="ph-fill ph-whatsapp-logo text-base"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
+            </button>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- BOTTOM NAVIGATION BAR -->
+      <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-slate-200 grid grid-cols-4 py-2 px-1 z-30 shadow-lg">
+        <button onclick="switchVendorTab('delivery')" id="navDelivery" class="flex flex-col items-center justify-center py-1 text-teal-700 font-extrabold">
+          <i class="ph-fill ph-truck text-xl"></i>
+          <span class="text-[10px] mt-0.5">డెలివరీ</span>
+        </button>
+        <button onclick="switchVendorTab('billing')" id="navBilling" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold">
+          <i class="ph-fill ph-receipt text-xl"></i>
+          <span class="text-[10px] mt-0.5">బిల్లులు</span>
+        </button>
+        <button onclick="switchVendorTab('customers')" id="navCustomers" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold">
+          <i class="ph-fill ph-users text-xl"></i>
+          <span class="text-[10px] mt-0.5">కస్టమర్లు</span>
+        </button>
+        <button onclick="switchVendorTab('summary')" id="navSummary" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold">
+          <i class="ph-fill ph-chart-bar text-xl"></i>
+          <span class="text-[10px] mt-0.5">సారాంశం</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300 pointer-events-none opacity-0 translate-y-4 flex items-center gap-2">
+      <i class="ph-bold ph-check text-emerald-400"></i>
+      <span id="toastMsg">అప్‌డేట్ అయ్యింది!</span>
+    </div>
+
+    <!-- MODAL: ADD / EDIT CUSTOMER (Vendor Side) -->
+    <div id="customerModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3">
+        <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
+          <h4 id="customerModalTitle" class="font-bold text-slate-800 text-sm">కొత్త కస్టమర్ యాడ్ చేయండి</h4>
+          <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-600">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+
+        <input type="hidden" id="editCustomerId">
+        <div class="space-y-2.5">
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">కస్టమర్ పేరు:</label>
+            <input type="text" id="custNameInput" placeholder="ఉదా: రమేష్ గారు" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">మొబైల్ నంబర్ (10 అంకెలు):</label>
+            <input type="tel" id="custPhoneInput" maxlength="10" placeholder="9876543210" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 mb-1 block">రోజువారీ కోటా (L):</label>
+              <input type="number" id="custQuotaInput" step="0.5" value="1.0" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 mb-1 block">లీటరు ధర (₹):</label>
+              <input type="number" id="custRateInput" value="70" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+            </div>
+          </div>
+          <div id="custPinFieldGroup">
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">కస్టమర్ లాగిన్ PIN (4 అంకెలు):</label>
+            <input type="text" id="custPinInput" maxlength="4" value="1234" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button onclick="closeCustomerModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">రద్దు</button>
+          <button id="saveCustModalBtn" onclick="saveVendorCustomer()" class="flex-1 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">సేవ్ చేయండి</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: VENDOR OVERRIDE CUSTOMER DAY ENTRY -->
+    <div id="vendorDayEditModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5">
+        <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
+          <div>
+            <h4 id="vDayCustName" class="font-bold text-slate-800 text-sm">కస్టమర్</h4>
+            <p id="vDayDateLabel" class="text-[10px] text-slate-500">తేదీ</p>
+          </div>
+          <button onclick="closeVendorDayModal()" class="text-slate-400 hover:text-slate-600">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-4 gap-1.5">
+          <button onclick="updateCustomerDayFromVendor(0.5)" class="py-2 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold text-xs">0.5L</button>
+          <button onclick="updateCustomerDayFromVendor(1.0)" class="py-2 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold text-xs">1.0L</button>
+          <button onclick="updateCustomerDayFromVendor(1.5)" class="py-2 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold text-xs">1.5L</button>
+          <button onclick="updateCustomerDayFromVendor(2.0)" class="py-2 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 font-bold text-xs">2.0L</button>
+        </div>
+
+        <div class="flex gap-1.5">
+          <input type="number" id="vCustomLiters" step="0.25" placeholder="కస్టమ్ L" class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold">
+          <button onclick="applyVendorCustomLiters()" class="bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-bold">సేవ్</button>
+        </div>
+
+        <button onclick="updateCustomerDayFromVendor(0)" class="w-full py-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">
+          ఈ రోజు పాలు వద్దు (Skip)
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // 1. LIVE SUPABASE CLIENT (Same database as Customer App)
+    const SUPABASE_URL = 'https://cbemchufrgcvzkbyvfrx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiZW1jaHVmcmdjdnprYnl2ZnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDQzMTEsImV4cCI6MjEwOTg4MDMxMX0.UZOiRzdcIbjS0lWHosZNb9YkKVJ9FNDehNL1Q-JTEqI';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const TELUGU_MONTHS = ["జనవరి", "ఫిబ్రవరి", "మార్చి", "ఏప్రిల్", "మే", "జూన్", "జూలై", "ఆగస్టు", "సెప్టెంబర్", "అక్టోబర్", "నవంబర్", "డిసెంబర్"];
+    const ENGLISH_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    let vendorProfile = null;
+    let activeTab = 'delivery';
+    let selectedRouteDate = new Date();
+    let selectedBillingMonth = new Date();
+    let deliveryFilter = 'all';
+    let billingFilter = 'all';
+
+    let allCustomers = [];
+    let monthLogsByUser = {}; // { user_id: { 'YYYY-MM-DD': { status, quantity } } }
+    let selectedCustForDayEdit = null;
+
+    window.onload = function() {
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        navigator.serviceWorker.register('./sw.js').catch(function(err) {
+          console.log('SW registration skipped:', err);
+        });
+      }
+      const savedVendor = localStorage.getItem('milkcount_vendor_session');
+      if (savedVendor) {
+        try {
+          vendorProfile = JSON.parse(savedVendor);
+          showVendorDashboard();
+          return;
+        } catch (e) {}
+      }
+      const cachedCreds = localStorage.getItem('milkcount_vendor_creds');
+      if (cachedCreds) {
+        try {
+          const c = JSON.parse(cachedCreds);
+          document.getElementById('vendorNameInput').value = c.name || '';
+          document.getElementById('vendorPhoneInput').value = c.phone || '';
+        } catch (e) {}
+      }
+    };
+
+    function handleVendorLogin() {
+      const name = document.getElementById('vendorNameInput').value.trim() || 'MilkCount Dairy';
+      const phone = document.getElementById('vendorPhoneInput').value.trim();
+      const pin = document.getElementById('vendorPinInput').value.trim();
+
+      if (phone.length !== 10 || isNaN(phone)) return alert('దయచేసి 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
+      if (pin.length !== 4 || isNaN(pin)) return alert('దయచేసి 4 అంకెల PIN నమోదు చేయండి.');
+
+      const existingCreds = localStorage.getItem('milkcount_vendor_creds');
+      if (existingCreds) {
+        const parsed = JSON.parse(existingCreds);
+        if (parsed.phone === phone && parsed.pin !== pin) {
+          return alert('అడ్మిన్ PIN తప్పుగా నమోదు చేశారు!');
+        }
+      }
+
+      vendorProfile = { name, phone, pin };
+      localStorage.setItem('milkcount_vendor_creds', JSON.stringify(vendorProfile));
+      localStorage.setItem('milkcount_vendor_session', JSON.stringify(vendorProfile));
+      showVendorDashboard();
+    }
+
+    function showVendorDashboard() {
+      document.getElementById('vendorAuthSection').classList.add('hidden-force');
+      document.getElementById('vendorAppSection').classList.remove('hidden-force');
+      document.getElementById('headerVendorName').innerText = vendorProfile.name;
+      document.getElementById('headerVendorPhone').innerText = `📞 ${vendorProfile.phone}`;
+      refreshAllVendorData();
+    }
+
+    function logoutVendor() {
+      localStorage.removeItem('milkcount_vendor_session');
+      vendorProfile = null;
+      document.getElementById('vendorAppSection').classList.add('hidden-force');
+      document.getElementById('vendorAuthSection').classList.remove('hidden-force');
+      document.getElementById('vendorPinInput').value = '';
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      t.classList.remove('opacity-0', 'translate-y-4');
+      t.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        t.classList.remove('opacity-100', 'translate-y-0');
+        t.classList.add('opacity-0', 'translate-y-4');
+      }, 2200);
+    }
+
+    function formatDateISO(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    // 2. DATA SYNC FROM SUPABASE
+    async function refreshAllVendorData() {
+      const icon = document.getElementById('syncIcon');
+      if (icon) icon.classList.add('animate-spin');
+
+      const { data: users } = await db.from('customer_users').select('*').order('name', { ascending: true });
+      allCustomers = users || [];
+
+      const refDate = activeTab === 'delivery' ? selectedRouteDate : selectedBillingMonth;
+      const y = refDate.getFullYear();
+      const m = refDate.getMonth();
+      // Fetch previous month start as well so 7-day chart across month boundaries works smoothly
+      const prevM = new Date(y, m - 1, 1);
+      const startDate = `${prevM.getFullYear()}-${String(prevM.getMonth() + 1).padStart(2, '0')}-01`;
+      const nextM = new Date(y, m + 1, 1);
+      const endDate = `${nextM.getFullYear()}-${String(nextM.getMonth() + 1).padStart(2, '0')}-01`;
+
+      const { data: logs } = await db.from('customer_milk_logs')
+        .select('*')
+        .gte('log_date', startDate)
+        .lt('log_date', endDate);
+
+      monthLogsByUser = {};
+      if (logs) {
+        logs.forEach(l => {
+          if (!monthLogsByUser[l.user_id]) monthLogsByUser[l.user_id] = {};
+          monthLogsByUser[l.user_id][l.log_date] = {
+            status: l.status,
+            quantity: parseFloat(l.quantity)
+          };
+        });
+      }
+
+      if (icon) icon.classList.remove('animate-spin');
+      renderActiveTab();
+    }
+
+    // 3. TAB & DATE NAVIGATION
+    function switchVendorTab(tab) {
+      activeTab = tab;
+      ['delivery', 'billing', 'customers', 'summary'].forEach(t => {
+        document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('hidden-force', t !== tab);
+        const navBtn = document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          navBtn.className = 'flex flex-col items-center justify-center py-1 text-teal-700 font-extrabold';
+        } else {
+          navBtn.className = 'flex flex-col items-center justify-center py-1 text-slate-400 font-semibold';
+        }
+      });
+
+      document.getElementById('dateSelectorBar').classList.toggle('hidden-force', tab === 'customers');
+      refreshAllVendorData();
+    }
+
+    function shiftSelectedDate(delta) {
+      if (activeTab === 'delivery') {
+        selectedRouteDate.setDate(selectedRouteDate.getDate() + delta);
+      } else {
+        selectedBillingMonth.setMonth(selectedBillingMonth.getMonth() + delta);
+      }
+      refreshAllVendorData();
+    }
+
+    function jumpToTomorrowDelivery() {
+      const now = new Date();
+      selectedRouteDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      refreshAllVendorData();
+    }
+
+    function renderActiveTab() {
+      if (activeTab === 'delivery') {
+        updateHeaderDateDisplay();
+        renderDeliveryTab();
+      } else if (activeTab === 'billing') {
+        updateHeaderMonthDisplay();
+        renderBillingTab();
+      } else if (activeTab === 'customers') {
+        renderCustomersTab();
+      } else if (activeTab === 'summary') {
+        updateHeaderMonthDisplay();
+        renderSummaryTab();
+      }
+    }
+
+    function updateHeaderDateDisplay() {
+      const now = new Date();
+      const todayIso = formatDateISO(now);
+      const tomIso = formatDateISO(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
+      const selIso = formatDateISO(selectedRouteDate);
+
+      const d = selectedRouteDate.getDate();
+      const mTel = TELUGU_MONTHS[selectedRouteDate.getMonth()];
+      const y = selectedRouteDate.getFullYear();
+
+      let prefix = `${d} ${mTel} ${y}`;
+      if (selIso === todayIso) prefix = `ఈరోజు (${d} ${mTel})`;
+      else if (selIso === tomIso) prefix = `రేపు (${d} ${mTel})`;
+
+      document.getElementById('activePeriodTitle').innerText = prefix;
+      document.getElementById('activePeriodSub').innerText = selIso;
+    }
+
+    function updateHeaderMonthDisplay() {
+      const m = selectedBillingMonth.getMonth();
+      const y = selectedBillingMonth.getFullYear();
+      document.getElementById('activePeriodTitle').innerText = `${TELUGU_MONTHS[m]} ${y}`;
+      document.getElementById('activePeriodSub').innerText = `${ENGLISH_MONTHS[m]} ${y}`;
+    }
+
+    // 4. TAB 1: DAILY DELIVERY ROUTE LOGIC
+    function setDeliveryFilter(f) {
+      deliveryFilter = f;
+      ['all', 'pending', 'skipped'].forEach(key => {
+        const btn = document.getElementById('filter' + key.charAt(0).toUpperCase() + key.slice(1) + 'Btn');
+        btn.className = (key === f)
+          ? 'px-3 py-1 rounded-full bg-teal-700 text-white shadow-2xs'
+          : 'px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+      });
+      renderDeliveryTab();
+    }
+
+    function getDeliveredDoneMap(isoDate) {
+      try {
+        return JSON.parse(localStorage.getItem(`vendor_done_${isoDate}`)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function toggleDeliveredCheck(userId) {
+      const iso = formatDateISO(selectedRouteDate);
+      const doneMap = getDeliveredDoneMap(iso);
+      doneMap[userId] = !doneMap[userId];
+      localStorage.setItem(`vendor_done_${iso}`, JSON.stringify(doneMap));
+      renderDeliveryTab();
+    }
+
+    function markAllRouteDelivered() {
+      const iso = formatDateISO(selectedRouteDate);
+      const doneMap = getDeliveredDoneMap(iso);
+      allCustomers.forEach(c => { doneMap[c.id] = true; });
+      localStorage.setItem(`vendor_done_${iso}`, JSON.stringify(doneMap));
+      renderDeliveryTab();
+      showToast('ఈరోజు డెలివరీలన్నీ Done మార్క్ అయ్యాయి!');
+    }
+
+    function getCustomerDayStatus(cust, dateObj) {
+      const iso = formatDateISO(dateObj);
+      const dateZero = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+      const userLogs = monthLogsByUser[cust.id] || {};
+      const log = userLogs[iso];
+      const defaultQty = parseFloat(cust.daily_qty || 1.0);
+      const isAuto = cust.auto_mode !== false;
+      const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
+      regDate.setHours(0, 0, 0, 0);
+
+      if (log) {
+        if (log.status === 'skipped' || log.quantity === 0) {
+          return { status: 'skipped', qty: 0, isExtra: false };
+        }
+        return { status: 'active', qty: log.quantity, isExtra: log.quantity > defaultQty };
+      } else if (isAuto && dateZero >= regDate) {
+        return { status: 'active', qty: defaultQty, isExtra: false };
+      }
+      return { status: 'none', qty: 0, isExtra: false };
+    }
+
+    function renderDeliveryTab() {
+      const iso = formatDateISO(selectedRouteDate);
+      const doneMap = getDeliveredDoneMap(iso);
+      const searchQ = (document.getElementById('routeSearchInput').value || '').toLowerCase();
+
+      let totalLiters = 0;
+      let activeCount = 0;
+      let skippedCount = 0;
+      let doneCount = 0;
+
+      const listEl = document.getElementById('deliveryRouteList');
+      listEl.innerHTML = '';
+
+      if (allCustomers.length === 0) {
+        listEl.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">ఇంకా కస్టమర్లు ఎవరూ లేరు. "కస్టమర్లు" ట్యాబ్‌లో యాడ్ చేయండి.</div>`;
+        return;
+      }
+
+      allCustomers.forEach(cust => {
+        const info = getCustomerDayStatus(cust, selectedRouteDate);
+        if (info.status === 'skipped') skippedCount++;
+        if (info.status === 'active') {
+          totalLiters += info.qty;
+          activeCount++;
+        }
+
+        const isDone = Boolean(doneMap[cust.id]);
+        if (info.status === 'active' && isDone) doneCount++;
+
+        if (searchQ && !(cust.name || '').toLowerCase().includes(searchQ) && !(cust.phone || '').includes(searchQ)) return;
+        if (deliveryFilter === 'pending' && (info.status !== 'active' || isDone)) return;
+        if (deliveryFilter === 'skipped' && info.status !== 'skipped') return;
+
+        const card = document.createElement('div');
+        card.className = `border rounded-2xl p-3 flex items-center justify-between gap-2 transition-all ${
+          info.status === 'skipped'
+            ? 'bg-rose-50/70 border-rose-200'
+            : isDone
+              ? 'bg-emerald-50/60 border-emerald-200 opacity-80'
+              : 'bg-white border-slate-200 shadow-2xs'
+        }`;
+
+        const badgeHtml = info.status === 'skipped'
+          ? `<span class="text-xs font-extrabold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-lg">వద్దు (Skip)</span>`
+          : info.status === 'none'
+            ? `<span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Manual (0L)</span>`
+            : `<span class="text-sm font-black ${info.isExtra ? 'text-amber-800 bg-amber-100 border border-amber-300' : 'text-teal-800 bg-teal-50 border border-teal-200'} px-2.5 py-1 rounded-lg">
+                ${info.qty} L ${info.isExtra ? '★' : ''}
+               </span>`;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <button onclick="toggleDeliveredCheck('${cust.id}')" class="w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+              info.status === 'skipped'
+                ? 'border-rose-300 text-rose-400 cursor-not-allowed'
+                : isDone
+                  ? 'bg-emerald-600 border-emerald-600 text-white'
+                  : 'border-slate-300 text-transparent hover:border-teal-600'
+            }" ${info.status === 'skipped' ? 'disabled' : ''}>
+              <i class="ph-bold ph-check text-xs"></i>
+            </button>
+            <div class="min-w-0">
+              <h4 class="font-bold text-slate-800 text-sm truncate ${isDone ? 'line-through text-slate-500' : ''}">${cust.name || 'Customer'}</h4>
+              <div class="flex items-center gap-2 text-[11px] text-slate-500">
+                <a href="tel:${cust.phone}" class="hover:text-teal-700 font-medium">📞 ${cust.phone}</a>
+                <span>• ₹${cust.price_per_ltr || 70}/L</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5 shrink-0">
+            ${badgeHtml}
+            <button onclick="openVendorDayModal('${cust.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600">
+              <i class="ph-bold ph-pencil-simple text-xs"></i>
+            </button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+
+      const pct = activeCount > 0 ? Math.round((doneCount / activeCount) * 100) : 0;
+      document.getElementById('totalLitersNeeded').innerText = totalLiters.toFixed(1);
+      document.getElementById('activeDeliveriesCount').innerText = activeCount;
+      document.getElementById('skippedDeliveriesCount').innerText = skippedCount;
+      document.getElementById('deliveredProgressText').innerText = `${doneCount}/${activeCount} Done (${pct}%)`;
+      document.getElementById('routeProgressBar').style.width = `${pct}%`;
+    }
+
+    function shareRouteSummaryWhatsApp() {
+      const iso = formatDateISO(selectedRouteDate);
+      const total = document.getElementById('totalLitersNeeded').innerText;
+      const active = document.getElementById('activeDeliveriesCount').innerText;
+      const skipped = document.getElementById('skippedDeliveriesCount').innerText;
+      const msg = encodeURIComponent(`🚚 *MilkCount డెలివరీ షీట్ (${iso})*
+• మొత్తం కావాల్సిన పాలు: *${total} L*
+• డెలివరీ ఇళ్లు: ${active}
+• సెలవులు (Skip): ${skipped}`);
+      window.location.href = `whatsapp://send?text=${msg}`;
+    }
+
+    // Vendor override single customer day entry
+    function openVendorDayModal(userId) {
+      const cust = allCustomers.find(c => c.id === userId);
+      if (!cust) return;
+      selectedCustForDayEdit = cust;
+      document.getElementById('vDayCustName').innerText = `${cust.name} (${cust.phone})`;
+      document.getElementById('vDayDateLabel').innerText = `తేదీ: ${formatDateISO(selectedRouteDate)}`;
+      document.getElementById('vCustomLiters').value = '';
+      document.getElementById('vendorDayEditModal').classList.remove('hidden-force');
+    }
+
+    function closeVendorDayModal() {
+      document.getElementById('vendorDayEditModal').classList.add('hidden-force');
+      selectedCustForDayEdit = null;
+    }
+
+    async function updateCustomerDayFromVendor(liters) {
+      if (!selectedCustForDayEdit) return;
+      const iso = formatDateISO(selectedRouteDate);
+      const status = liters === 0 ? 'skipped' : 'taken';
+
+      const { error } = await db.from('customer_milk_logs').upsert({
+        user_id: selectedCustForDayEdit.id,
+        log_date: iso,
+        quantity: liters,
+        status: status
+      }, { onConflict: 'user_id,log_date' });
+
+      if (!error) {
+        showToast(`${selectedCustForDayEdit.name}: ${liters === 0 ? 'వద్దు (Skip)' : liters + 'L'} అప్‌డేట్ అయ్యింది!`);
+        closeVendorDayModal();
+        refreshAllVendorData();
+      }
+    }
+
+    function applyVendorCustomLiters() {
+      const val = parseFloat(document.getElementById('vCustomLiters').value);
+      if (!isNaN(val) && val >= 0) updateCustomerDayFromVendor(val);
+    }
+
+    // 5. TAB 2: MONTHLY BILLING & COLLECTIONS
+    function setBillingFilter(f) {
+      billingFilter = f;
+      ['all', 'unpaid', 'paid'].forEach(key => {
+        const btn = document.getElementById('billFilter' + key.charAt(0).toUpperCase() + key.slice(1) + 'Btn');
+        btn.className = (key === f)
+          ? 'px-3 py-1 rounded-full bg-teal-700 text-white'
+          : 'px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+      });
+      renderBillingTab();
+    }
+
+    function calculateCustomerMonthStats(cust, year, month) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const now = new Date();
+      const defaultQty = parseFloat(cust.daily_qty || 1.0);
+      const rate = parseFloat(cust.price_per_ltr || 70);
+      const isAuto = cust.auto_mode !== false;
+      const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
+      regDate.setHours(0, 0, 0, 0);
+      const logs = monthLogsByUser[cust.id] || {};
+
+      let deliveredDays = 0;
+      let skippedDays = 0;
+      let totalLiters = 0;
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cDate = new Date(year, month, d);
+        const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const isPastOrToday = cDate <= now;
+        const isJoined = cDate >= regDate;
+        const rec = logs[iso];
+
+        if (rec) {
+          if (rec.status === 'taken' && rec.quantity > 0 && isPastOrToday) {
+            deliveredDays++;
+            totalLiters += rec.quantity;
+          } else if (rec.status === 'skipped' || rec.quantity === 0) {
+            skippedDays++;
+          }
+        } else if (isPastOrToday && isJoined && isAuto) {
+          deliveredDays++;
+          totalLiters += defaultQty;
+        }
+      }
+
+      const amount = Math.round(totalLiters * rate);
+      return { deliveredDays, skippedDays, totalLiters, rate, amount };
+    }
+
+    function getVendorPaidStatusMap(year, month) {
+      const key = `vendor_paid_${year}_${String(month + 1).padStart(2, '0')}`;
+      try {
+        return JSON.parse(localStorage.getItem(key)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function toggleVendorCustomerPaid(userId) {
+      const y = selectedBillingMonth.getFullYear();
+      const m = selectedBillingMonth.getMonth();
+      const key = `vendor_paid_${y}_${String(m + 1).padStart(2, '0')}`;
+      const map = getVendorPaidStatusMap(y, m);
+      map[userId] = !map[userId];
+      localStorage.setItem(key, JSON.stringify(map));
+      renderBillingTab();
+      showToast(map[userId] ? 'బిల్లు చెల్లించినట్లు (PAID) మార్క్ అయ్యింది!' : 'Pending లోకి మార్చబడింది');
+    }
+
+    function renderBillingTab() {
+      const y = selectedBillingMonth.getFullYear();
+      const m = selectedBillingMonth.getMonth();
+      const paidMap = getVendorPaidStatusMap(y, m);
+
+      let collectedTotal = 0;
+      let pendingTotal = 0;
+
+      const listEl = document.getElementById('billingCustomerList');
+      listEl.innerHTML = '';
+
+      allCustomers.forEach(cust => {
+        const stats = calculateCustomerMonthStats(cust, y, m);
+        const isPaid = Boolean(paidMap[cust.id]);
+
+        if (isPaid) collectedTotal += stats.amount;
+        else pendingTotal += stats.amount;
+
+        if (billingFilter === 'paid' && !isPaid) return;
+        if (billingFilter === 'unpaid' && isPaid) return;
+
+        const card = document.createElement('div');
+        card.className = `border rounded-2xl p-3.5 space-y-2.5 ${isPaid ? 'bg-emerald-50/60 border-emerald-200' : 'bg-white border-slate-200 shadow-2xs'}`;
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                ${cust.name || 'Customer'}
+                ${isPaid ? '<span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-black">PAID ✓</span>' : ''}
+              </h4>
+              <p class="text-[11px] text-slate-500">${cust.phone} • ${stats.deliveredDays} రోజులు (${stats.totalLiters.toFixed(1)}L × ₹${stats.rate})</p>
+            </div>
+            <div class="text-right">
+              <span class="text-base font-black ${isPaid ? 'text-emerald-700' : 'text-slate-900'}">₹${stats.amount.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+            <button onclick="toggleVendorCustomerPaid('${cust.id}')" class="py-1.5 px-2.5 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 ${
+              isPaid
+                ? 'bg-slate-200 text-slate-700'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }">
+              <i class="ph-bold ph-check-circle"></i> ${isPaid ? 'Unmark Paid' : 'Mark Paid'}
+            </button>
+
+            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, ${stats.rate}, ${stats.amount})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
+              <i class="ph-fill ph-whatsapp-logo"></i> వాట్సాప్ బిల్
+            </button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+
+      const grandTotal = collectedTotal + pendingTotal;
+      const pct = grandTotal > 0 ? Math.round((collectedTotal / grandTotal) * 100) : 0;
+
+      document.getElementById('billingCollectedTotal').innerText = collectedTotal.toLocaleString('en-IN');
+      document.getElementById('billingPendingTotal').innerText = pendingTotal.toLocaleString('en-IN');
+      document.getElementById('collectionPercentLabel').innerText = `${pct}%`;
+      document.getElementById('collectionProgressBar').style.width = `${pct}%`;
+    }
+
+    function sendWhatsAppBillToCustomer(userId, delDays, skipDays, liters, rate, amount) {
+      const cust = allCustomers.find(c => c.id === userId);
+      if (!cust) return;
+      const mTel = TELUGU_MONTHS[selectedBillingMonth.getMonth()];
+      const y = selectedBillingMonth.getFullYear();
+
+      const msg =
+`🥛 *పాల బిల్లు వివరాలు (${vendorProfile.name})* 🥛
+-------------------------------------
+👤 *కస్టమర్:* ${cust.name}
+📅 *నెల:* ${mTel} ${y}
+✅ *పాలు పోసిన రోజులు:* ${delDays} రోజులు
+❌ *ఆపిన రోజులు:* ${skipDays} రోజులు
+🍶 *మొత్తం లీటర్లు:* ${liters} L (₹${rate}/L)
+-------------------------------------
+💵 *చెల్లించవలసిన బిల్లు: ₹${amount}*
+-------------------------------------
+దయచేసి త్వరగా చెల్లించగలరు. ధన్యవాదాలు!`;
+
+      window.location.href = `whatsapp://send?phone=91${cust.phone}&text=${encodeURIComponent(msg)}`;
+    }
+
+    // 6. TAB 3: CUSTOMERS MANAGEMENT
+    function renderCustomersTab() {
+      const query = (document.getElementById('customerSearchInput').value || '').toLowerCase();
+      const filtered = allCustomers.filter(c =>
+        (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query)
+      );
+
+      document.getElementById('totalCustomersCount').innerText = allCustomers.length;
+      const listEl = document.getElementById('customersManageList');
+      listEl.innerHTML = '';
+
+      filtered.forEach(cust => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between shadow-2xs';
+        card.innerHTML = `
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm">${cust.name || 'Customer'}</h4>
+            <p class="text-[11px] text-slate-500">📞 ${cust.phone} • కోటా: <strong>${cust.daily_qty || 1.0}L</strong> • ₹${cust.price_per_ltr || 70}/L</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <a href="tel:${cust.phone}" class="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100">
+              <i class="ph-bold ph-phone text-sm"></i>
+            </a>
+            <button onclick="openEditCustomerModal('${cust.id}')" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <i class="ph-bold ph-pencil-simple text-sm"></i>
+            </button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function openAddCustomerModal() {
+      document.getElementById('customerModalTitle').innerText = 'కొత్త కస్టమర్ యాడ్ చేయండి';
+      document.getElementById('editCustomerId').value = '';
+      document.getElementById('custNameInput').value = '';
+      document.getElementById('custPhoneInput').value = '';
+      document.getElementById('custPhoneInput').disabled = false;
+      document.getElementById('custQuotaInput').value = '1.0';
+      document.getElementById('custRateInput').value = '70';
+      document.getElementById('custPinInput').value = '1234';
+      document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
+      document.getElementById('customerModal').classList.remove('hidden-force');
+    }
+
+    function openEditCustomerModal(userId) {
+      const cust = allCustomers.find(c => c.id === userId);
+      if (!cust) return;
+      document.getElementById('customerModalTitle').innerText = 'కస్టమర్ వివరాలు మార్చండి';
+      document.getElementById('editCustomerId').value = cust.id;
+      document.getElementById('custNameInput').value = cust.name || '';
+      document.getElementById('custPhoneInput').value = cust.phone || '';
+      document.getElementById('custPhoneInput').disabled = true;
+      document.getElementById('custQuotaInput').value = cust.daily_qty || 1.0;
+      document.getElementById('custRateInput').value = cust.price_per_ltr || 70;
+      document.getElementById('custPinFieldGroup').classList.add('hidden-force');
+      document.getElementById('customerModal').classList.remove('hidden-force');
+    }
+
+    function closeCustomerModal() {
+      document.getElementById('customerModal').classList.add('hidden-force');
+    }
+
+    async function saveVendorCustomer() {
+      const editId = document.getElementById('editCustomerId').value;
+      const name = document.getElementById('custNameInput').value.trim();
+      const phone = document.getElementById('custPhoneInput').value.trim();
+      const daily_qty = parseFloat(document.getElementById('custQuotaInput').value) || 1.0;
+      const price_per_ltr = parseFloat(document.getElementById('custRateInput').value) || 70;
+      const pin = document.getElementById('custPinInput').value.trim() || '1234';
+
+      if (!name) return alert('దయచేసి కస్టమర్ పేరు నమోదు చేయండి.');
+      if (!editId && (phone.length !== 10 || isNaN(phone))) return alert('10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
+
+      const btn = document.getElementById('saveCustModalBtn');
+      btn.disabled = true;
+      btn.innerText = 'సేవ్ అవుతోంది...';
+
+      if (editId) {
+        const { error } = await db.from('customer_users')
+          .update({ name, daily_qty, price_per_ltr })
+          .eq('id', editId);
+        btn.disabled = false;
+        btn.innerText = 'సేవ్ చేయండి';
+        if (error) return alert('Error: ' + error.message);
+        showToast('కస్టమర్ వివరాలు అప్‌డేట్ అయ్యాయి!');
+      } else {
+        const { data: exist } = await db.from('customer_users').select('id').eq('phone', phone).maybeSingle();
+        if (exist) {
+          btn.disabled = false;
+          btn.innerText = 'సేవ్ చేయండి';
+          return alert('ఈ మొబైల్ నంబర్ ఇప్పటికే లిస్ట్‌లో ఉంది!');
+        }
+        const { error } = await db.from('customer_users').insert([{
+          name, phone, pin, daily_qty, price_per_ltr, auto_mode: true
+        }]);
+        btn.disabled = false;
+        btn.innerText = 'సేవ్ చేయండి';
+        if (error) return alert('Error: ' + error.message);
+        showToast(`${name} కొత్త కస్టమర్‌గా యాడ్ అయ్యారు!`);
+      }
+
+      closeCustomerModal();
+      refreshAllVendorData();
+    }
+
+    // 7. TAB 4: MONTHLY SUMMARY, 7-DAY GRAPH & TOP CUSTOMERS
+    function renderSummaryTab() {
+      const y = selectedBillingMonth.getFullYear();
+      const m = selectedBillingMonth.getMonth();
+      document.getElementById('summaryMonthTag').innerText = `${TELUGU_MONTHS[m]} ${y}`;
+
+      let grandLiters = 0;
+      let grandRevenue = 0;
+      const ranked = [];
+
+      allCustomers.forEach(cust => {
+        const st = calculateCustomerMonthStats(cust, y, m);
+        grandLiters += st.totalLiters;
+        grandRevenue += st.amount;
+        ranked.push({ name: cust.name || cust.phone, liters: st.totalLiters, amount: st.amount });
+      });
+
+      const now = new Date();
+      const daysPassed = (y === now.getFullYear() && m === now.getMonth())
+        ? Math.max(1, now.getDate())
+        : new Date(y, m + 1, 0).getDate();
+
+      document.getElementById('sumTotalLiters').innerText = grandLiters.toFixed(1);
+      document.getElementById('sumTotalRevenue').innerText = grandRevenue.toLocaleString('en-IN');
+      document.getElementById('sumDailyAvg').innerText = (grandLiters / daysPassed).toFixed(1);
+
+      // Render 7-Day Supply Bar Chart
+      const chartEl = document.getElementById('sevenDayBarChart');
+      chartEl.innerHTML = '';
+      const last7 = [];
+      let maxVal = 1;
+      for (let i = 6; i >= 0; i--) {
+        const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        let daySum = 0;
+        allCustomers.forEach(c => {
+          const inf = getCustomerDayStatus(c, dObj);
+          if (inf.status === 'active') daySum += inf.qty;
+        });
+        if (daySum > maxVal) maxVal = daySum;
+        last7.push({ label: `${dObj.getDate()}/${dObj.getMonth() + 1}`, val: daySum });
+      }
+
+      last7.forEach((item, idx) => {
+        const heightPct = Math.max(12, Math.round((item.val / maxVal) * 100));
+        const isTodayBar = idx === 6;
+        chartEl.innerHTML += `
+          <div class="flex flex-col items-center gap-1 h-full justify-end">
+            <span class="text-[9px] font-extrabold text-slate-600">${item.val.toFixed(1)}</span>
+            <div class="w-full rounded-t-lg transition-all ${isTodayBar ? 'bg-teal-600' : 'bg-teal-200'}" style="height: ${heightPct}%"></div>
+            <span class="text-[9px] font-semibold text-slate-400">${item.label}</span>
+          </div>
+        `;
+      });
+
+      // Render Top Customers
+      ranked.sort((a, b) => b.liters - a.liters);
+      const topEl = document.getElementById('topCustomersList');
+      topEl.innerHTML = '';
+      ranked.slice(0, 5).forEach((item, idx) => {
+        topEl.innerHTML += `
+          <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-100 last:border-0">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-teal-50 text-teal-800 font-extrabold text-[10px] flex items-center justify-center">${idx + 1}</span>
+              <span class="font-bold text-slate-700">${item.name}</span>
+            </div>
+            <span class="font-extrabold text-teal-800">${item.liters.toFixed(1)} L <span class="text-[10px] font-normal text-slate-400">(₹${item.amount})</span></span>
+          </div>
+        `;
+      });
+    }
+
+    function shareCustomerAppLink() {
+      const appUrl = 'https://kishoreee226-netizen.github.io/milk-tracker/';
+      const msg = encodeURIComponent(`🥛 *${vendorProfile.name} - MilkCount App*
+మీ రోజువారీ పాల లెక్కలు, సెలవులు మరియు నెలవారీ బిల్లు కోసం ఈ యాప్‌ను మీ మొబైల్ నంబర్‌తో లాగిన్ అయి వాడుకోండి:
+${appUrl}`);
+      window.location.href = `whatsapp://send?text=${msg}`;
+    }
+  </script>
+</body>
+</html>
