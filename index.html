@@ -474,36 +474,53 @@
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">మొబైల్ నంబర్ (10 అంకెలు):</label>
             <input type="tel" id="custPhoneInput" maxlength="10" placeholder="9876543210" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[11px] font-bold text-slate-600 mb-1 block">పాల రకం (Milk Type):</label>
-              <select id="custMilkTypeInput" onchange="autoSetRateByMilkType()" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
-                <option value="Buffalo">🐃 గేదె పాలు (Buffalo)</option>
-                <option value="Cow">🐄 ఆవు పాలు (Cow)</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[11px] font-bold text-slate-600 mb-1 block">షిఫ్ట్ (Shift):</label>
-              <select id="custShiftInput" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
-                <option value="Morning">🌅 ఉదయం (Morning)</option>
-                <option value="Evening">🌇 సాయంత్రం (Evening)</option>
-                <option value="Both">🔄 రెండు పూటలా (Both)</option>
-              </select>
+          <!-- MORNING SHIFT CONFIG -->
+          <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-2.5 space-y-1.5">
+            <span class="text-[11px] font-extrabold text-amber-900 block">🌅 ఉదయం (Morning Shift)</span>
+            <div class="grid grid-cols-3 gap-1.5">
+              <div>
+                <label class="text-[9px] font-bold text-slate-600 block">రకం:</label>
+                <select id="custMorningMilkType" onchange="autoSetVendorShiftRate('Morning')" class="w-full px-1.5 py-1.5 bg-white border border-slate-300 rounded-lg text-[11px] font-bold">
+                  <option value="Buffalo">🐃 గేదె</option>
+                  <option value="Cow">🐄 ఆవు</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-600 block">కోటా (L):</label>
+                <input type="number" id="custMorningQuota" step="0.25" value="1.0" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-600 block">రేటు (₹):</label>
+                <input type="number" id="custMorningRate" value="75" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+              </div>
             </div>
           </div>
+
+          <!-- EVENING SHIFT CONFIG -->
+          <div class="bg-sky-50/70 border border-sky-200 rounded-xl p-2.5 space-y-1.5">
+            <span class="text-[11px] font-extrabold text-sky-900 block">🌇 సాయంత్రం (Evening Shift)</span>
+            <div class="grid grid-cols-3 gap-1.5">
+              <div>
+                <label class="text-[9px] font-bold text-slate-600 block">రకం:</label>
+                <select id="custEveningMilkType" onchange="autoSetVendorShiftRate('Evening')" class="w-full px-1.5 py-1.5 bg-white border border-slate-300 rounded-lg text-[11px] font-bold">
+                  <option value="Cow">🐄 ఆవు</option>
+                  <option value="Buffalo">🐃 గేదె</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-600 block">కోటా (L):</label>
+                <input type="number" id="custEveningQuota" step="0.25" value="0" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+              </div>
+              <div>
+                <label class="text-[9px] font-bold text-slate-600 block">రేటు (₹):</label>
+                <input type="number" id="custEveningRate" value="55" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+              </div>
+            </div>
+          </div>
+
           <div>
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">ఏరియా / రూట్ (Area / Route):</label>
             <input type="text" id="custAreaInput" placeholder="ఉదా: హన్మకొండ / కాజీపేట" value="General" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[11px] font-bold text-slate-600 mb-1 block">రోజువారీ కోటా (L):</label>
-              <input type="number" id="custQuotaInput" step="0.5" value="1.0" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
-            </div>
-            <div>
-              <label class="text-[11px] font-bold text-slate-600 mb-1 block">లీటరు ధర (₹):</label>
-              <input type="number" id="custRateInput" value="75" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
-            </div>
           </div>
           <div id="custPinFieldGroup">
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">కస్టమర్ లాగిన్ PIN (4 అంకెలు):</label>
@@ -874,6 +891,8 @@
             monthLogsByUser[l.user_id][l.log_date] = {
               status: l.status,
               quantity: parseFloat(l.quantity),
+              morning_qty: l.morning_qty !== undefined && l.morning_qty !== null ? parseFloat(l.morning_qty) : null,
+              evening_qty: l.evening_qty !== undefined && l.evening_qty !== null ? parseFloat(l.evening_qty) : null,
               quality_note: l.quality_note || ''
             };
           });
@@ -1017,12 +1036,28 @@
       }
     }
 
-    function toggleDeliveredCheck(userId) {
+    async function toggleDeliveredCheck(userId) {
       const iso = formatDateISO(selectedRouteDate);
       const doneMap = getDeliveredDoneMap(iso);
-      doneMap[userId] = !doneMap[userId];
+      const newDoneState = !doneMap[userId];
+      doneMap[userId] = newDoneState;
       localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
       renderDeliveryTab();
+
+      // Sync live delivery status to customer_milk_logs so Customer sees "Delivered ✓"
+      const cust = allCustomers.find(c => c.id === userId);
+      if (cust) {
+        const info = getCustomerDayStatus(cust, selectedRouteDate);
+        if (info.status === 'active') {
+          await db.from('customer_milk_logs').upsert({
+            user_id: userId,
+            log_date: iso,
+            quantity: info.qty,
+            status: 'taken',
+            vendor_delivered: newDoneState
+          }, { onConflict: 'user_id,log_date' });
+        }
+      }
     }
 
     function markAllRouteDelivered() {
@@ -1034,25 +1069,50 @@
       showToast('ఈరోజు డెలివరీలన్నీ Done మార్క్ అయ్యాయి!');
     }
 
+    function getCustShiftPrefs(cust) {
+      const mType = cust.morning_milk_type || cust.milk_type || 'Buffalo';
+      const mQty = cust.morning_qty !== undefined && cust.morning_qty !== null
+        ? parseFloat(cust.morning_qty)
+        : (cust.shift === 'Evening' ? 0 : parseFloat(cust.daily_qty || 1.0));
+      const mRate = parseFloat(cust.morning_rate || cust.price_per_ltr || (mType === 'Cow' ? 55 : 75));
+
+      const eType = cust.evening_milk_type || 'Cow';
+      const eQty = cust.evening_qty !== undefined && cust.evening_qty !== null
+        ? parseFloat(cust.evening_qty)
+        : (cust.shift === 'Evening' ? parseFloat(cust.daily_qty || 1.0) : 0);
+      const eRate = parseFloat(cust.evening_rate || (eType === 'Cow' ? 55 : 75));
+
+      const totalDefault = parseFloat((mQty + eQty).toFixed(2)) || parseFloat(cust.daily_qty || 1.0);
+      const effectiveShift = (mQty > 0 && eQty > 0) ? 'Both' : (eQty > 0 ? 'Evening' : 'Morning');
+      return { mType, mQty, mRate, eType, eQty, eRate, totalDefault, effectiveShift };
+    }
+
     function getCustomerDayStatus(cust, dateObj) {
       const iso = formatDateISO(dateObj);
       const dateZero = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
       const userLogs = monthLogsByUser[cust.id] || {};
       const log = userLogs[iso];
-      const defaultQty = parseFloat(cust.daily_qty || 1.0);
+      const prefs = getCustShiftPrefs(cust);
+      const defaultQty = prefs.totalDefault;
       const isAuto = cust.auto_mode !== false;
       const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
       regDate.setHours(0, 0, 0, 0);
 
       if (log) {
         if (log.status === 'skipped' || log.quantity === 0) {
-          return { status: 'skipped', qty: 0, isExtra: false, quality_note: log.quality_note || '' };
+          return { status: 'skipped', qty: 0, mQty: 0, eQty: 0, isExtra: false, quality_note: log.quality_note || '' };
         }
-        return { status: 'active', qty: log.quantity, isExtra: log.quantity > defaultQty, quality_note: log.quality_note || '' };
+        const mQ = log.morning_qty !== null
+          ? log.morning_qty
+          : (defaultQty > 0 ? parseFloat((log.quantity * (prefs.mQty / defaultQty)).toFixed(2)) : log.quantity);
+        const eQ = log.evening_qty !== null
+          ? log.evening_qty
+          : Math.max(0, parseFloat((log.quantity - mQ).toFixed(2)));
+        return { status: 'active', qty: log.quantity, mQty: mQ, eQty: eQ, isExtra: log.quantity > defaultQty, quality_note: log.quality_note || '' };
       } else if (isAuto && dateZero >= regDate) {
-        return { status: 'active', qty: defaultQty, isExtra: false, quality_note: '' };
+        return { status: 'active', qty: defaultQty, mQty: prefs.mQty, eQty: prefs.eQty, isExtra: false, quality_note: '' };
       }
-      return { status: 'none', qty: 0, isExtra: false, quality_note: '' };
+      return { status: 'none', qty: 0, mQty: 0, eQty: 0, isExtra: false, quality_note: '' };
     }
 
     function renderDeliveryTab() {
@@ -1104,33 +1164,58 @@
       }
 
       allCustomers.forEach(cust => {
-        const custShift = cust.shift || 'Morning';
+        const prefs = getCustShiftPrefs(cust);
+        const custShift = prefs.effectiveShift;
         const custArea = (cust.route_area || 'General').trim();
-        const mType = cust.milk_type || 'Buffalo';
 
-        if (shiftFilter !== 'all' && custShift !== shiftFilter) return;
+        if (shiftFilter === 'Morning' && prefs.mQty <= 0) return;
+        if (shiftFilter === 'Evening' && prefs.eQty <= 0) return;
+        if (shiftFilter === 'Both' && custShift !== 'Both') return;
         if (areaFilter !== 'all' && custArea !== areaFilter) return;
 
         const info = getCustomerDayStatus(cust, selectedRouteDate);
+        // Shift-specific quantity when filtering Morning or Evening
+        const displayQty = shiftFilter === 'Morning' ? info.mQty : (shiftFilter === 'Evening' ? info.eQty : info.qty);
+
         if (info.status === 'skipped') skippedCount++;
-        if (info.status === 'active') {
-          totalLiters += info.qty;
-          if (mType === 'Cow') cowLiters += info.qty;
-          else buffaloLiters += info.qty;
+        if (info.status === 'active' && displayQty > 0) {
+          totalLiters += displayQty;
+          if (shiftFilter === 'Morning') {
+            if (prefs.mType === 'Cow') cowLiters += info.mQty;
+            else buffaloLiters += info.mQty;
+          } else if (shiftFilter === 'Evening') {
+            if (prefs.eType === 'Cow') cowLiters += info.eQty;
+            else buffaloLiters += info.eQty;
+          } else {
+            if (prefs.mType === 'Cow') cowLiters += info.mQty;
+            else buffaloLiters += info.mQty;
+            if (prefs.eType === 'Cow') cowLiters += info.eQty;
+            else buffaloLiters += info.eQty;
+          }
           activeCount++;
         }
 
         const isDone = Boolean(doneMap[cust.id]);
-        if (info.status === 'active' && isDone) doneCount++;
+        if (info.status === 'active' && displayQty > 0 && isDone) doneCount++;
 
         if (searchQ && !(cust.name || '').toLowerCase().includes(searchQ) && !(cust.phone || '').includes(searchQ)) return;
-        if (deliveryFilter === 'pending' && (info.status !== 'active' || isDone)) return;
+        if (deliveryFilter === 'pending' && (info.status !== 'active' || displayQty <= 0 || isDone)) return;
         if (deliveryFilter === 'skipped' && info.status !== 'skipped') return;
 
         const shiftIcon = custShift === 'Evening' ? '🌇' : custShift === 'Both' ? '🔄' : '🌅';
-        const milkBadge = mType === 'Cow'
-          ? `<span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-1.5 py-0.2 rounded font-bold">🐄 Cow</span>`
-          : `<span class="text-[9px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.2 rounded font-bold">🐃 Buffalo</span>`;
+        let milkBadge = '';
+        if (custShift === 'Both') {
+          milkBadge = `<span class="text-[9px] bg-amber-50 text-amber-800 border border-amber-200 px-1 py-0.2 rounded font-bold">🌅${prefs.mType === 'Cow' ? '🐄' : '🐃'}${info.mQty}L</span>
+                       <span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-1 py-0.2 rounded font-bold">🌇${prefs.eType === 'Cow' ? '🐄' : '🐃'}${info.eQty}L</span>`;
+        } else if (custShift === 'Evening') {
+          milkBadge = prefs.eType === 'Cow'
+            ? `<span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-1.5 py-0.2 rounded font-bold">🐄 Cow</span>`
+            : `<span class="text-[9px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.2 rounded font-bold">🐃 Buffalo</span>`;
+        } else {
+          milkBadge = prefs.mType === 'Cow'
+            ? `<span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-1.5 py-0.2 rounded font-bold">🐄 Cow</span>`
+            : `<span class="text-[9px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.2 rounded font-bold">🐃 Buffalo</span>`;
+        }
 
         const card = document.createElement('div');
         card.className = `border rounded-2xl p-3 flex items-center justify-between gap-2 transition-all ${
@@ -1146,7 +1231,7 @@
           : info.status === 'none'
             ? `<span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Manual (0L)</span>`
             : `<span class="text-sm font-black ${info.isExtra ? 'text-amber-800 bg-amber-100 border border-amber-300' : 'text-teal-800 bg-teal-50 border border-teal-200'} px-2.5 py-1 rounded-lg">
-                ${info.qty} L ${info.isExtra ? '★' : ''}
+                ${displayQty} L ${info.isExtra ? '★' : ''}
                </span>`;
 
         card.innerHTML = `
@@ -1268,8 +1353,9 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*
     function calculateCustomerMonthStats(cust, year, month) {
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const now = new Date();
-      const defaultQty = parseFloat(cust.daily_qty || 1.0);
-      const rate = parseFloat(cust.price_per_ltr || 70);
+      const prefs = getCustShiftPrefs(cust);
+      const defaultQty = prefs.totalDefault;
+      const rate = prefs.mQty > 0 ? prefs.mRate : prefs.eRate;
       const isAuto = cust.auto_mode !== false;
       const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
       regDate.setHours(0, 0, 0, 0);
@@ -1278,6 +1364,8 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*
       let deliveredDays = 0;
       let skippedDays = 0;
       let totalLiters = 0;
+      let morningLiters = 0;
+      let eveningLiters = 0;
 
       for (let d = 1; d <= daysInMonth; d++) {
         const cDate = new Date(year, month, d);
@@ -1290,17 +1378,27 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*
           if (rec.status === 'taken' && rec.quantity > 0 && isPastOrToday) {
             deliveredDays++;
             totalLiters += rec.quantity;
+            const mQ = rec.morning_qty !== null
+              ? rec.morning_qty
+              : (defaultQty > 0 ? parseFloat((rec.quantity * (prefs.mQty / defaultQty)).toFixed(2)) : rec.quantity);
+            const eQ = rec.evening_qty !== null
+              ? rec.evening_qty
+              : Math.max(0, parseFloat((rec.quantity - mQ).toFixed(2)));
+            morningLiters += mQ;
+            eveningLiters += eQ;
           } else if (rec.status === 'skipped' || rec.quantity === 0) {
             skippedDays++;
           }
         } else if (isPastOrToday && isJoined && isAuto) {
           deliveredDays++;
           totalLiters += defaultQty;
+          morningLiters += prefs.mQty;
+          eveningLiters += prefs.eQty;
         }
       }
 
-      const amount = Math.round(totalLiters * rate);
-      return { deliveredDays, skippedDays, totalLiters, rate, amount };
+      const amount = Math.round((morningLiters * prefs.mRate) + (eveningLiters * prefs.eRate));
+      return { deliveredDays, skippedDays, totalLiters, morningLiters, eveningLiters, rate, amount };
     }
 
     function renderBillingTab() {
@@ -1485,19 +1583,17 @@ ${dueLines}
       }
 
       filtered.forEach(cust => {
-        const mType = cust.milk_type || 'Buffalo';
-        const cShift = cust.shift || 'Morning';
+        const prefs = getCustShiftPrefs(cust);
         const cArea = cust.route_area || 'General';
+        const mBadge = prefs.mQty > 0 ? `🌅 ${prefs.mType === 'Cow' ? '🐄' : '🐃'} ${prefs.mQty}L (₹${prefs.mRate})` : '';
+        const eBadge = prefs.eQty > 0 ? `🌇 ${prefs.eType === 'Cow' ? '🐄' : '🐃'} ${prefs.eQty}L (₹${prefs.eRate})` : '';
         const card = document.createElement('div');
         card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-2 shadow-2xs';
         card.innerHTML = `
           <div class="min-w-0">
-            <h4 class="font-bold text-slate-800 text-sm truncate flex items-center gap-1.5">
-              <span>${cust.name || 'Customer'}</span>
-              <span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${mType === 'Cow' ? 'bg-sky-50 text-sky-700' : 'bg-amber-50 text-amber-800'}">${mType === 'Cow' ? '🐄 Cow' : '🐃 Buffalo'}</span>
-            </h4>
-            <p class="text-[11px] text-slate-500">📞 ${cust.phone} • <strong>${cust.daily_qty || 1.0}L</strong> • ₹${cust.price_per_ltr || 70}/L</p>
-            <p class="text-[10px] text-slate-400 mt-0.5">🕒 ${cShift} • 📍 ${cArea}</p>
+            <h4 class="font-bold text-slate-800 text-sm truncate">${cust.name || 'Customer'}</h4>
+            <p class="text-[11px] text-slate-500">📞 ${cust.phone} • 📍 ${cArea}</p>
+            <p class="text-[10px] font-bold text-teal-800 mt-0.5">${[mBadge, eBadge].filter(Boolean).join(' • ')}</p>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
             <a href="tel:${cust.phone}" title="కాల్ చేయండి" class="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100">
@@ -1515,11 +1611,11 @@ ${dueLines}
       });
     }
 
-    function autoSetRateByMilkType() {
-      const mType = document.getElementById('custMilkTypeInput').value;
-      const rateEl = document.getElementById('custRateInput');
-      if (mType === 'Cow' && rateEl.value === '75') rateEl.value = '55';
-      else if (mType === 'Buffalo' && rateEl.value === '55') rateEl.value = '75';
+    function autoSetVendorShiftRate(which) {
+      const mType = document.getElementById('cust' + which + 'MilkType').value;
+      const rateEl = document.getElementById('cust' + which + 'Rate');
+      if (mType === 'Cow' && (rateEl.value === '75' || rateEl.value === '70')) rateEl.value = '55';
+      else if (mType === 'Buffalo' && (rateEl.value === '55' || rateEl.value === '60')) rateEl.value = '75';
     }
 
     async function confirmRemoveCustomer(userId) {
@@ -1555,11 +1651,13 @@ ${dueLines}
       document.getElementById('custNameInput').value = '';
       document.getElementById('custPhoneInput').value = '';
       document.getElementById('custPhoneInput').disabled = false;
-      document.getElementById('custMilkTypeInput').value = 'Buffalo';
-      document.getElementById('custShiftInput').value = 'Morning';
+      document.getElementById('custMorningMilkType').value = 'Buffalo';
+      document.getElementById('custMorningQuota').value = '1.0';
+      document.getElementById('custMorningRate').value = '75';
+      document.getElementById('custEveningMilkType').value = 'Cow';
+      document.getElementById('custEveningQuota').value = '0';
+      document.getElementById('custEveningRate').value = '55';
       document.getElementById('custAreaInput').value = 'General';
-      document.getElementById('custQuotaInput').value = '1.0';
-      document.getElementById('custRateInput').value = '75';
       document.getElementById('custPinInput').value = '1234';
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.add('hidden-force');
@@ -1569,16 +1667,19 @@ ${dueLines}
     function openEditCustomerModal(userId) {
       const cust = allCustomers.find(c => c.id === userId);
       if (!cust) return;
+      const prefs = getCustShiftPrefs(cust);
       document.getElementById('customerModalTitle').innerText = 'కస్టమర్ వివరాలు మార్చండి';
       document.getElementById('editCustomerId').value = cust.id;
       document.getElementById('custNameInput').value = cust.name || '';
       document.getElementById('custPhoneInput').value = cust.phone || '';
       document.getElementById('custPhoneInput').disabled = true;
-      document.getElementById('custMilkTypeInput').value = cust.milk_type || 'Buffalo';
-      document.getElementById('custShiftInput').value = cust.shift || 'Morning';
+      document.getElementById('custMorningMilkType').value = prefs.mType;
+      document.getElementById('custMorningQuota').value = prefs.mQty;
+      document.getElementById('custMorningRate').value = prefs.mRate;
+      document.getElementById('custEveningMilkType').value = prefs.eType;
+      document.getElementById('custEveningQuota').value = prefs.eQty;
+      document.getElementById('custEveningRate').value = prefs.eRate;
       document.getElementById('custAreaInput').value = cust.route_area || 'General';
-      document.getElementById('custQuotaInput').value = cust.daily_qty || 1.0;
-      document.getElementById('custRateInput').value = cust.price_per_ltr || 70;
       document.getElementById('custPinFieldGroup').classList.add('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.remove('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
@@ -1592,15 +1693,40 @@ ${dueLines}
       const editId = document.getElementById('editCustomerId').value;
       const name = document.getElementById('custNameInput').value.trim();
       const phone = document.getElementById('custPhoneInput').value.trim();
-      const milk_type = document.getElementById('custMilkTypeInput').value;
-      const shift = document.getElementById('custShiftInput').value;
+      const morning_milk_type = document.getElementById('custMorningMilkType').value;
+      const morning_qty = Math.max(0, parseFloat(document.getElementById('custMorningQuota').value) || 0);
+      const morning_rate = Math.max(1, parseFloat(document.getElementById('custMorningRate').value) || 75);
+
+      const evening_milk_type = document.getElementById('custEveningMilkType').value;
+      const evening_qty = Math.max(0, parseFloat(document.getElementById('custEveningQuota').value) || 0);
+      const evening_rate = Math.max(1, parseFloat(document.getElementById('custEveningRate').value) || 55);
+
       const route_area = document.getElementById('custAreaInput').value.trim() || 'General';
-      const daily_qty = parseFloat(document.getElementById('custQuotaInput').value) || 1.0;
-      const price_per_ltr = parseFloat(document.getElementById('custRateInput').value) || 70;
+      const daily_qty = parseFloat((morning_qty + evening_qty).toFixed(2));
       const pin = document.getElementById('custPinInput').value.trim() || '1234';
 
       if (!name) return alert('దయచేసి కస్టమర్ పేరు నమోదు చేయండి.');
       if (!editId && (phone.length !== 10 || isNaN(phone))) return alert('10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
+      if (daily_qty <= 0) return alert('ఉదయం లేదా సాయంత్రం కనీసం ఒక షిఫ్ట్‌లో కోటా నమోదు చేయండి.');
+
+      const shift = (morning_qty > 0 && evening_qty > 0) ? 'Both' : (evening_qty > 0 ? 'Evening' : 'Morning');
+      const milk_type = morning_qty > 0 ? morning_milk_type : evening_milk_type;
+      const price_per_ltr = morning_qty > 0 ? morning_rate : evening_rate;
+
+      const payload = {
+        name,
+        milk_type,
+        shift,
+        route_area,
+        daily_qty,
+        price_per_ltr,
+        morning_milk_type,
+        morning_qty,
+        morning_rate,
+        evening_milk_type,
+        evening_qty,
+        evening_rate
+      };
 
       const btn = document.getElementById('saveCustModalBtn');
       btn.disabled = true;
@@ -1608,7 +1734,7 @@ ${dueLines}
 
       if (editId) {
         const { error } = await db.from('customer_users')
-          .update({ name, milk_type, shift, route_area, daily_qty, price_per_ltr })
+          .update(payload)
           .eq('id', editId)
           .eq('vendor_phone', vendorProfile.phone);
         btn.disabled = false;
@@ -1620,7 +1746,7 @@ ${dueLines}
         if (exist) {
           if (!exist.vendor_phone) {
             const { error: linkErr } = await db.from('customer_users')
-              .update({ name, milk_type, shift, route_area, daily_qty, price_per_ltr, vendor_phone: vendorProfile.phone })
+              .update(Object.assign({}, payload, { vendor_phone: vendorProfile.phone }))
               .eq('id', exist.id);
             btn.disabled = false;
             btn.innerText = 'సేవ్ చేయండి';
@@ -1634,18 +1760,9 @@ ${dueLines}
           btn.innerText = 'సేవ్ చేయండి';
           return alert('ఈ మొబైల్ నంబర్ ఇప్పటికే రిజిస్టర్ అయి ఉంది!');
         }
-        const { error } = await db.from('customer_users').insert([{
-          name,
-          phone,
-          pin,
-          milk_type,
-          shift,
-          route_area,
-          daily_qty,
-          price_per_ltr,
-          auto_mode: true,
-          vendor_phone: vendorProfile.phone
-        }]);
+        const { error } = await db.from('customer_users').insert([
+          Object.assign({}, payload, { phone, pin, auto_mode: true, vendor_phone: vendorProfile.phone })
+        ]);
         btn.disabled = false;
         btn.innerText = 'సేవ్ చేయండి';
         if (error) return alert('Error: ' + error.message);
