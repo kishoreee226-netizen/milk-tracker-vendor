@@ -249,7 +249,7 @@
           <div class="flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
             <div>
               <h2 class="text-sm font-extrabold text-slate-800">కస్టమర్ల జాబితా (<span id="totalCustomersCount">0</span>)</h2>
-              <p class="text-[10px] text-slate-500">మీ కస్టమర్లు & కొత్త కస్టమర్ యాడ్</p>
+              <p class="text-[10px] text-slate-500">కస్టమర్లను యాడ్, ఎడిట్ లేదా తొలగించండి</p>
             </div>
             <button onclick="openAddCustomerModal()" class="bg-teal-700 hover:bg-teal-800 active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-xs">
               <i class="ph-bold ph-user-plus"></i> కొత్త కస్టమర్
@@ -387,7 +387,7 @@
       </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT CUSTOMER (Vendor Side) -->
+    <!-- MODAL: ADD / EDIT / REMOVE CUSTOMER (Vendor Side) -->
     <div id="customerModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3">
         <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
@@ -427,6 +427,10 @@
           <button onclick="closeCustomerModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">రద్దు</button>
           <button id="saveCustModalBtn" onclick="saveVendorCustomer()" class="flex-1 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">సేవ్ చేయండి</button>
         </div>
+
+        <button id="removeCustFromModalBtn" onclick="removeCustomerFromModal()" class="hidden-force w-full py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold flex items-center justify-center gap-1.5">
+          <i class="ph-bold ph-trash"></i> కస్టమర్‌ను లిస్ట్ నుండి తొలగించండి
+        </button>
       </div>
     </div>
 
@@ -473,7 +477,7 @@
     const TELUGU_MONTHS = ["జనవరి", "ఫిబ్రవరి", "మార్చి", "ఏప్రిల్", "మే", "జూన్", "జూలై", "ఆగస్టు", "సెప్టెంబర్", "అక్టోబర్", "నవంబర్", "డిసెంబర్"];
     const ENGLISH_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    let authMode = 'login'; // 'login' or 'signup'
+    let authMode = 'login';
     let vendorProfile = null;
     let activeTab = 'delivery';
     let selectedRouteDate = new Date();
@@ -535,7 +539,6 @@
       }
     }
 
-    // MULTI-VENDOR SIGN UP & LOGIN WITH 4-DIGIT PIN
     async function handleVendorAuthSubmit() {
       const nameInput = document.getElementById('vendorNameInput').value.trim();
       const phone = document.getElementById('vendorPhoneInput').value.trim();
@@ -586,7 +589,6 @@
         vendorProfile = { name: nameInput, phone, pin };
         showToast('Sign Up విజయవంతమైంది! స్వాగతం!');
       } else {
-        // LOGIN MODE
         if (!existingVendor) {
           btn.disabled = false;
           btn.innerText = origText;
@@ -612,7 +614,6 @@
       showVendorDashboard();
     }
 
-    // EDIT VENDOR NAME & 4-DIGIT PIN MODAL
     function openVendorProfileModal() {
       if (!vendorProfile) return;
       document.getElementById('editVendorPhoneDisplay').value = vendorProfile.phone;
@@ -692,7 +693,7 @@
       return `${y}-${m}-${day}`;
     }
 
-    // 2. DATA SYNC FROM SUPABASE (Filtered strictly by logged-in vendor_phone)
+    // 2. DATA SYNC FROM SUPABASE
     async function refreshAllVendorData() {
       if (!vendorProfile) return;
       const icon = document.getElementById('syncIcon');
@@ -1169,7 +1170,7 @@
       window.location.href = `whatsapp://send?phone=91${cust.phone}&text=${encodeURIComponent(msg)}`;
     }
 
-    // 6. TAB 3: CUSTOMERS MANAGEMENT
+    // 6. TAB 3: CUSTOMERS MANAGEMENT (Add, Edit & Remove)
     function renderCustomersTab() {
       const query = (document.getElementById('customerSearchInput').value || '').toLowerCase();
       const filtered = allCustomers.filter(c =>
@@ -1187,23 +1188,53 @@
 
       filtered.forEach(cust => {
         const card = document.createElement('div');
-        card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between shadow-2xs';
+        card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-2 shadow-2xs';
         card.innerHTML = `
-          <div>
-            <h4 class="font-bold text-slate-800 text-sm">${cust.name || 'Customer'}</h4>
+          <div class="min-w-0">
+            <h4 class="font-bold text-slate-800 text-sm truncate">${cust.name || 'Customer'}</h4>
             <p class="text-[11px] text-slate-500">📞 ${cust.phone} • కోటా: <strong>${cust.daily_qty || 1.0}L</strong> • ₹${cust.price_per_ltr || 70}/L</p>
           </div>
-          <div class="flex items-center gap-1.5">
-            <a href="tel:${cust.phone}" class="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100">
+          <div class="flex items-center gap-1.5 shrink-0">
+            <a href="tel:${cust.phone}" title="కాల్ చేయండి" class="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100">
               <i class="ph-bold ph-phone text-sm"></i>
             </a>
-            <button onclick="openEditCustomerModal('${cust.id}')" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <button onclick="openEditCustomerModal('${cust.id}')" title="ఎడిట్ చేయండి" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200">
               <i class="ph-bold ph-pencil-simple text-sm"></i>
+            </button>
+            <button onclick="confirmRemoveCustomer('${cust.id}')" title="తొలగించండి" class="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-90">
+              <i class="ph-bold ph-trash text-sm"></i>
             </button>
           </div>
         `;
         listEl.appendChild(card);
       });
+    }
+
+    async function confirmRemoveCustomer(userId) {
+      const cust = allCustomers.find(c => c.id === userId);
+      if (!cust) return;
+
+      const ok = confirm(`"${cust.name || cust.phone}" ని మీ కస్టమర్ల జాబితా నుండి తొలగించాలా?`);
+      if (!ok) return;
+
+      const { error } = await db
+        .from('customer_users')
+        .update({ vendor_phone: null })
+        .eq('id', userId)
+        .eq('vendor_phone', vendorProfile.phone);
+
+      if (error) {
+        return alert('తొలగించడంలో లోపం జరిగింది: ' + error.message);
+      }
+
+      closeCustomerModal();
+      showToast(`${cust.name || cust.phone} మీ లిస్ట్ నుండి తొలగించబడ్డారు!`);
+      refreshAllVendorData();
+    }
+
+    function removeCustomerFromModal() {
+      const editId = document.getElementById('editCustomerId').value;
+      if (editId) confirmRemoveCustomer(editId);
     }
 
     function openAddCustomerModal() {
@@ -1216,6 +1247,7 @@
       document.getElementById('custRateInput').value = '70';
       document.getElementById('custPinInput').value = '1234';
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
+      document.getElementById('removeCustFromModalBtn').classList.add('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
     }
 
@@ -1230,6 +1262,7 @@
       document.getElementById('custQuotaInput').value = cust.daily_qty || 1.0;
       document.getElementById('custRateInput').value = cust.price_per_ltr || 70;
       document.getElementById('custPinFieldGroup').classList.add('hidden-force');
+      document.getElementById('removeCustFromModalBtn').classList.remove('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
     }
 
@@ -1262,8 +1295,21 @@
         if (error) return alert('Error: ' + error.message);
         showToast('కస్టమర్ వివరాలు అప్‌డేట్ అయ్యాయి!');
       } else {
-        const { data: exist } = await db.from('customer_users').select('id').eq('phone', phone).maybeSingle();
+        const { data: exist } = await db.from('customer_users').select('id, vendor_phone').eq('phone', phone).maybeSingle();
         if (exist) {
+          // If customer already exists in Customer App without a vendor, link them to this vendor!
+          if (!exist.vendor_phone) {
+            const { error: linkErr } = await db.from('customer_users')
+              .update({ name, daily_qty, price_per_ltr, vendor_phone: vendorProfile.phone })
+              .eq('id', exist.id);
+            btn.disabled = false;
+            btn.innerText = 'సేవ్ చేయండి';
+            if (linkErr) return alert('Error: ' + linkErr.message);
+            showToast(`${name} మీ కస్టమర్ల లిస్ట్‌లో చేర్చబడ్డారు!`);
+            closeCustomerModal();
+            refreshAllVendorData();
+            return;
+          }
           btn.disabled = false;
           btn.innerText = 'సేవ్ చేయండి';
           return alert('ఈ మొబైల్ నంబర్ ఇప్పటికే రిజిస్టర్ అయి ఉంది!');
