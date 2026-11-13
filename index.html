@@ -1060,13 +1060,37 @@
       }
     }
 
-    function markAllRouteDelivered() {
+    async function markAllRouteDelivered() {
       const iso = formatDateISO(selectedRouteDate);
       const doneMap = getDeliveredDoneMap(iso);
-      allCustomers.forEach(c => { doneMap[c.id] = true; });
+      const rows = [];
+
+      allCustomers.forEach(c => {
+        const info = getCustomerDayStatus(c, selectedRouteDate);
+        if (info.status === 'active' && info.qty > 0) {
+          doneMap[c.id] = true;
+          rows.push({
+            user_id: c.id,
+            log_date: iso,
+            quantity: info.qty,
+            morning_qty: info.mQty,
+            evening_qty: info.eQty,
+            status: 'taken',
+            vendor_delivered: true
+          });
+        }
+      });
+
       localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
       renderDeliveryTab();
-      showToast('ఈరోజు డెలివరీలన్నీ Done మార్క్ అయ్యాయి!');
+
+      if (rows.length > 0) {
+        const { error } = await db.from('customer_milk_logs').upsert(rows, { onConflict: 'user_id,log_date' });
+        if (error) {
+          return alert('Sync Error: ' + error.message);
+        }
+      }
+      showToast('అందరికీ డెలివరీ Done మార్క్ అయ్యింది & కస్టమర్లకు సింక్ అయ్యింది!');
     }
 
     function getCustShiftPrefs(cust) {
