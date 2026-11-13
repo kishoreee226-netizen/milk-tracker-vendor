@@ -103,13 +103,16 @@
             </div>
             <div class="min-w-0">
               <h1 class="text-base font-extrabold tracking-tight leading-tight flex items-center gap-1.5">
-                <span id="headerVendorName" class="truncate">MilkCount Vendor</span>
-                <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="p-1 rounded-lg bg-white/15 hover:bg-white/25 text-amber-200 shrink-0 active:scale-90">
-                  <i class="ph-bold ph-pencil-simple text-xs"></i>
-                </button>
+                MilkCount <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-semibold">Vendor</span>
               </h1>
-              <div class="flex items-center gap-2 mt-0.5">
-                <span id="headerVendorPhone" class="text-[11px] text-teal-100 font-medium">9876543210</span>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="text-[11px] text-amber-200 hover:text-white font-bold flex items-center gap-1 underline decoration-amber-300/50 underline-offset-2 truncate">
+                  <span id="headerVendorName" class="truncate">Vendor</span>
+                  <i class="ph-bold ph-pencil-simple text-[10px] shrink-0"></i>
+                </button>
+                <span id="headerVendorPhone" class="text-[10px] text-teal-100 font-medium shrink-0">9876543210</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-1">
                 <button onclick="openVendorProfileModal()" class="text-[10px] bg-amber-400/20 text-amber-200 border border-amber-300/30 px-1.5 py-0.5 rounded font-semibold">ప్రొఫైల్ / PIN</button>
                 <button onclick="logoutVendor()" class="text-[10px] bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded text-white">లాగౌట్</button>
               </div>
@@ -643,6 +646,8 @@
     let billingLedgerByUser = {}; // { customer_id: { prev_due, paid_amount, payment_mode } }
     let currentMonthExpenses = { milk_purchase_cost: 0, other_expenses: 0 };
     let selectedCustForDayEdit = null;
+    let vendorRealtimeChannel = null;
+    let vendorAutoSyncTimer = null;
 
     window.onload = function() {
       if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
@@ -812,15 +817,61 @@
       showToast('వెండర్ పేరు & PIN అప్‌డేట్ అయ్యాయి!');
     }
 
+    function stopVendorAutoLiveSync() {
+      if (vendorAutoSyncTimer) {
+        clearInterval(vendorAutoSyncTimer);
+        vendorAutoSyncTimer = null;
+      }
+      if (vendorRealtimeChannel) {
+        db.removeChannel(vendorRealtimeChannel);
+        vendorRealtimeChannel = null;
+      }
+    }
+
+    function startVendorAutoLiveSync() {
+      stopVendorAutoLiveSync();
+      if (!vendorProfile) return;
+
+      // 1. Supabase Realtime listener for customer logs, quality alerts & profile updates
+      try {
+        vendorRealtimeChannel = db
+          .channel(`vendor-live-${vendorProfile.phone}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'customer_milk_logs' }, () => {
+            refreshAllVendorData();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'customer_users', filter: `vendor_phone=eq.${vendorProfile.phone}` }, () => {
+            refreshAllVendorData();
+          })
+          .subscribe();
+      } catch (e) {
+        console.log('Vendor realtime fallback to polling:', e);
+      }
+
+      // 2. Silent background polling every 15 seconds while screen is active
+      vendorAutoSyncTimer = setInterval(() => {
+        if (vendorProfile && !document.hidden) {
+          refreshAllVendorData();
+        }
+      }, 15000);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && vendorProfile) {
+        refreshAllVendorData();
+      }
+    });
+
     function showVendorDashboard() {
       document.getElementById('vendorAuthSection').classList.add('hidden-force');
       document.getElementById('vendorAppSection').classList.remove('hidden-force');
       document.getElementById('headerVendorName').innerText = vendorProfile.name;
       document.getElementById('headerVendorPhone').innerText = `📞 ${vendorProfile.phone}`;
       refreshAllVendorData();
+      startVendorAutoLiveSync();
     }
 
     function logoutVendor() {
+      stopVendorAutoLiveSync();
       localStorage.removeItem('milkcount_vendor_session');
       vendorProfile = null;
       allCustomers = [];
