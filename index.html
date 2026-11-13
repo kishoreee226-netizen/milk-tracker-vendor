@@ -112,8 +112,11 @@
                 </button>
                 <span id="headerVendorPhone" class="text-[10px] text-teal-100 font-medium shrink-0">9876543210</span>
               </div>
-              <div class="flex items-center gap-1.5 mt-1">
+              <div class="flex items-center gap-1.5 mt-1 flex-wrap">
                 <button onclick="openVendorProfileModal()" class="text-[10px] bg-amber-400/20 text-amber-200 border border-amber-300/30 px-1.5 py-0.5 rounded font-semibold">ప్రొఫైల్ / PIN</button>
+                <button onclick="openVendorSupportModal()" class="text-[10px] bg-sky-400/25 text-sky-100 border border-sky-300/30 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5">
+                  <i class="ph-bold ph-ticket text-[10px]"></i> సపోర్ట్
+                </button>
                 <button onclick="logoutVendor()" class="text-[10px] bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded text-white">లాగౌట్</button>
               </div>
             </div>
@@ -622,6 +625,52 @@
       </div>
     </div>
 
+    <!-- MODAL: VENDOR IN-APP SUPPORT TICKET (Raise Ticket to Admin) -->
+    <div id="vendorSupportModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+              <i class="ph-fill ph-ticket text-teal-700 text-base"></i> వెండర్ సపోర్ట్ (Raise a Ticket)
+            </h4>
+            <p class="text-[10px] text-slate-500">యాప్ టెక్నికల్ సమస్యలు & ఫీడ్‌బ్యాక్ నేరుగా Admin కి</p>
+          </div>
+          <button onclick="closeVendorSupportModal()" class="text-slate-400 hover:text-slate-600">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">సమస్య రకం (Category):</label>
+            <select id="vTicketCategorySelect" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+              <option value="Vendor Sync / App Issue">🔄 డేటా సింక్ / యాప్ సమస్య</option>
+              <option value="Customer Link / Billing">👥 కస్టమర్ లింక్ / బిల్లింగ్ సమస్య</option>
+              <option value="PIN / Login Issue">🔐 అకౌంట్ / PIN సమస్య</option>
+              <option value="Vendor Feedback">💡 కొత్త ఫీచర్ సలహా / ఫీడ్‌బ్యాక్</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">వివరాలు రాయండి (Description):</label>
+            <textarea id="vTicketDescInput" rows="2" placeholder="మీ టెక్నికల్ సమస్య లేదా ఫీడ్‌బ్యాక్ రాయండి..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600"></textarea>
+          </div>
+          <button id="vSubmitTicketBtn" onclick="submitVendorSupportTicket()" class="w-full py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:scale-95 text-white text-xs font-bold shadow-xs transition-all">
+            టికెట్ పంపండి (Submit Ticket)
+          </button>
+        </div>
+
+        <div class="pt-2.5 border-t border-slate-100 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-slate-700">నా టికెట్లు (My Tickets)</span>
+            <button onclick="loadVendorSupportTickets()" class="text-[10px] text-teal-700 font-bold hover:underline">రిఫ్రెష్ ↻</button>
+          </div>
+          <div id="vMyTicketsListContainer" class="space-y-2 max-h-44 overflow-y-auto">
+            <p class="text-[11px] text-slate-400 text-center py-2">ఇంకా టికెట్లు ఏవీ లేవు.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
@@ -649,7 +698,32 @@
     let vendorRealtimeChannel = null;
     let vendorAutoSyncTimer = null;
 
+    async function logVendorAnalytics(eventType, vObj = null) {
+      try {
+        const v = vObj || vendorProfile;
+        await db.from('app_analytics').insert([{
+          event_type: eventType,
+          app_type: 'vendor',
+          user_name: v ? (v.name || 'Vendor') : null,
+          user_phone: v ? v.phone : null
+        }]);
+      } catch (e) {}
+    }
+
+    window.addEventListener('appinstalled', () => {
+      localStorage.setItem('mc_vendor_pwa_installed', '1');
+      logVendorAnalytics('install');
+    });
+
     window.onload = function() {
+      if (!sessionStorage.getItem('mc_vendor_visit_logged')) {
+        sessionStorage.setItem('mc_vendor_visit_logged', '1');
+        logVendorAnalytics('visit');
+      }
+      if (window.matchMedia('(display-mode: standalone)').matches && !localStorage.getItem('mc_vendor_pwa_installed')) {
+        localStorage.setItem('mc_vendor_pwa_installed', '1');
+        logVendorAnalytics('install');
+      }
       if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./sw.js').catch(function(err) {
           console.log('SW registration skipped:', err);
@@ -861,11 +935,20 @@
       }
     });
 
-    function showVendorDashboard() {
+    async function showVendorDashboard() {
       document.getElementById('vendorAuthSection').classList.add('hidden-force');
       document.getElementById('vendorAppSection').classList.remove('hidden-force');
       document.getElementById('headerVendorName').innerText = vendorProfile.name;
       document.getElementById('headerVendorPhone').innerText = `📞 ${vendorProfile.phone}`;
+
+      try {
+        await db.from('vendors').update({ last_login_at: new Date().toISOString() }).eq('phone', vendorProfile.phone);
+        if (!sessionStorage.getItem('mc_vendor_login_logged')) {
+          sessionStorage.setItem('mc_vendor_login_logged', '1');
+          logVendorAnalytics('login', vendorProfile);
+        }
+      } catch (e) {}
+
       refreshAllVendorData();
       startVendorAutoLiveSync();
     }
@@ -1755,7 +1838,8 @@ ${dueLines}
       document.getElementById('custEveningQuota').value = prefs.eQty;
       document.getElementById('custEveningRate').value = prefs.eRate;
       document.getElementById('custAreaInput').value = cust.route_area || 'General';
-      document.getElementById('custPinFieldGroup').classList.add('hidden-force');
+      document.getElementById('custPinInput').value = cust.pin || '1234';
+      document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.remove('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
     }
@@ -1790,6 +1874,7 @@ ${dueLines}
 
       const payload = {
         name,
+        pin,
         milk_type,
         shift,
         route_area,
@@ -1968,6 +2053,87 @@ ${dueLines}
 మీ రోజువారీ పాల లెక్కలు, సెలవులు మరియు నెలవారీ బిల్లు కోసం ఈ యాప్‌ను మీ మొబైల్ నంబర్‌తో లాగిన్ అయి వాడుకోండి:
 ${appUrl}`);
       window.location.href = `whatsapp://send?text=${msg}`;
+    }
+
+    // 8. VENDOR IN-APP SUPPORT TICKETS (Raise Ticket & View Admin Replies)
+    function openVendorSupportModal() {
+      if (!vendorProfile) return;
+      document.getElementById('vTicketDescInput').value = '';
+      document.getElementById('vendorSupportModal').classList.remove('hidden-force');
+      loadVendorSupportTickets();
+    }
+
+    function closeVendorSupportModal() {
+      document.getElementById('vendorSupportModal').classList.add('hidden-force');
+    }
+
+    async function submitVendorSupportTicket() {
+      if (!vendorProfile) return;
+      const category = document.getElementById('vTicketCategorySelect').value;
+      const description = document.getElementById('vTicketDescInput').value.trim();
+      if (!description) return alert('దయచేసి మీ సమస్య లేదా ఫీడ్‌బ్యాక్ రాయండి.');
+
+      const ticketCode = 'MV-' + Math.floor(1000 + Math.random() * 9000);
+      const btn = document.getElementById('vSubmitTicketBtn');
+      btn.disabled = true;
+      btn.innerText = 'పంపబడుతోంది...';
+
+      const { error } = await db.from('support_tickets').insert([{
+        ticket_code: ticketCode,
+        user_role: 'vendor',
+        user_name: vendorProfile.name || 'Vendor',
+        user_phone: vendorProfile.phone,
+        category: category,
+        description: description,
+        status: 'Open'
+      }]);
+
+      btn.disabled = false;
+      btn.innerText = 'టికెట్ పంపండి (Submit Ticket)';
+
+      if (error) return alert('Error: ' + error.message);
+
+      document.getElementById('vTicketDescInput').value = '';
+      showToast(`టికెట్ #${ticketCode} అడ్మిన్‌కు పంపబడింది!`);
+      loadVendorSupportTickets();
+    }
+
+    async function loadVendorSupportTickets() {
+      if (!vendorProfile) return;
+      const listEl = document.getElementById('vMyTicketsListContainer');
+      const { data, error } = await db.from('support_tickets')
+        .select('*')
+        .eq('user_phone', vendorProfile.phone)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error || !data || data.length === 0) {
+        listEl.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-2">ఇంకా టికెట్లు ఏవీ లేవు.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = data.map(t => {
+        const isResolved = t.status === 'Resolved';
+        const dateStr = t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : '';
+        return `
+          <div class="border ${isResolved ? 'border-emerald-200 bg-emerald-50/40' : 'border-slate-200 bg-slate-50'} rounded-xl p-2.5 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black text-slate-700">#${t.ticket_code} • ${t.category}</span>
+              <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${isResolved ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${isResolved ? 'Resolved ✓' : 'Open'}
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-700">${t.description}</p>
+            <span class="text-[9px] text-slate-400 block">${dateStr}</span>
+            ${t.admin_reply ? `
+              <div class="mt-1.5 pt-1.5 border-t border-emerald-200/80 bg-white rounded-lg p-2 text-[10px] text-emerald-950">
+                <strong class="text-emerald-700 block">👨‍💻 Admin సమాధానం:</strong>
+                ${t.admin_reply}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
     }
   </script>
 </body>
