@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MilkCount Admin - మాస్టర్ కంట్రోల్ & సపోర్ట్ డాష్‌బోర్డ్</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    .hidden-force { display: none !important; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex justify-center selection:bg-indigo-100">
+
+  <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
+
+    <!-- 1. ADMIN PIN LOCK SCREEN -->
+    <section id="adminAuthSection" class="p-6 flex-1 flex flex-col justify-center items-center bg-white">
+      <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-600/25">
+        <i class="ph-fill ph-shield-star text-3xl text-amber-300"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-slate-900 text-center">MilkCount Admin</h2>
+      <p class="text-xs text-slate-500 mb-6 text-center">మాస్టర్ అనలిటిక్స్, యూజర్ & సపోర్ట్ టికెట్ కంట్రోల్</p>
+
+      <div class="w-full bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-3.5 shadow-xs">
+        <div>
+          <label class="text-xs font-bold text-slate-600 block mb-1 text-center">4-అంకెల Admin PIN నమోదు చేయండి</label>
+          <input type="password" id="adminPinInput" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full text-center tracking-widest text-lg py-2.5 bg-white border border-slate-300 rounded-xl font-black focus:outline-none focus:border-indigo-600">
+          <p class="text-[10px] text-slate-400 text-center mt-1">డిఫాల్ట్ Admin PIN: <strong>9999</strong> (లోపల మార్చుకోవచ్చు)</p>
+        </div>
+        <button onclick="handleAdminLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
+          అన్‌లాక్ Admin Dashboard
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. MAIN ADMIN DASHBOARD -->
+    <div id="adminAppSection" class="hidden-force flex-1 flex flex-col">
+
+      <!-- TOP HEADER -->
+      <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sticky top-0 z-30 shadow-md">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-amber-300">
+              <i class="ph-fill ph-shield-star text-2xl"></i>
+            </div>
+            <div>
+              <h1 class="text-base font-extrabold tracking-tight flex items-center gap-1.5">
+                MilkCount <span class="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold">ADMIN</span>
+              </h1>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-[10px] text-emerald-300 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ఆటో-సింక్ ఆన్
+                </span>
+                <button onclick="changeAdminPinPrompt()" class="text-[10px] text-indigo-200 underline">PIN మార్పు</button>
+                <button onclick="logoutAdmin()" class="text-[10px] bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded text-white">లాగౌట్</button>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="refreshAdminData(true)" class="flex items-center gap-1 bg-white/10 hover:bg-white/20 active:scale-95 text-xs px-2.5 py-1.5 rounded-lg border border-white/15 font-bold">
+            <i id="adminSyncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
+            <span>సింక్</span>
+          </button>
+        </div>
+
+        <!-- LIVE KPI SUMMARY GRID -->
+        <div class="grid grid-cols-3 gap-2 mt-3.5">
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[9px] text-indigo-200 uppercase font-bold block">ఓపెన్ టికెట్లు</span>
+            <span id="kpiOpenTickets" class="text-lg font-black text-amber-300">0</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[9px] text-indigo-200 uppercase font-bold block">వెండర్లు</span>
+            <span id="kpiTotalVendors" class="text-lg font-black text-teal-300">0</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[9px] text-indigo-200 uppercase font-bold block">కస్టమర్లు</span>
+            <span id="kpiTotalCustomers" class="text-lg font-black text-sky-300">0</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[9px] text-indigo-200 uppercase font-bold block">యాప్ వ్యూస్</span>
+            <span id="kpiTotalViews" class="text-sm font-black text-white">0</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[9px] text-indigo-200 uppercase font-bold block">ఇన్‌స్టాల్స్ (PWA)</span>
+            <span id="kpiTotalInstalls" class="text-sm font-black text-emerald-300">0</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[9px] text-indigo-200 uppercase font-bold block">మొత్తం లాగిన్స్</span>
+            <span id="kpiTotalLogins" class="text-sm font-black text-purple-300">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN SCROLLABLE CONTENT -->
+      <main class="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
+
+        <!-- TAB 1: SUPPORT TICKETS INBOX -->
+        <div id="adminTabTickets" class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+              <i class="ph-fill ph-ticket text-amber-600 text-base"></i> సపోర్ట్ టికెట్లు (Support Inbox)
+            </h2>
+            <div class="flex gap-1 text-[10px] font-bold">
+              <button onclick="setTicketFilter('all')" id="tFilterAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
+              <button onclick="setTicketFilter('Open')" id="tFilterOpen" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Open</button>
+              <button onclick="setTicketFilter('Resolved')" id="tFilterResolved" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Resolved</button>
+            </div>
+          </div>
+
+          <div id="adminTicketsList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- TAB 2: VENDORS LIST & PIN RESET -->
+        <div id="adminTabVendors" class="hidden-force space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+              <i class="ph-fill ph-truck text-teal-700 text-base"></i> రిజిస్టర్డ్ వెండర్లు (<span id="vendorCountBadge">0</span>)
+            </h2>
+          </div>
+          <div class="relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+            <input type="text" id="adminVendorSearch" onkeyup="renderAdminVendors()" placeholder="వెండర్ పేరు లేదా ఫోన్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">
+          </div>
+          <div id="adminVendorsList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- TAB 3: CUSTOMERS LIST & PIN RESET -->
+        <div id="adminTabCustomers" class="hidden-force space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+              <i class="ph-fill ph-users text-sky-600 text-base"></i> రిజిస్టర్డ్ కస్టమర్లు (<span id="customerCountBadge">0</span>)
+            </h2>
+          </div>
+          <div class="relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+            <input type="text" id="adminCustomerSearch" onkeyup="renderAdminCustomers()" placeholder="కస్టమర్ పేరు, ఫోన్ లేదా వెండర్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">
+          </div>
+          <div id="adminCustomersList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- TAB 4: LIVE ANALYTICS (VIEWS, INSTALLS & LOGINS) -->
+        <div id="adminTabAnalytics" class="hidden-force space-y-3.5">
+          <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+            <i class="ph-fill ph-chart-line-up text-indigo-600 text-base"></i> యాప్ వ్యూస్, ఇన్‌స్టాల్స్ & లాగిన్ వివరాలు
+          </h2>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <!-- Customer App Breakdown -->
+            <div class="bg-white border border-sky-200 rounded-2xl p-3.5 shadow-2xs space-y-1.5">
+              <span class="text-[10px] font-extrabold text-sky-700 uppercase block">👤 Customer App</span>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Views (చూసినవి):</span>
+                <strong id="statCustViews" class="text-slate-800">0</strong>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Installs (డౌన్‌లోడ్స్):</span>
+                <strong id="statCustInstalls" class="text-emerald-700">0</strong>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Logins (లాగిన్స్):</span>
+                <strong id="statCustLogins" class="text-indigo-700">0</strong>
+              </div>
+            </div>
+
+            <!-- Vendor App Breakdown -->
+            <div class="bg-white border border-teal-200 rounded-2xl p-3.5 shadow-2xs space-y-1.5">
+              <span class="text-[10px] font-extrabold text-teal-700 uppercase block">🚚 Vendor App</span>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Views (చూసినవి):</span>
+                <strong id="statVendorViews" class="text-slate-800">0</strong>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Installs (డౌన్‌లోడ్స్):</span>
+                <strong id="statVendorInstalls" class="text-emerald-700">0</strong>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Logins (లాగిన్స్):</span>
+                <strong id="statVendorLogins" class="text-indigo-700">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs space-y-2">
+            <span class="text-xs font-extrabold text-slate-800 block">🕒 తాజా యాక్టివిటీ & లాగిన్ హిస్టరీ (Recent Activity)</span>
+            <div id="adminActivityFeed" class="space-y-2 max-h-96 overflow-y-auto"></div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- BOTTOM NAVIGATION BAR -->
+      <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-slate-200 grid grid-cols-4 py-2 px-1 z-30 shadow-lg">
+        <button onclick="switchAdminTab('Tickets')" id="adminNavTickets" class="flex flex-col items-center justify-center py-1 text-indigo-600 font-extrabold">
+          <i class="ph-fill ph-ticket text-xl"></i>
+          <span class="text-[10px] mt-0.5">టికెట్లు</span>
+        </button>
+        <button onclick="switchAdminTab('Vendors')" id="adminNavVendors" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold">
+          <i class="ph-fill ph-truck text-xl"></i>
+          <span class="text-[10px] mt-0.5">వెండర్లు</span>
+        </button>
+        <button onclick="switchAdminTab('Customers')" id="adminNavCustomers" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold">
+          <i class="ph-fill ph-users text-xl"></i>
+          <span class="text-[10px] mt-0.5">కస్టమర్లు</span>
+        </button>
+        <button onclick="switchAdminTab('Analytics')" id="adminNavAnalytics" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold">
+          <i class="ph-fill ph-chart-line-up text-xl"></i>
+          <span class="text-[10px] mt-0.5">అనలిటిక్స్</span>
+        </button>
+      </nav>
+
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300 pointer-events-none opacity-0 translate-y-4 flex items-center gap-2">
+      <i class="ph-bold ph-check text-emerald-400"></i>
+      <span id="toastMsg">అప్‌డేట్ అయ్యింది!</span>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://cbemchufrgcvzkbyvfrx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiZW1jaHVmcmdjdnprYnl2ZnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDQzMTEsImV4cCI6MjEwOTg4MDMxMX0.UZOiRzdcIbjS0lWHosZNb9YkKVJ9FNDehNL1Q-JTEqI';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let activeAdminTab = 'Tickets';
+    let ticketFilter = 'all';
+    let allTickets = [];
+    let allVendors = [];
+    let allCustomers = [];
+    let allAnalytics = [];
+    let adminRealtimeChannel = null;
+    let adminTimer = null;
+
+    function getAdminPin() {
+      return localStorage.getItem('mc_admin_master_pin') || '9999';
+    }
+
+    window.onload = function() {
+      if (sessionStorage.getItem('mc_admin_unlocked') === '1') {
+        unlockAdminDashboard();
+      }
+    };
+
+    function handleAdminLogin() {
+      const entered = document.getElementById('adminPinInput').value.trim();
+      if (entered === getAdminPin()) {
+        sessionStorage.setItem('mc_admin_unlocked', '1');
+        unlockAdminDashboard();
+      } else {
+        alert('Admin PIN తప్పుగా నమోదు చేశారు!');
+      }
+    }
+
+    function changeAdminPinPrompt() {
+      const newPin = prompt('కొత్త 4-అంకెల Admin PIN నమోదు చేయండి:', getAdminPin());
+      if (newPin && newPin.length === 4 && !isNaN(newPin)) {
+        localStorage.setItem('mc_admin_master_pin', newPin);
+        showToast('Admin PIN మార్చబడింది!');
+      } else if (newPin !== null) {
+        alert('దయచేసి 4 అంకెలు మాత్రమే ఇవ్వండి.');
+      }
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem('mc_admin_unlocked');
+      if (adminTimer) clearInterval(adminTimer);
+      if (adminRealtimeChannel) db.removeChannel(adminRealtimeChannel);
+      document.getElementById('adminAppSection').classList.add('hidden-force');
+      document.getElementById('adminAuthSection').classList.remove('hidden-force');
+      document.getElementById('adminPinInput').value = '';
+    }
+
+    function unlockAdminDashboard() {
+      document.getElementById('adminAuthSection').classList.add('hidden-force');
+      document.getElementById('adminAppSection').classList.remove('hidden-force');
+      refreshAdminData(false);
+      startAdminLiveSync();
+    }
+
+    function startAdminLiveSync() {
+      if (adminTimer) clearInterval(adminTimer);
+      if (adminRealtimeChannel) db.removeChannel(adminRealtimeChannel);
+
+      try {
+        adminRealtimeChannel = db
+          .channel('admin-master-live')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'support_tickets' }, () => refreshAdminData(false))
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'app_analytics' }, () => refreshAdminData(false))
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'vendors' }, () => refreshAdminData(false))
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'customer_users' }, () => refreshAdminData(false))
+          .subscribe();
+      } catch (e) {}
+
+      adminTimer = setInterval(() => {
+        if (!document.hidden) refreshAdminData(false);
+      }, 15000);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      t.classList.remove('opacity-0', 'translate-y-4');
+      t.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        t.classList.remove('opacity-100', 'translate-y-0');
+        t.classList.add('opacity-0', 'translate-y-4');
+      }, 2200);
+    }
+
+    function switchAdminTab(tab) {
+      activeAdminTab = tab;
+      ['Tickets', 'Vendors', 'Customers', 'Analytics'].forEach(t => {
+        document.getElementById('adminTab' + t).classList.toggle('hidden-force', t !== tab);
+        document.getElementById('adminNav' + t).className = (t === tab)
+          ? 'flex flex-col items-center justify-center py-1 text-indigo-600 font-extrabold'
+          : 'flex flex-col items-center justify-center py-1 text-slate-400 font-semibold';
+      });
+      renderAllAdminViews();
+    }
+
+    async function refreshAdminData(manual = false) {
+      const icon = document.getElementById('adminSyncIcon');
+      if (icon) icon.classList.add('animate-spin');
+
+      const [tRes, vRes, cRes, aRes] = await Promise.all([
+        db.from('support_tickets').select('*').order('created_at', { ascending: false }),
+        db.from('vendors').select('*').order('created_at', { ascending: false }),
+        db.from('customer_users').select('*').order('created_at', { ascending: false }),
+        db.from('app_analytics').select('*').order('created_at', { ascending: false }).limit(500)
+      ]);
+
+      allTickets = tRes.data || [];
+      allVendors = vRes.data || [];
+      allCustomers = cRes.data || [];
+      allAnalytics = aRes.data || [];
+
+      if (icon) icon.classList.remove('animate-spin');
+      if (manual) showToast('అడ్మిన్ డేటా సింక్ అయ్యింది!');
+      renderAllAdminViews();
+    }
+
+    function formatDateTime(iso) {
+      if (!iso) return 'ఇంకా లాగిన్ అవ్వలేదు';
+      const d = new Date(iso);
+      return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderAllAdminViews() {
+      // KPIs
+      const openCount = allTickets.filter(t => t.status !== 'Resolved').length;
+      const viewsCount = allAnalytics.filter(a => a.event_type === 'visit').length;
+      const installsCount = allAnalytics.filter(a => a.event_type === 'install').length;
+      const loginsCount = allAnalytics.filter(a => a.event_type === 'login').length;
+
+      document.getElementById('kpiOpenTickets').innerText = openCount;
+      document.getElementById('kpiTotalVendors').innerText = allVendors.length;
+      document.getElementById('kpiTotalCustomers').innerText = allCustomers.length;
+      document.getElementById('kpiTotalViews').innerText = viewsCount;
+      document.getElementById('kpiTotalInstalls').innerText = installsCount;
+      document.getElementById('kpiTotalLogins').innerText = loginsCount;
+
+      renderAdminTickets();
+      renderAdminVendors();
+      renderAdminCustomers();
+      renderAdminAnalytics();
+    }
+
+    // TAB 1: SUPPORT TICKETS
+    function setTicketFilter(f) {
+      ticketFilter = f;
+      ['all', 'Open', 'Resolved'].forEach(k => {
+        const id = 'tFilter' + (k === 'all' ? 'All' : k);
+        document.getElementById(id).className = (k === f)
+          ? 'px-2.5 py-1 rounded-full bg-indigo-600 text-white'
+          : 'px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+      });
+      renderAdminTickets();
+    }
+
+    function renderAdminTickets() {
+      const listEl = document.getElementById('adminTicketsList');
+      const filtered = allTickets.filter(t => ticketFilter === 'all' ? true : t.status === ticketFilter);
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="bg-white border border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-400">సపోర్ట్ టికెట్లు ఏవీ లేవు.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(t => {
+        const isResolved = t.status === 'Resolved';
+        const roleBadge = t.user_role === 'vendor'
+          ? `<span class="text-[9px] bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-extrabold">🚚 Vendor</span>`
+          : `<span class="text-[9px] bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-extrabold">👤 Customer</span>`;
+
+        return `
+          <div class="bg-white border ${isResolved ? 'border-emerald-200' : 'border-amber-300'} rounded-2xl p-3.5 shadow-2xs space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-xs font-black text-slate-900">#${t.ticket_code}</span>
+                  ${roleBadge}
+                  <span class="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">${t.category}</span>
+                </div>
+                <p class="text-[11px] font-bold text-slate-700 mt-1">${t.user_name || 'User'} • 📞 ${t.user_phone}</p>
+                <span class="text-[9px] text-slate-400">${formatDateTime(t.created_at)}</span>
+              </div>
+              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${isResolved ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${isResolved ? 'Resolved ✓' : 'Open'}
+              </span>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-xs text-slate-800 font-medium">
+              ${t.description}
+            </div>
+
+            <div class="space-y-1.5 pt-1">
+              <textarea id="replyInput_${t.id}" rows="2" placeholder="ఇక్కడ మీ సమాధానం (Admin Reply) టైప్ చేయండి..." class="w-full p-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">${t.admin_reply || ''}</textarea>
+              <div class="flex gap-2">
+                <button onclick="saveTicketReply('${t.id}', 'Resolved')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold">
+                  రిప్లై సేవ్ & Resolve ✓
+                </button>
+                ${isResolved ? `
+                  <button onclick="saveTicketReply('${t.id}', 'Open')" class="px-3 py-2 rounded-xl bg-slate-200 text-slate-700 text-[11px] font-bold">
+                    Reopen
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function saveTicketReply(ticketId, newStatus) {
+      const replyText = document.getElementById('replyInput_' + ticketId).value.trim();
+      const { error } = await db.from('support_tickets')
+        .update({ admin_reply: replyText, status: newStatus })
+        .eq('id', ticketId);
+
+      if (error) return alert('Error: ' + error.message);
+      showToast('టికెట్ రిప్లై అప్‌డేట్ అయ్యింది!');
+      refreshAdminData(false);
+    }
+
+    // TAB 2: VENDORS LIST & PIN RESET
+    function renderAdminVendors() {
+      document.getElementById('vendorCountBadge').innerText = allVendors.length;
+      const q = (document.getElementById('adminVendorSearch').value || '').toLowerCase();
+      const filtered = allVendors.filter(v =>
+        (v.name || '').toLowerCase().includes(q) || (v.phone || '').includes(q)
+      );
+
+      const listEl = document.getElementById('adminVendorsList');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="bg-white border border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-400">వెండర్లు ఎవరూ కనిపించలేదు.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(v => {
+        const custCount = allCustomers.filter(c => c.vendor_phone === v.phone).length;
+        return `
+          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <h4 class="font-bold text-slate-800 text-sm truncate">${v.name || 'Vendor'}</h4>
+              <p class="text-[11px] text-slate-600">📞 ${v.phone} • 👥 కస్టమర్లు: <strong>${custCount}</strong></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(v.last_login_at)}</p>
+            </div>
+            <div class="text-right shrink-0 space-y-1">
+              <span class="text-[10px] bg-amber-50 border border-amber-200 text-amber-900 font-black px-2 py-0.5 rounded block">PIN: ${v.pin || '----'}</span>
+              <button onclick="resetVendorPinAdmin('${v.phone}', '${v.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
+                PIN మార్చు
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function resetVendorPinAdmin(phone, currentPin) {
+      const newPin = prompt(`వెండర్ (${phone}) కొత్త 4-అంకెల PIN నమోదు చేయండి:`, currentPin);
+      if (!newPin) return;
+      if (newPin.length !== 4 || isNaN(newPin)) return alert('4 అంకెల PIN మాత్రమే ఇవ్వండి.');
+      const { error } = await db.from('vendors').update({ pin: newPin }).eq('phone', phone);
+      if (error) return alert('Error: ' + error.message);
+      showToast(`వెండర్ ${phone} PIN ${newPin} గా మార్చబడింది!`);
+      refreshAdminData(false);
+    }
+
+    // TAB 3: CUSTOMERS LIST & PIN RESET
+    function renderAdminCustomers() {
+      document.getElementById('customerCountBadge').innerText = allCustomers.length;
+      const q = (document.getElementById('adminCustomerSearch').value || '').toLowerCase();
+      const filtered = allCustomers.filter(c =>
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.phone || '').includes(q) ||
+        (c.vendor_phone || '').includes(q)
+      );
+
+      const listEl = document.getElementById('adminCustomersList');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="bg-white border border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-400">కస్టమర్లు ఎవరూ కనిపించలేదు.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(c => {
+        return `
+          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <h4 class="font-bold text-slate-800 text-sm truncate">${c.name || 'Customer'}</h4>
+              <p class="text-[11px] text-slate-600">📞 ${c.phone} • 🚚 వెండర్: <strong>${c.vendor_phone || 'Unlinked'}</strong></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(c.last_login_at)}</p>
+            </div>
+            <div class="text-right shrink-0 space-y-1">
+              <span class="text-[10px] bg-sky-50 border border-sky-200 text-sky-900 font-black px-2 py-0.5 rounded block">PIN: ${c.pin || '----'}</span>
+              <button onclick="resetCustomerPinAdmin('${c.id}', '${c.name || c.phone}', '${c.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
+                PIN మార్చు
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function resetCustomerPinAdmin(custId, custLabel, currentPin) {
+      const newPin = prompt(`కస్టమర్ (${custLabel}) కొత్త 4-అంకెల PIN నమోదు చేయండి:`, currentPin);
+      if (!newPin) return;
+      if (newPin.length !== 4 || isNaN(newPin)) return alert('4 అంకెల PIN మాత్రమే ఇవ్వండి.');
+      const { error } = await db.from('customer_users').update({ pin: newPin }).eq('id', custId);
+      if (error) return alert('Error: ' + error.message);
+      showToast(`${custLabel} PIN ${newPin} గా మార్చబడింది!`);
+      refreshAdminData(false);
+    }
+
+    // TAB 4: ANALYTICS & RECENT ACTIVITY
+    function renderAdminAnalytics() {
+      const cViews = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'visit').length;
+      const cInstalls = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'install').length;
+      const cLogins = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'login').length;
+
+      const vViews = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'visit').length;
+      const vInstalls = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'install').length;
+      const vLogins = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'login').length;
+
+      document.getElementById('statCustViews').innerText = cViews;
+      document.getElementById('statCustInstalls').innerText = cInstalls;
+      document.getElementById('statCustLogins').innerText = cLogins;
+
+      document.getElementById('statVendorViews').innerText = vViews;
+      document.getElementById('statVendorInstalls').innerText = vInstalls;
+      document.getElementById('statVendorLogins').innerText = vLogins;
+
+      const feedEl = document.getElementById('adminActivityFeed');
+      if (allAnalytics.length === 0) {
+        feedEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ఇంకా యాక్టివిటీ నమోదు కాలేదు.</p>`;
+        return;
+      }
+
+      feedEl.innerHTML = allAnalytics.slice(0, 60).map(a => {
+        const icon = a.event_type === 'install' ? '📲 ఇన్‌స్టాల్' : (a.event_type === 'login' ? '🔐 లాగిన్' : '👀 విజిట్');
+        const appTag = a.app_type === 'vendor' ? '🚚 Vendor App' : '👤 Customer App';
+        const userStr = a.user_phone ? `${a.user_name || ''} (${a.user_phone})` : 'Guest / Browser';
+        return `
+          <div class="flex items-center justify-between text-[11px] py-1.5 border-b border-slate-100 last:border-0">
+            <div>
+              <span class="font-extrabold text-slate-800">${icon}</span>
+              <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold ml-1">${appTag}</span>
+              <p class="text-[10px] text-slate-500 mt-0.5">${userStr}</p>
+            </div>
+            <span class="text-[9px] text-slate-400 shrink-0">${formatDateTime(a.created_at)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
+
