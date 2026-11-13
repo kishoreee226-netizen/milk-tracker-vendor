@@ -143,13 +143,29 @@
         <!-- TAB 1: DAILY DELIVERY ROUTE -->
         <div id="tabDelivery" class="space-y-3.5">
 
-          <!-- Hero Total Milk & Quick Actions Card -->
+          <!-- FEATURE 6: CUSTOMER QUALITY ALERTS BANNER -->
+          <div id="qualityAlertsBanner" class="hidden-force bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-2xs space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-900 flex items-center gap-1.5">
+                <i class="ph-fill ph-warning-circle text-amber-600 text-base"></i> కస్టమర్ నాణ్యత ఫిర్యాదులు (<span id="qualityAlertCount">0</span>)
+              </span>
+              <span class="text-[9px] font-bold bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded">Quality Alert</span>
+            </div>
+            <div id="qualityAlertsList" class="space-y-1 text-[11px] text-amber-900"></div>
+          </div>
+
+          <!-- Hero Total Milk (Buffalo vs Cow Split) & Quick Actions Card -->
           <div class="bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 text-white rounded-2xl p-4 shadow-md relative overflow-hidden">
             <div class="flex items-start justify-between relative z-10">
               <div>
                 <p class="text-[11px] text-teal-100 font-semibold uppercase tracking-wider">మొత్తం కావాల్సిన పాలు (Milk Load)</p>
                 <div class="text-3xl font-black tracking-tight mt-0.5 flex items-baseline gap-1.5">
                   <span id="totalLitersNeeded">0.0</span> <span class="text-sm font-bold text-teal-200">లీటర్లు</span>
+                </div>
+                <!-- FEATURE 1: BUFFALO VS COW SPLIT -->
+                <div class="flex items-center gap-2 mt-1.5 text-[11px] font-bold">
+                  <span class="bg-black/25 px-2 py-0.5 rounded-lg text-amber-200">🐃 గేదె: <span id="buffaloLitersNeeded">0.0</span>L</span>
+                  <span class="bg-black/25 px-2 py-0.5 rounded-lg text-sky-200">🐄 ఆవు: <span id="cowLitersNeeded">0.0</span>L</span>
                 </div>
                 <div class="flex items-center gap-3 mt-1.5 text-[11px] text-teal-100">
                   <span class="flex items-center gap-1"><i class="ph-fill ph-house text-amber-300"></i> డెలివరీ: <strong id="activeDeliveriesCount" class="text-white">0</strong></span>
@@ -179,7 +195,21 @@
             </div>
           </div>
 
-          <!-- Search & Filter Pills -->
+          <!-- FEATURE 2 & 3: SHIFT (MORNING/EVENING) & AREA/ROUTE FILTERS -->
+          <div class="grid grid-cols-2 gap-2">
+            <select id="routeShiftFilter" onchange="renderDeliveryTab()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-teal-600 shadow-2xs">
+              <option value="all">🕒 అన్ని షిఫ్ట్‌లు (All Shifts)</option>
+              <option value="Morning">🌅 ఉదయం (Morning)</option>
+              <option value="Evening">🌇 సాయంత్రం (Evening)</option>
+              <option value="Both">🔄 రెండు పూటలా (Both)</option>
+            </select>
+
+            <select id="routeAreaFilter" onchange="renderDeliveryTab()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-teal-600 shadow-2xs">
+              <option value="all">📍 అన్ని ఏరియాలు (All Areas)</option>
+            </select>
+          </div>
+
+          <!-- Search & Status Filter Pills -->
           <div class="space-y-2">
             <div class="relative">
               <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
@@ -202,7 +232,7 @@
           <div id="deliveryRouteList" class="space-y-2.5"></div>
         </div>
 
-        <!-- TAB 2: MONTHLY BILLING & COLLECTIONS -->
+        <!-- TAB 2: MONTHLY BILLING & COLLECTIONS (FEATURE 4: CASH/UPI & PREV DUE LEDGER) -->
         <div id="tabBilling" class="hidden-force space-y-3.5">
           <!-- Collection KPI Cards -->
           <div class="grid grid-cols-2 gap-2.5">
@@ -212,6 +242,9 @@
                 <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="ph-fill ph-check-circle text-sm"></i></span>
               </div>
               <div class="text-xl font-black text-emerald-800 mt-1">₹<span id="billingCollectedTotal">0</span></div>
+              <div class="text-[10px] text-slate-500 mt-0.5 font-semibold">
+                💵 Cash: ₹<span id="billingCashTotal">0</span> • 📱 UPI: ₹<span id="billingUpiTotal">0</span>
+              </div>
             </div>
 
             <div class="bg-white border border-rose-200 rounded-2xl p-3.5 shadow-2xs">
@@ -220,6 +253,7 @@
                 <span class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><i class="ph-fill ph-clock text-sm"></i></span>
               </div>
               <div class="text-xl font-black text-rose-700 mt-1">₹<span id="billingPendingTotal">0</span></div>
+              <div class="text-[10px] text-slate-400 mt-0.5 font-medium">పాత బాకీతో కలిపి</div>
             </div>
           </div>
 
@@ -259,13 +293,13 @@
           <!-- Search Box -->
           <div class="relative">
             <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
-            <input type="text" id="customerSearchInput" onkeyup="renderCustomersTab()" placeholder="పేరు లేదా ఫోన్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600">
+            <input type="text" id="customerSearchInput" onkeyup="renderCustomersTab()" placeholder="పేరు, ఫోన్ నంబర్ లేదా ఏరియా వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600">
           </div>
 
           <div id="customersManageList" class="space-y-2.5"></div>
         </div>
 
-        <!-- TAB 4: BUSINESS ANALYTICS & INSIGHTS -->
+        <!-- TAB 4: BUSINESS ANALYTICS & NET PROFIT CALCULATOR -->
         <div id="tabSummary" class="hidden-force space-y-3.5">
           <!-- Main Revenue & Liters Card -->
           <div class="bg-gradient-to-br from-slate-800 via-slate-900 to-teal-950 text-white rounded-2xl p-4 shadow-md space-y-3">
@@ -281,13 +315,46 @@
                 <span class="text-2xl font-black text-white mt-0.5 block"><span id="sumTotalLiters">0.0</span> <span class="text-xs font-bold text-teal-300">L</span></span>
               </div>
               <div class="bg-white/5 border border-white/10 rounded-xl p-3">
-                <span class="text-[10px] text-slate-400 block">మొత్తం ఆదాయం (Revenue)</span>
+                <span class="text-[10px] text-slate-400 block">మొత్తం అమ్మకాల ఆదాయం</span>
                 <span class="text-2xl font-black text-emerald-400 mt-0.5 block">₹<span id="sumTotalRevenue">0</span></span>
               </div>
             </div>
             <div class="pt-2 border-t border-white/10 flex justify-between text-xs">
               <span class="text-slate-300">సగటు రోజువారీ సరఫరా:</span>
               <span class="font-bold text-amber-300"><span id="sumDailyAvg">0.0</span> లీటర్లు / రోజు</span>
+            </div>
+          </div>
+
+          <!-- FEATURE 5: MILK PROCUREMENT & NET PROFIT CALCULATOR -->
+          <div class="bg-white border border-teal-200 rounded-2xl p-4 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
+                <i class="ph-fill ph-calculator text-teal-600 text-base"></i> నికర లాభం లెక్క (Net Profit Calculator)
+              </h3>
+              <span class="text-[9px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full font-bold">Expenses & Profit</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="text-[10px] font-bold text-slate-600 block mb-1">పాలు కొనుగోలు ఖర్చు (₹):</label>
+                <input type="number" id="expMilkPurchaseInput" placeholder="0" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+              </div>
+              <div>
+                <label class="text-[10px] font-bold text-slate-600 block mb-1">పెట్రోల్ / జీతాలు & ఇతర (₹):</label>
+                <input type="number" id="expOtherInput" placeholder="0" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+              </div>
+            </div>
+
+            <button id="saveExpensesBtn" onclick="saveVendorExpenses()" class="w-full py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold active:scale-95 transition-all">
+              ఖర్చులు సేవ్ & లాభం లెక్కించండి
+            </button>
+
+            <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold text-emerald-800 uppercase block">ఈ నెల నికర లాభం (Net Profit)</span>
+                <span class="text-[10px] text-slate-500">ఆదాయం - మొత్తం ఖర్చులు</span>
+              </div>
+              <span id="netProfitAmountText" class="text-xl font-black text-emerald-700">₹0</span>
             </div>
           </div>
 
@@ -316,7 +383,7 @@
               <i class="ph-fill ph-share-network text-teal-700"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
             </h3>
             <p class="text-[11px] text-teal-800/80 leading-relaxed">
-              మీరు యాడ్ చేసిన కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ మొబైల్ నంబర్ & PIN తో లాగిన్ అయి రోజువారీ లెక్కలు చూసుకోవచ్చు!
+              మీ కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ మొబైల్ నంబర్ & PIN తో లాగిన్ అయి రోజువారీ లెక్కలు చూసుకోవచ్చు!
             </p>
             <button onclick="shareCustomerAppLink()" class="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-95">
               <i class="ph-fill ph-whatsapp-logo text-base"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
@@ -387,9 +454,9 @@
       </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT / REMOVE CUSTOMER (Vendor Side) -->
+    <!-- MODAL: ADD / EDIT / REMOVE CUSTOMER (With Milk Type, Shift & Area) -->
     <div id="customerModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
-      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
           <h4 id="customerModalTitle" class="font-bold text-slate-800 text-sm">కొత్త కస్టమర్ యాడ్ చేయండి</h4>
           <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-600">
@@ -409,12 +476,33 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
+              <label class="text-[11px] font-bold text-slate-600 mb-1 block">పాల రకం (Milk Type):</label>
+              <select id="custMilkTypeInput" onchange="autoSetRateByMilkType()" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+                <option value="Buffalo">🐃 గేదె పాలు (Buffalo)</option>
+                <option value="Cow">🐄 ఆవు పాలు (Cow)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 mb-1 block">షిఫ్ట్ (Shift):</label>
+              <select id="custShiftInput" class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+                <option value="Morning">🌅 ఉదయం (Morning)</option>
+                <option value="Evening">🌇 సాయంత్రం (Evening)</option>
+                <option value="Both">🔄 రెండు పూటలా (Both)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">ఏరియా / రూట్ (Area / Route):</label>
+            <input type="text" id="custAreaInput" placeholder="ఉదా: హన్మకొండ / కాజీపేట" value="General" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
               <label class="text-[11px] font-bold text-slate-600 mb-1 block">రోజువారీ కోటా (L):</label>
               <input type="number" id="custQuotaInput" step="0.5" value="1.0" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
             </div>
             <div>
               <label class="text-[11px] font-bold text-slate-600 mb-1 block">లీటరు ధర (₹):</label>
-              <input type="number" id="custRateInput" value="70" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+              <input type="number" id="custRateInput" value="75" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
             </div>
           </div>
           <div id="custPinFieldGroup">
@@ -431,6 +519,55 @@
         <button id="removeCustFromModalBtn" onclick="removeCustomerFromModal()" class="hidden-force w-full py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold flex items-center justify-center gap-1.5">
           <i class="ph-bold ph-trash"></i> కస్టమర్‌ను లిస్ట్ నుండి తొలగించండి
         </button>
+      </div>
+    </div>
+
+    <!-- MODAL: RECORD BILL PAYMENT (Cash / UPI & Prev Due) -->
+    <div id="billingLedgerModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5">
+        <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
+          <div>
+            <h4 id="ledgerCustName" class="font-bold text-slate-800 text-sm">కస్టమర్ బిల్లు</h4>
+            <p id="ledgerMonthLabel" class="text-[10px] text-slate-500">నెల వివరాలు</p>
+          </div>
+          <button onclick="closeBillingLedgerModal()" class="text-slate-400 hover:text-slate-600">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+
+        <input type="hidden" id="ledgerCustId">
+        <input type="hidden" id="ledgerCurrentBillVal">
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex justify-between text-xs">
+          <span class="text-slate-600">ఈ నెల బిల్లు:</span>
+          <span class="font-extrabold text-slate-900">₹<span id="ledgerCurrentBillDisplay">0</span></span>
+        </div>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">పాత బాకీ (Previous Due ₹):</label>
+            <input type="number" id="ledgerPrevDueInput" value="0" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">కట్టిన మొత్తం (Paid Amount ₹):</label>
+            <div class="flex gap-1.5">
+              <input type="number" id="ledgerPaidInput" value="0" class="flex-1 px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+              <button onclick="fillFullPayableInModal()" class="px-2.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-extrabold">Full</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">చెల్లింపు పద్ధతి (Payment Mode):</label>
+            <select id="ledgerPaymentModeInput" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+              <option value="Cash">💵 నగదు (Cash)</option>
+              <option value="UPI">📱 UPI (PhonePe / GPay)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button onclick="closeBillingLedgerModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">రద్దు</button>
+          <button id="saveLedgerBtn" onclick="saveBillingLedgerEntry()" class="flex-1 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">సేవ్ చేయండి</button>
+        </div>
       </div>
     </div>
 
@@ -469,7 +606,6 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // 1. LIVE SUPABASE CLIENT
     const SUPABASE_URL = 'https://cbemchufrgcvzkbyvfrx.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiZW1jaHVmcmdjdnprYnl2ZnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDQzMTEsImV4cCI6MjEwOTg4MDMxMX0.UZOiRzdcIbjS0lWHosZNb9YkKVJ9FNDehNL1Q-JTEqI';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -486,7 +622,9 @@
     let billingFilter = 'all';
 
     let allCustomers = [];
-    let monthLogsByUser = {};
+    let monthLogsByUser = {}; // { user_id: { 'YYYY-MM-DD': { status, quantity, quality_note } } }
+    let billingLedgerByUser = {}; // { customer_id: { prev_due, paid_amount, payment_mode } }
+    let currentMonthExpenses = { milk_purchase_cost: 0, other_expenses: 0 };
     let selectedCustForDayEdit = null;
 
     window.onload = function() {
@@ -693,6 +831,10 @@
       return `${y}-${m}-${day}`;
     }
 
+    function getMonthKey(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
     // 2. DATA SYNC FROM SUPABASE
     async function refreshAllVendorData() {
       if (!vendorProfile) return;
@@ -706,6 +848,7 @@
         .order('name', { ascending: true });
 
       allCustomers = users || [];
+      populateAreaDropdown();
 
       const refDate = activeTab === 'delivery' ? selectedRouteDate : selectedBillingMonth;
       const y = refDate.getFullYear();
@@ -730,14 +873,56 @@
             if (!monthLogsByUser[l.user_id]) monthLogsByUser[l.user_id] = {};
             monthLogsByUser[l.user_id][l.log_date] = {
               status: l.status,
-              quantity: parseFloat(l.quantity)
+              quantity: parseFloat(l.quantity),
+              quality_note: l.quality_note || ''
             };
           });
         }
       }
 
+      // Fetch Billing Ledger & Expenses for selectedBillingMonth
+      const mKey = getMonthKey(selectedBillingMonth);
+      const [{ data: ledgerRows }, { data: expRow }] = await Promise.all([
+        db.from('vendor_billing_ledger')
+          .select('*')
+          .eq('vendor_phone', vendorProfile.phone)
+          .eq('month_key', mKey),
+        db.from('vendor_expenses')
+          .select('*')
+          .eq('vendor_phone', vendorProfile.phone)
+          .eq('month_key', mKey)
+          .maybeSingle()
+      ]);
+
+      billingLedgerByUser = {};
+      if (ledgerRows) {
+        ledgerRows.forEach(r => {
+          billingLedgerByUser[r.customer_id] = {
+            prev_due: parseFloat(r.prev_due) || 0,
+            paid_amount: parseFloat(r.paid_amount) || 0,
+            payment_mode: r.payment_mode || 'Cash'
+          };
+        });
+      }
+
+      currentMonthExpenses = expRow
+        ? { milk_purchase_cost: parseFloat(expRow.milk_purchase_cost) || 0, other_expenses: parseFloat(expRow.other_expenses) || 0 }
+        : { milk_purchase_cost: 0, other_expenses: 0 };
+
       if (icon) icon.classList.remove('animate-spin');
       renderActiveTab();
+    }
+
+    function populateAreaDropdown() {
+      const sel = document.getElementById('routeAreaFilter');
+      if (!sel) return;
+      const currentVal = sel.value || 'all';
+      const areas = [...new Set(allCustomers.map(c => (c.route_area || 'General').trim()).filter(Boolean))];
+      sel.innerHTML = `<option value="all">📍 అన్ని ఏరియాలు (All Areas)</option>`;
+      areas.forEach(a => {
+        sel.innerHTML += `<option value="${a}">📍 ${a}</option>`;
+      });
+      if (areas.includes(currentVal) || currentVal === 'all') sel.value = currentVal;
     }
 
     // 3. TAB & DATE NAVIGATION
@@ -861,24 +1046,47 @@
 
       if (log) {
         if (log.status === 'skipped' || log.quantity === 0) {
-          return { status: 'skipped', qty: 0, isExtra: false };
+          return { status: 'skipped', qty: 0, isExtra: false, quality_note: log.quality_note || '' };
         }
-        return { status: 'active', qty: log.quantity, isExtra: log.quantity > defaultQty };
+        return { status: 'active', qty: log.quantity, isExtra: log.quantity > defaultQty, quality_note: log.quality_note || '' };
       } else if (isAuto && dateZero >= regDate) {
-        return { status: 'active', qty: defaultQty, isExtra: false };
+        return { status: 'active', qty: defaultQty, isExtra: false, quality_note: '' };
       }
-      return { status: 'none', qty: 0, isExtra: false };
+      return { status: 'none', qty: 0, isExtra: false, quality_note: '' };
     }
 
     function renderDeliveryTab() {
       const iso = formatDateISO(selectedRouteDate);
       const doneMap = getDeliveredDoneMap(iso);
       const searchQ = (document.getElementById('routeSearchInput').value || '').toLowerCase();
+      const shiftFilter = document.getElementById('routeShiftFilter').value;
+      const areaFilter = document.getElementById('routeAreaFilter').value;
 
       let totalLiters = 0;
+      let buffaloLiters = 0;
+      let cowLiters = 0;
       let activeCount = 0;
       let skippedCount = 0;
       let doneCount = 0;
+
+      // Check Quality Alerts for selected date
+      const qualityAlerts = [];
+      allCustomers.forEach(c => {
+        const st = getCustomerDayStatus(c, selectedRouteDate);
+        if (st.quality_note) {
+          qualityAlerts.push({ name: c.name || c.phone, note: st.quality_note });
+        }
+      });
+
+      const alertBanner = document.getElementById('qualityAlertsBanner');
+      const alertList = document.getElementById('qualityAlertsList');
+      if (qualityAlerts.length > 0) {
+        alertBanner.classList.remove('hidden-force');
+        document.getElementById('qualityAlertCount').innerText = qualityAlerts.length;
+        alertList.innerHTML = qualityAlerts.map(a => `<div>• <strong>${a.name}:</strong> ${a.note}</div>`).join('');
+      } else {
+        alertBanner.classList.add('hidden-force');
+      }
 
       const listEl = document.getElementById('deliveryRouteList');
       listEl.innerHTML = '';
@@ -886,6 +1094,8 @@
       if (allCustomers.length === 0) {
         listEl.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">మీ అకౌంట్‌లో ఇంకా కస్టమర్లు ఎవరూ లేరు. "కస్టమర్లు" ట్యాబ్‌లో యాడ్ చేయండి.</div>`;
         document.getElementById('totalLitersNeeded').innerText = '0.0';
+        document.getElementById('buffaloLitersNeeded').innerText = '0.0';
+        document.getElementById('cowLitersNeeded').innerText = '0.0';
         document.getElementById('activeDeliveriesCount').innerText = '0';
         document.getElementById('skippedDeliveriesCount').innerText = '0';
         document.getElementById('deliveredProgressText').innerText = '0/0 Done (0%)';
@@ -894,10 +1104,19 @@
       }
 
       allCustomers.forEach(cust => {
+        const custShift = cust.shift || 'Morning';
+        const custArea = (cust.route_area || 'General').trim();
+        const mType = cust.milk_type || 'Buffalo';
+
+        if (shiftFilter !== 'all' && custShift !== shiftFilter) return;
+        if (areaFilter !== 'all' && custArea !== areaFilter) return;
+
         const info = getCustomerDayStatus(cust, selectedRouteDate);
         if (info.status === 'skipped') skippedCount++;
         if (info.status === 'active') {
           totalLiters += info.qty;
+          if (mType === 'Cow') cowLiters += info.qty;
+          else buffaloLiters += info.qty;
           activeCount++;
         }
 
@@ -907,6 +1126,11 @@
         if (searchQ && !(cust.name || '').toLowerCase().includes(searchQ) && !(cust.phone || '').includes(searchQ)) return;
         if (deliveryFilter === 'pending' && (info.status !== 'active' || isDone)) return;
         if (deliveryFilter === 'skipped' && info.status !== 'skipped') return;
+
+        const shiftIcon = custShift === 'Evening' ? '🌇' : custShift === 'Both' ? '🔄' : '🌅';
+        const milkBadge = mType === 'Cow'
+          ? `<span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-1.5 py-0.2 rounded font-bold">🐄 Cow</span>`
+          : `<span class="text-[9px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.2 rounded font-bold">🐃 Buffalo</span>`;
 
         const card = document.createElement('div');
         card.className = `border rounded-2xl p-3 flex items-center justify-between gap-2 transition-all ${
@@ -937,11 +1161,16 @@
               <i class="ph-bold ph-check text-xs"></i>
             </button>
             <div class="min-w-0">
-              <h4 class="font-bold text-slate-800 text-sm truncate ${isDone ? 'line-through text-slate-500' : ''}">${cust.name || 'Customer'}</h4>
-              <div class="flex items-center gap-2 text-[11px] text-slate-500">
-                <a href="tel:${cust.phone}" class="hover:text-teal-700 font-medium">📞 ${cust.phone}</a>
-                <span>• ₹${cust.price_per_ltr || 70}/L</span>
+              <h4 class="font-bold text-slate-800 text-sm truncate flex items-center gap-1 ${isDone ? 'line-through text-slate-500' : ''}">
+                <span>${cust.name || 'Customer'}</span>
+                ${milkBadge}
+              </h4>
+              <div class="flex items-center gap-1.5 text-[10px] text-slate-500 mt-0.5 flex-wrap">
+                <span>${shiftIcon} ${custShift}</span>
+                <span>• 📍 ${custArea}</span>
+                <a href="tel:${cust.phone}" class="hover:text-teal-700 font-semibold">• 📞 ${cust.phone}</a>
               </div>
+              ${info.quality_note ? `<div class="text-[10px] text-amber-800 font-bold mt-0.5">⚠️ ${info.quality_note}</div>` : ''}
             </div>
           </div>
 
@@ -957,6 +1186,8 @@
 
       const pct = activeCount > 0 ? Math.round((doneCount / activeCount) * 100) : 0;
       document.getElementById('totalLitersNeeded').innerText = totalLiters.toFixed(1);
+      document.getElementById('buffaloLitersNeeded').innerText = buffaloLiters.toFixed(1);
+      document.getElementById('cowLitersNeeded').innerText = cowLiters.toFixed(1);
       document.getElementById('activeDeliveriesCount').innerText = activeCount;
       document.getElementById('skippedDeliveriesCount').innerText = skippedCount;
       document.getElementById('deliveredProgressText').innerText = `${doneCount}/${activeCount} Done (${pct}%)`;
@@ -966,10 +1197,17 @@
     function shareRouteSummaryWhatsApp() {
       const iso = formatDateISO(selectedRouteDate);
       const total = document.getElementById('totalLitersNeeded').innerText;
+      const buf = document.getElementById('buffaloLitersNeeded').innerText;
+      const cow = document.getElementById('cowLitersNeeded').innerText;
       const active = document.getElementById('activeDeliveriesCount').innerText;
       const skipped = document.getElementById('skippedDeliveriesCount').innerText;
+      const area = document.getElementById('routeAreaFilter').value;
+      const shift = document.getElementById('routeShiftFilter').value;
+
       const msg = encodeURIComponent(`🚚 *${vendorProfile.name} డెలివరీ షీట్ (${iso})*
-• మొత్తం కావాల్సిన పాలు: *${total} L*
+${area !== 'all' ? `📍 ఏరియా: *${area}*
+` : ''}${shift !== 'all' ? `🕒 షిఫ్ట్: *${shift}*
+` : ''}• మొత్తం పాలు: *${total} L* (🐃 గేదె: ${buf}L | 🐄 ఆవు: ${cow}L)
 • డెలివరీ ఇళ్లు: ${active}
 • సెలవులు (Skip): ${skipped}`);
       window.location.href = `whatsapp://send?text=${msg}`;
@@ -1015,7 +1253,7 @@
       if (!isNaN(val) && val >= 0) updateCustomerDayFromVendor(val);
     }
 
-    // 5. TAB 2: MONTHLY BILLING & COLLECTIONS
+    // 5. TAB 2: MONTHLY BILLING & COLLECTIONS (Cash / UPI & Prev Due Ledger)
     function setBillingFilter(f) {
       billingFilter = f;
       ['all', 'unpaid', 'paid'].forEach(key => {
@@ -1065,32 +1303,13 @@
       return { deliveredDays, skippedDays, totalLiters, rate, amount };
     }
 
-    function getVendorPaidStatusMap(year, month) {
-      const key = `vendor_paid_${vendorProfile.phone}_${year}_${String(month + 1).padStart(2, '0')}`;
-      try {
-        return JSON.parse(localStorage.getItem(key)) || {};
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function toggleVendorCustomerPaid(userId) {
-      const y = selectedBillingMonth.getFullYear();
-      const m = selectedBillingMonth.getMonth();
-      const key = `vendor_paid_${vendorProfile.phone}_${y}_${String(m + 1).padStart(2, '0')}`;
-      const map = getVendorPaidStatusMap(y, m);
-      map[userId] = !map[userId];
-      localStorage.setItem(key, JSON.stringify(map));
-      renderBillingTab();
-      showToast(map[userId] ? 'బిల్లు చెల్లించినట్లు (PAID) మార్క్ అయ్యింది!' : 'Pending లోకి మార్చబడింది');
-    }
-
     function renderBillingTab() {
       const y = selectedBillingMonth.getFullYear();
       const m = selectedBillingMonth.getMonth();
-      const paidMap = getVendorPaidStatusMap(y, m);
 
       let collectedTotal = 0;
+      let cashTotal = 0;
+      let upiTotal = 0;
       let pendingTotal = 0;
 
       const listEl = document.getElementById('billingCustomerList');
@@ -1098,40 +1317,52 @@
 
       allCustomers.forEach(cust => {
         const stats = calculateCustomerMonthStats(cust, y, m);
-        const isPaid = Boolean(paidMap[cust.id]);
+        const ledger = billingLedgerByUser[cust.id] || { prev_due: 0, paid_amount: 0, payment_mode: 'Cash' };
+        const totalPayable = stats.amount + ledger.prev_due;
+        const balanceDue = Math.max(0, totalPayable - ledger.paid_amount);
+        const isPaid = totalPayable > 0 && balanceDue === 0;
 
-        if (isPaid) collectedTotal += stats.amount;
-        else pendingTotal += stats.amount;
+        collectedTotal += ledger.paid_amount;
+        if (ledger.payment_mode === 'UPI') upiTotal += ledger.paid_amount;
+        else cashTotal += ledger.paid_amount;
+        pendingTotal += balanceDue;
 
         if (billingFilter === 'paid' && !isPaid) return;
         if (billingFilter === 'unpaid' && isPaid) return;
+
+        const modeBadge = ledger.paid_amount > 0
+          ? `<span class="text-[9px] bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-bold">${ledger.payment_mode === 'UPI' ? '📱 UPI' : '💵 Cash'}</span>`
+          : '';
 
         const card = document.createElement('div');
         card.className = `border rounded-2xl p-3.5 space-y-2.5 ${isPaid ? 'bg-emerald-50/60 border-emerald-200' : 'bg-white border-slate-200 shadow-2xs'}`;
         card.innerHTML = `
           <div class="flex items-start justify-between">
             <div>
-              <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+              <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5 flex-wrap">
                 ${cust.name || 'Customer'}
                 ${isPaid ? '<span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-black">PAID ✓</span>' : ''}
+                ${modeBadge}
               </h4>
               <p class="text-[11px] text-slate-500">${cust.phone} • ${stats.deliveredDays} రోజులు (${stats.totalLiters.toFixed(1)}L × ₹${stats.rate})</p>
+              ${ledger.prev_due > 0 ? `<p class="text-[10px] text-amber-700 font-bold">పాత బాకీ: ₹${ledger.prev_due} • కట్టినది: ₹${ledger.paid_amount}</p>` : (ledger.paid_amount > 0 ? `<p class="text-[10px] text-emerald-700 font-bold">కట్టినది: ₹${ledger.paid_amount}</p>` : '')}
             </div>
             <div class="text-right">
-              <span class="text-base font-black ${isPaid ? 'text-emerald-700' : 'text-slate-900'}">₹${stats.amount.toLocaleString('en-IN')}</span>
+              <span class="text-base font-black ${isPaid ? 'text-emerald-700' : 'text-slate-900'}">₹${totalPayable.toLocaleString('en-IN')}</span>
+              ${!isPaid && ledger.paid_amount > 0 ? `<span class="text-[10px] text-rose-600 font-bold block">బాకీ: ₹${balanceDue}</span>` : ''}
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-            <button onclick="toggleVendorCustomerPaid('${cust.id}')" class="py-1.5 px-2.5 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 ${
+            <button onclick="openBillingLedgerModal('${cust.id}', ${stats.amount})" class="py-1.5 px-2.5 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 ${
               isPaid
                 ? 'bg-slate-200 text-slate-700'
-                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                : 'bg-teal-700 text-white hover:bg-teal-800'
             }">
-              <i class="ph-bold ph-check-circle"></i> ${isPaid ? 'Unmark Paid' : 'Mark Paid'}
+              <i class="ph-bold ph-currency-inr"></i> ${isPaid ? 'ఎడిట్ పేమెంట్' : 'పేమెంట్ / బాకీ'}
             </button>
 
-            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, ${stats.rate}, ${stats.amount})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
+            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, ${stats.rate}, ${stats.amount}, ${ledger.prev_due}, ${ledger.paid_amount}, ${balanceDue})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
               <i class="ph-fill ph-whatsapp-logo"></i> వాట్సాప్ బిల్
             </button>
           </div>
@@ -1143,16 +1374,81 @@
       const pct = grandTotal > 0 ? Math.round((collectedTotal / grandTotal) * 100) : 0;
 
       document.getElementById('billingCollectedTotal').innerText = collectedTotal.toLocaleString('en-IN');
+      document.getElementById('billingCashTotal').innerText = cashTotal.toLocaleString('en-IN');
+      document.getElementById('billingUpiTotal').innerText = upiTotal.toLocaleString('en-IN');
       document.getElementById('billingPendingTotal').innerText = pendingTotal.toLocaleString('en-IN');
       document.getElementById('collectionPercentLabel').innerText = `${pct}%`;
       document.getElementById('collectionProgressBar').style.width = `${pct}%`;
     }
 
-    function sendWhatsAppBillToCustomer(userId, delDays, skipDays, liters, rate, amount) {
+    function openBillingLedgerModal(custId, currentBill) {
+      const cust = allCustomers.find(c => c.id === custId);
+      if (!cust) return;
+      const ledger = billingLedgerByUser[custId] || { prev_due: 0, paid_amount: 0, payment_mode: 'Cash' };
+
+      document.getElementById('ledgerCustId').value = custId;
+      document.getElementById('ledgerCurrentBillVal').value = currentBill;
+      document.getElementById('ledgerCustName').innerText = cust.name || cust.phone;
+      document.getElementById('ledgerMonthLabel').innerText = `${TELUGU_MONTHS[selectedBillingMonth.getMonth()]} ${selectedBillingMonth.getFullYear()}`;
+      document.getElementById('ledgerCurrentBillDisplay').innerText = currentBill;
+      document.getElementById('ledgerPrevDueInput').value = ledger.prev_due || 0;
+      document.getElementById('ledgerPaidInput').value = ledger.paid_amount || 0;
+      document.getElementById('ledgerPaymentModeInput').value = ledger.payment_mode || 'Cash';
+      document.getElementById('billingLedgerModal').classList.remove('hidden-force');
+    }
+
+    function closeBillingLedgerModal() {
+      document.getElementById('billingLedgerModal').classList.add('hidden-force');
+    }
+
+    function fillFullPayableInModal() {
+      const cur = parseFloat(document.getElementById('ledgerCurrentBillVal').value) || 0;
+      const prev = parseFloat(document.getElementById('ledgerPrevDueInput').value) || 0;
+      document.getElementById('ledgerPaidInput').value = cur + prev;
+    }
+
+    async function saveBillingLedgerEntry() {
+      const custId = document.getElementById('ledgerCustId').value;
+      const prevDue = parseFloat(document.getElementById('ledgerPrevDueInput').value) || 0;
+      const paidAmt = parseFloat(document.getElementById('ledgerPaidInput').value) || 0;
+      const payMode = document.getElementById('ledgerPaymentModeInput').value;
+      const mKey = getMonthKey(selectedBillingMonth);
+
+      const btn = document.getElementById('saveLedgerBtn');
+      btn.disabled = true;
+      btn.innerText = 'సేవ్ అవుతోంది...';
+
+      const { error } = await db.from('vendor_billing_ledger').upsert({
+        vendor_phone: vendorProfile.phone,
+        customer_id: custId,
+        month_key: mKey,
+        prev_due: prevDue,
+        paid_amount: paidAmt,
+        payment_mode: payMode
+      }, { onConflict: 'vendor_phone,customer_id,month_key' });
+
+      btn.disabled = false;
+      btn.innerText = 'సేవ్ చేయండి';
+
+      if (error) return alert('Error: ' + error.message);
+      closeBillingLedgerModal();
+      showToast('పేమెంట్ & బాకీ వివరాలు సేవ్ అయ్యాయి!');
+      refreshAllVendorData();
+    }
+
+    function sendWhatsAppBillToCustomer(userId, delDays, skipDays, liters, rate, amount, prevDue, paidAmt, balanceDue) {
       const cust = allCustomers.find(c => c.id === userId);
       if (!cust) return;
       const mTel = TELUGU_MONTHS[selectedBillingMonth.getMonth()];
       const y = selectedBillingMonth.getFullYear();
+
+      let dueLines = `💵 *ఈ నెల బిల్లు: ₹${amount}*`;
+      if (prevDue > 0 || paidAmt > 0) {
+        dueLines += `
+📌 *పాత బాకీ:* ₹${prevDue}
+✅ *చెల్లించినది:* ₹${paidAmt}
+💳 *నికర బాకీ (Balance): ₹${balanceDue}*`;
+      }
 
       const msg =
 `🥛 *పాల బిల్లు వివరాలు (${vendorProfile.name})* 🥛
@@ -1163,18 +1459,20 @@
 ❌ *ఆపిన రోజులు:* ${skipDays} రోజులు
 🍶 *మొత్తం లీటర్లు:* ${liters} L (₹${rate}/L)
 -------------------------------------
-💵 *చెల్లించవలసిన బిల్లు: ₹${amount}*
+${dueLines}
 -------------------------------------
 దయచేసి త్వరగా చెల్లించగలరు. ధన్యవాదాలు!`;
 
       window.location.href = `whatsapp://send?phone=91${cust.phone}&text=${encodeURIComponent(msg)}`;
     }
 
-    // 6. TAB 3: CUSTOMERS MANAGEMENT (Add, Edit & Remove)
+    // 6. TAB 3: CUSTOMERS MANAGEMENT (Add, Edit & Remove with Milk Type, Shift, Area)
     function renderCustomersTab() {
       const query = (document.getElementById('customerSearchInput').value || '').toLowerCase();
       const filtered = allCustomers.filter(c =>
-        (c.name || '').toLowerCase().includes(query) || (c.phone || '').includes(query)
+        (c.name || '').toLowerCase().includes(query) ||
+        (c.phone || '').includes(query) ||
+        (c.route_area || '').toLowerCase().includes(query)
       );
 
       document.getElementById('totalCustomersCount').innerText = allCustomers.length;
@@ -1187,12 +1485,19 @@
       }
 
       filtered.forEach(cust => {
+        const mType = cust.milk_type || 'Buffalo';
+        const cShift = cust.shift || 'Morning';
+        const cArea = cust.route_area || 'General';
         const card = document.createElement('div');
         card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-2 shadow-2xs';
         card.innerHTML = `
           <div class="min-w-0">
-            <h4 class="font-bold text-slate-800 text-sm truncate">${cust.name || 'Customer'}</h4>
-            <p class="text-[11px] text-slate-500">📞 ${cust.phone} • కోటా: <strong>${cust.daily_qty || 1.0}L</strong> • ₹${cust.price_per_ltr || 70}/L</p>
+            <h4 class="font-bold text-slate-800 text-sm truncate flex items-center gap-1.5">
+              <span>${cust.name || 'Customer'}</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${mType === 'Cow' ? 'bg-sky-50 text-sky-700' : 'bg-amber-50 text-amber-800'}">${mType === 'Cow' ? '🐄 Cow' : '🐃 Buffalo'}</span>
+            </h4>
+            <p class="text-[11px] text-slate-500">📞 ${cust.phone} • <strong>${cust.daily_qty || 1.0}L</strong> • ₹${cust.price_per_ltr || 70}/L</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">🕒 ${cShift} • 📍 ${cArea}</p>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
             <a href="tel:${cust.phone}" title="కాల్ చేయండి" class="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100">
@@ -1208,6 +1513,13 @@
         `;
         listEl.appendChild(card);
       });
+    }
+
+    function autoSetRateByMilkType() {
+      const mType = document.getElementById('custMilkTypeInput').value;
+      const rateEl = document.getElementById('custRateInput');
+      if (mType === 'Cow' && rateEl.value === '75') rateEl.value = '55';
+      else if (mType === 'Buffalo' && rateEl.value === '55') rateEl.value = '75';
     }
 
     async function confirmRemoveCustomer(userId) {
@@ -1243,8 +1555,11 @@
       document.getElementById('custNameInput').value = '';
       document.getElementById('custPhoneInput').value = '';
       document.getElementById('custPhoneInput').disabled = false;
+      document.getElementById('custMilkTypeInput').value = 'Buffalo';
+      document.getElementById('custShiftInput').value = 'Morning';
+      document.getElementById('custAreaInput').value = 'General';
       document.getElementById('custQuotaInput').value = '1.0';
-      document.getElementById('custRateInput').value = '70';
+      document.getElementById('custRateInput').value = '75';
       document.getElementById('custPinInput').value = '1234';
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.add('hidden-force');
@@ -1259,6 +1574,9 @@
       document.getElementById('custNameInput').value = cust.name || '';
       document.getElementById('custPhoneInput').value = cust.phone || '';
       document.getElementById('custPhoneInput').disabled = true;
+      document.getElementById('custMilkTypeInput').value = cust.milk_type || 'Buffalo';
+      document.getElementById('custShiftInput').value = cust.shift || 'Morning';
+      document.getElementById('custAreaInput').value = cust.route_area || 'General';
       document.getElementById('custQuotaInput').value = cust.daily_qty || 1.0;
       document.getElementById('custRateInput').value = cust.price_per_ltr || 70;
       document.getElementById('custPinFieldGroup').classList.add('hidden-force');
@@ -1274,6 +1592,9 @@
       const editId = document.getElementById('editCustomerId').value;
       const name = document.getElementById('custNameInput').value.trim();
       const phone = document.getElementById('custPhoneInput').value.trim();
+      const milk_type = document.getElementById('custMilkTypeInput').value;
+      const shift = document.getElementById('custShiftInput').value;
+      const route_area = document.getElementById('custAreaInput').value.trim() || 'General';
       const daily_qty = parseFloat(document.getElementById('custQuotaInput').value) || 1.0;
       const price_per_ltr = parseFloat(document.getElementById('custRateInput').value) || 70;
       const pin = document.getElementById('custPinInput').value.trim() || '1234';
@@ -1287,7 +1608,7 @@
 
       if (editId) {
         const { error } = await db.from('customer_users')
-          .update({ name, daily_qty, price_per_ltr })
+          .update({ name, milk_type, shift, route_area, daily_qty, price_per_ltr })
           .eq('id', editId)
           .eq('vendor_phone', vendorProfile.phone);
         btn.disabled = false;
@@ -1297,10 +1618,9 @@
       } else {
         const { data: exist } = await db.from('customer_users').select('id, vendor_phone').eq('phone', phone).maybeSingle();
         if (exist) {
-          // If customer already exists in Customer App without a vendor, link them to this vendor!
           if (!exist.vendor_phone) {
             const { error: linkErr } = await db.from('customer_users')
-              .update({ name, daily_qty, price_per_ltr, vendor_phone: vendorProfile.phone })
+              .update({ name, milk_type, shift, route_area, daily_qty, price_per_ltr, vendor_phone: vendorProfile.phone })
               .eq('id', exist.id);
             btn.disabled = false;
             btn.innerText = 'సేవ్ చేయండి';
@@ -1318,6 +1638,9 @@
           name,
           phone,
           pin,
+          milk_type,
+          shift,
+          route_area,
           daily_qty,
           price_per_ltr,
           auto_mode: true,
@@ -1333,7 +1656,9 @@
       refreshAllVendorData();
     }
 
-    // 7. TAB 4: MONTHLY SUMMARY, 7-DAY GRAPH & TOP CUSTOMERS
+    // 7. TAB 4: MONTHLY SUMMARY, NET PROFIT CALCULATOR, 7-DAY GRAPH & TOP CUSTOMERS
+    let currentGrandRevenue = 0;
+
     function renderSummaryTab() {
       const y = selectedBillingMonth.getFullYear();
       const m = selectedBillingMonth.getMonth();
@@ -1350,6 +1675,8 @@
         ranked.push({ name: cust.name || cust.phone, liters: st.totalLiters, amount: st.amount });
       });
 
+      currentGrandRevenue = grandRevenue;
+
       const now = new Date();
       const daysPassed = (y === now.getFullYear() && m === now.getMonth())
         ? Math.max(1, now.getDate())
@@ -1358,6 +1685,11 @@
       document.getElementById('sumTotalLiters').innerText = grandLiters.toFixed(1);
       document.getElementById('sumTotalRevenue').innerText = grandRevenue.toLocaleString('en-IN');
       document.getElementById('sumDailyAvg').innerText = (grandLiters / daysPassed).toFixed(1);
+
+      // Update Expenses & Net Profit UI
+      document.getElementById('expMilkPurchaseInput').value = currentMonthExpenses.milk_purchase_cost || '';
+      document.getElementById('expOtherInput').value = currentMonthExpenses.other_expenses || '';
+      updateNetProfitDisplay();
 
       // Render 7-Day Supply Bar Chart
       const chartEl = document.getElementById('sevenDayBarChart');
@@ -1402,6 +1734,40 @@
           </div>
         `;
       });
+    }
+
+    function updateNetProfitDisplay() {
+      const milkCost = parseFloat(document.getElementById('expMilkPurchaseInput').value) || 0;
+      const otherCost = parseFloat(document.getElementById('expOtherInput').value) || 0;
+      const netProfit = currentGrandRevenue - (milkCost + otherCost);
+      const el = document.getElementById('netProfitAmountText');
+      el.innerText = `₹${netProfit.toLocaleString('en-IN')}`;
+      el.className = netProfit >= 0 ? 'text-xl font-black text-emerald-700' : 'text-xl font-black text-rose-600';
+    }
+
+    async function saveVendorExpenses() {
+      const milkCost = parseFloat(document.getElementById('expMilkPurchaseInput').value) || 0;
+      const otherCost = parseFloat(document.getElementById('expOtherInput').value) || 0;
+      const mKey = getMonthKey(selectedBillingMonth);
+
+      const btn = document.getElementById('saveExpensesBtn');
+      btn.disabled = true;
+      btn.innerText = 'సేవ్ అవుతోంది...';
+
+      const { error } = await db.from('vendor_expenses').upsert({
+        vendor_phone: vendorProfile.phone,
+        month_key: mKey,
+        milk_purchase_cost: milkCost,
+        other_expenses: otherCost
+      }, { onConflict: 'vendor_phone,month_key' });
+
+      btn.disabled = false;
+      btn.innerText = 'ఖర్చులు సేవ్ & లాభం లెక్కించండి';
+
+      if (error) return alert('Error: ' + error.message);
+      currentMonthExpenses = { milk_purchase_cost: milkCost, other_expenses: otherCost };
+      updateNetProfitDisplay();
+      showToast('నెలవారీ ఖర్చులు & నికర లాభం సేవ్ అయ్యాయి!');
     }
 
     function shareCustomerAppLink() {
