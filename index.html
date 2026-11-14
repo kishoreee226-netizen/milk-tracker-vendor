@@ -1245,34 +1245,78 @@
       return { mType, mQty, mRate, eType, eQty, eRate, totalDefault, effectiveShift };
     }
 
-    function getCustomerDayStatus(cust, dateObj) {
-      const iso = formatDateISO(dateObj);
-      const dateZero = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-      const userLogs = monthLogsByUser[cust.id] || {};
-      const log = userLogs[iso];
-      const prefs = getCustShiftPrefs(cust);
-      const defaultQty = prefs.totalDefault;
-      const isAuto = cust.auto_mode !== false;
-      const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
-      regDate.setHours(0, 0, 0, 0);
+ // 1. FIX: DB లో vendor_delivered = true ఉంటే ఏ ఫోన్‌లో లాగిన్ అయినా "Done" టిక్ ఆటోమేటిక్‌గా కనిపిస్తుంది + ఖచ్చితమైన Shift Split
+function getCustomerDayStatus(cust, dateObj) {
+  const iso = formatDateISO(dateObj);
+  const dateZero = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+  const userLogs = monthLogsByUser[cust.id] || {};
+  const log = userLogs[iso];
+  const prefs = getCustShiftPrefs(cust);
 
-      if (log) {
-        if (log.status === 'skipped' || log.quantity === 0) {
-          return { status: 'skipped', qty: 0, mQty: 0, eQty: 0, isExtra: false, quality_note: log.quality_note || '' };
-        }
-        const mQ = log.morning_qty !== null
-          ? log.morning_qty
-          : (defaultQty > 0 ? parseFloat((log.quantity * (prefs.mQty / defaultQty)).toFixed(2)) : log.quantity);
-        const eQ = log.evening_qty !== null
-          ? log.evening_qty
-          : Math.max(0, parseFloat((log.quantity - mQ).toFixed(2)));
-        return { status: 'active', qty: log.quantity, mQty: mQ, eQty: eQ, isExtra: log.quantity > defaultQty, quality_note: log.quality_note || '' };
-      } else if (isAuto && dateZero >= regDate) {
-        return { status: 'active', qty: defaultQty, mQty: prefs.mQty, eQty: prefs.eQty, isExtra: false, quality_note: '' };
-      }
-      return { status: 'none', qty: 0, mQty: 0, eQty: 0, isExtra: false, quality_note: '' };
+  const now = new Date();
+  const todayZero = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
+  regDate.setHours(0, 0, 0, 0);
+
+  const doneMap = JSON.parse(localStorage.getItem(`vendor_done_${vendorProfile.phone}_${iso}`) || '{}');
+  const isMarkedDone = Boolean((log && log.vendor_delivered) || doneMap[cust.id]);
+
+  if (log) {
+    if (log.status === 'skipped' || parseFloat(log.quantity) === 0) {
+      return {
+        status: 'skipped',
+        liters: 0,
+        mQty: 0,
+        eQty: 0,
+        isDone: false,
+        qualityNote: log.quality_note || ''
+      };
     }
+    const totalL = parseFloat(log.quantity);
+    let mQty = log.morning_qty !== null && log.morning_qty !== undefined ? parseFloat(log.morning_qty) : null;
+    let eQty = log.evening_qty !== null && log.evening_qty !== undefined ? parseFloat(log.evening_qty) : null;
 
+    if (mQty === null || eQty === null || isNaN(mQty) || isNaN(eQty)) {
+      if (prefs.totalDefault > 0) {
+        mQty = parseFloat(((prefs.mQty / prefs.totalDefault) * totalL).toFixed(2));
+        eQty = parseFloat((totalL - mQty).toFixed(2));
+      } else {
+        mQty = totalL;
+        eQty = 0;
+      }
+    }
+    return {
+      status: 'delivered',
+      liters: totalL,
+      mQty,
+      eQty,
+      isDone: isMarkedDone,
+      qualityNote: log.quality_note || ''
+    };
+  }
+
+  // ఆటో మోడ్ (Auto Mode) లో ఉన్నప్పుడు డిఫాల్ట్ కోటా
+  const isAuto = cust.auto_mode !== false;
+  if (isAuto && dateZero >= regDate) {
+    return {
+      status: 'delivered',
+      liters: prefs.totalDefault,
+      mQty: prefs.mQty,
+      eQty: prefs.eQty,
+      isDone: isMarkedDone,
+      qualityNote: ''
+    };
+  }
+
+  return {
+    status: 'skipped',
+    liters: 0,
+    mQty: 0,
+    eQty: 0,
+    isDone: false,
+    qualityNote: ''
+  };
+}
     function renderDeliveryTab() {
       const iso = formatDateISO(selectedRouteDate);
       const doneMap = getDeliveredDoneMap(iso);
@@ -1472,25 +1516,62 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*
       selectedCustForDayEdit = null;
     }
 
-    async function updateCustomerDayFromVendor(liters) {
-      if (!selectedCustForDayEdit) return;
-      const iso = formatDateISO(selectedRouteDate);
-      const status = liters === 0 ? 'skipped' : 'taken';
+    // 2. FIX: వెండర్ ఒక కస్టమర్‌పై నొక్కి లీటర్లు మార్చినప్పుడు morning_qty, evening_qty మరియు vendor_delivered కూడా DB కి సింక్ అవుతాయి
+async function updateCustomerDayFromVendor(liters) {
+  if (!selectedCustForDayEdit) return;
+  const cust = selectedCustForDayEdit;
+  const iso = formatDateISO(selectedRouteDate);
+  const prefs = getCustShiftPrefs(cust);
+  const qty = Math.max(0, parseFloat(liters) || 0);
+  const isSkipped = qty === 0;
 
-      const { error } = await db.from('customer_milk_logs').upsert({
-        user_id: selectedCustForDayEdit.id,
-        log_date: iso,
-        quantity: liters,
-        status: status
-      }, { onConflict: 'user_id,log_date' });
-
-      if (!error) {
-        showToast(`${selectedCustForDayEdit.name}: ${liters === 0 ? 'వద్దు (Skip)' : liters + 'L'} అప్‌డేట్ అయ్యింది!`);
-        closeVendorDayModal();
-        refreshAllVendorData();
-      }
+  let mQty = 0;
+  let eQty = 0;
+  if (!isSkipped) {
+    if (qty === prefs.totalDefault) {
+      mQty = prefs.mQty;
+      eQty = prefs.eQty;
+    } else if (prefs.totalDefault > 0) {
+      mQty = parseFloat(((prefs.mQty / prefs.totalDefault) * qty).toFixed(2));
+      eQty = parseFloat((qty - mQty).toFixed(2));
+    } else {
+      mQty = qty;
+      eQty = 0;
     }
+  }
 
+  const payload = {
+    user_id: cust.id,
+    log_date: iso,
+    quantity: qty,
+    morning_qty: mQty,
+    evening_qty: eQty,
+    status: isSkipped ? 'skipped' : 'taken',
+    vendor_delivered: !isSkipped
+  };
+
+  const { error } = await db
+    .from('customer_milk_logs')
+    .upsert([payload], { onConflict: 'user_id,log_date' });
+
+  if (error) {
+    return alert('Update Error: ' + error.message);
+  }
+
+  // Local Done map అప్‌డేట్
+  const doneKey = `vendor_done_${vendorProfile.phone}_${iso}`;
+  const doneMap = JSON.parse(localStorage.getItem(doneKey) || '{}');
+  if (isSkipped) {
+    delete doneMap[cust.id];
+  } else {
+    doneMap[cust.id] = true;
+  }
+  localStorage.setItem(doneKey, JSON.stringify(doneMap));
+
+  closeVendorDayModal();
+  showToast(isSkipped ? `${cust.name}: ఈరోజు పాలు వద్దు (Skip) చేయబడింది!` : `${cust.name}: ${qty}L డెలివరీ అప్‌డేట్ అయ్యింది!`);
+  refreshAllVendorData();
+}
     function applyVendorCustomLiters() {
       const val = parseFloat(document.getElementById('vCustomLiters').value);
       if (!isNaN(val) && val >= 0) updateCustomerDayFromVendor(val);
@@ -1508,57 +1589,81 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*
       renderBillingTab();
     }
 
-    function calculateCustomerMonthStats(cust, year, month) {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const now = new Date();
-      const prefs = getCustShiftPrefs(cust);
-      const defaultQty = prefs.totalDefault;
-      const rate = prefs.mQty > 0 ? prefs.mRate : prefs.eRate;
-      const isAuto = cust.auto_mode !== false;
-      const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
-      regDate.setHours(0, 0, 0, 0);
-      const logs = monthLogsByUser[cust.id] || {};
+    // 3. FIX: ఉదయం (గేదె) & సాయంత్రం (ఆవు) వేర్వేరు ధరలు ఉన్నప్పుడు Customer App తో 100% సరిపోలేలా బిల్లు లెక్క
+function calculateCustomerMonthStats(cust, year, month) {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const now = new Date();
+  const todayZero = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const prefs = getCustShiftPrefs(cust);
+  const isAuto = cust.auto_mode !== false;
+  const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
+  regDate.setHours(0, 0, 0, 0);
 
-      let deliveredDays = 0;
-      let skippedDays = 0;
-      let totalLiters = 0;
-      let morningLiters = 0;
-      let eveningLiters = 0;
+  const userLogs = monthLogsByUser[cust.id] || {};
+  let deliveredDays = 0;
+  let skippedDays = 0;
+  let totalLiters = 0;
+  let totalMorningLiters = 0;
+  let totalEveningLiters = 0;
+  let totalAmount = 0;
 
-      for (let d = 1; d <= daysInMonth; d++) {
-        const cDate = new Date(year, month, d);
-        const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const isPastOrToday = cDate <= now;
-        const isJoined = cDate >= regDate;
-        const rec = logs[iso];
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cDate = new Date(year, month, d);
+    const isPastOrToday = cDate <= todayZero;
+    const isJoined = cDate >= regDate;
+    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const log = userLogs[iso];
 
-        if (rec) {
-          if (rec.status === 'taken' && rec.quantity > 0 && isPastOrToday) {
-            deliveredDays++;
-            totalLiters += rec.quantity;
-            const mQ = rec.morning_qty !== null
-              ? rec.morning_qty
-              : (defaultQty > 0 ? parseFloat((rec.quantity * (prefs.mQty / defaultQty)).toFixed(2)) : rec.quantity);
-            const eQ = rec.evening_qty !== null
-              ? rec.evening_qty
-              : Math.max(0, parseFloat((rec.quantity - mQ).toFixed(2)));
-            morningLiters += mQ;
-            eveningLiters += eQ;
-          } else if (rec.status === 'skipped' || rec.quantity === 0) {
-            skippedDays++;
+    if (log) {
+      if (log.status !== 'skipped' && parseFloat(log.quantity) > 0) {
+        if (isPastOrToday) {
+          const dayTotal = parseFloat(log.quantity);
+          let mL = log.morning_qty !== null && log.morning_qty !== undefined ? parseFloat(log.morning_qty) : null;
+          let eL = log.evening_qty !== null && log.evening_qty !== undefined ? parseFloat(log.evening_qty) : null;
+
+          if (mL === null || eL === null || isNaN(mL) || isNaN(eL)) {
+            if (prefs.totalDefault > 0) {
+              mL = parseFloat(((prefs.mQty / prefs.totalDefault) * dayTotal).toFixed(2));
+              eL = parseFloat((dayTotal - mL).toFixed(2));
+            } else {
+              mL = dayTotal;
+              eL = 0;
+            }
           }
-        } else if (isPastOrToday && isJoined && isAuto) {
+
           deliveredDays++;
-          totalLiters += defaultQty;
-          morningLiters += prefs.mQty;
-          eveningLiters += prefs.eQty;
+          totalLiters += dayTotal;
+          totalMorningLiters += mL;
+          totalEveningLiters += eL;
+          totalAmount += (mL * prefs.mRate) + (eL * prefs.eRate);
         }
+      } else {
+        skippedDays++;
       }
-
-      const amount = Math.round((morningLiters * prefs.mRate) + (eveningLiters * prefs.eRate));
-      return { deliveredDays, skippedDays, totalLiters, morningLiters, eveningLiters, rate, amount };
+    } else if (isPastOrToday && isJoined && isAuto) {
+      deliveredDays++;
+      totalLiters += prefs.totalDefault;
+      totalMorningLiters += prefs.mQty;
+      totalEveningLiters += prefs.eQty;
+      totalAmount += (prefs.mQty * prefs.mRate) + (prefs.eQty * prefs.eRate);
     }
+  }
 
+  const finalAmount = Math.round(totalAmount);
+  const displayRate = (prefs.mQty > 0 && prefs.eQty > 0 && prefs.mRate !== prefs.eRate)
+    ? `${prefs.mRate}/${prefs.eRate}`
+    : (prefs.mQty > 0 ? prefs.mRate : prefs.eRate);
+
+  return {
+    deliveredDays,
+    skippedDays,
+    totalLiters: parseFloat(totalLiters.toFixed(2)),
+    totalMorningLiters: parseFloat(totalMorningLiters.toFixed(2)),
+    totalEveningLiters: parseFloat(totalEveningLiters.toFixed(2)),
+    rate: displayRate,
+    amount: finalAmount
+  };
+}
     function renderBillingTab() {
       const y = selectedBillingMonth.getFullYear();
       const m = selectedBillingMonth.getMonth();
@@ -1618,7 +1723,7 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*
               <i class="ph-bold ph-currency-inr"></i> ${isPaid ? 'ఎడిట్ పేమెంట్' : 'పేమెంట్ / బాకీ'}
             </button>
 
-            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, ${stats.rate}, ${stats.amount}, ${ledger.prev_due}, ${ledger.paid_amount}, ${balanceDue})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
+            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, '${stats.rate}', ${stats.amount}, ${ledger.prev_due}, ${ledger.paid_amount}, ${balanceDue})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
               <i class="ph-fill ph-whatsapp-logo"></i> వాట్సాప్ బిల్
             </button>
           </div>
