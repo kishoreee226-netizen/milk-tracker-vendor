@@ -2122,39 +2122,49 @@ ${dueLines}
       document.getElementById('expOtherInput').value = currentMonthExpenses.other_expenses || '';
       updateNetProfitDisplay();
 
-      // Render 7-Day Supply Bar Chart
-      const chartEl = document.getElementById('sevenDayBarChart');
-      chartEl.innerHTML = '';
-      const last7 = [];
-      let maxVal = 1;
-        for (let i = 6; i >= 0; i--) {
-    const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-    let daySum = 0;
-    allCustomers.forEach(c => {
-      const inf = getCustomerDayStatus(c, dObj);
-      // 'active' లేదా 'delivered' రెండు స్టేటస్‌లను సమ్ చేయాలి
-      if (inf && (inf.status === 'active' || inf.status === 'delivered')) {
-        daySum += parseFloat(inf.qty || inf.liters || 0);
-      }
-    });
-    if (daySum > maxVal) maxVal = daySum;
-    last7.push({ 
-      label: `${dObj.getDate()}/${dObj.getMonth() + 1}`, 
-      val: parseFloat(daySum.toFixed(1)) 
+        // Render 7-Day Supply Bar Chart (Fixed: Only counts actual delivered/taken milk)
+  const chartEl = document.getElementById('sevenDayBarChart');
+  if (chartEl) {
+    chartEl.innerHTML = '';
+    const last7 = [];
+    let maxVal = 1;
+
+    for (let i = 6; i >= 0; i--) {
+      const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const isoDate = formatDateISO(dObj);
+      let daySum = 0;
+
+      allCustomers.forEach(c => {
+        const userLogs = monthLogsByUser[c.id] || {};
+        const log = userLogs[isoDate];
+        const doneMap = getDeliveredDoneMap(isoDate);
+        const isDoneMarked = Boolean((log && log.vendor_delivered) || doneMap[c.id]);
+
+        // రూల్: లాగ్ ఉండి 'skipped' కాకుండా, మరియు వెండర్ 'Done' మార్క్ చేసి ఉంటేనే గ్రాఫ్‌లో కలపాలి
+        if (log && log.status !== 'skipped' && isDoneMarked) {
+          daySum += parseFloat(log.quantity || 0);
+        }
+      });
+
+      if (daySum > maxVal) maxVal = daySum;
+      last7.push({ 
+        label: `${dObj.getDate()}/${dObj.getMonth() + 1}`, 
+        val: parseFloat(daySum.toFixed(1)) 
+      });
+    }
+
+    last7.forEach((item, idx) => {
+      const heightPct = Math.max(12, Math.round((item.val / maxVal) * 100));
+      const isTodayBar = idx === 6;
+      chartEl.innerHTML += `
+        <div class="flex flex-col items-center gap-1 h-full justify-end">
+          <span class="text-[9px] font-extrabold text-slate-600">${item.val}</span>
+          <div class="w-full rounded-t-lg transition-all ${isTodayBar ? 'bg-teal-600' : 'bg-teal-200'}" style="height: ${heightPct}%"></div>
+          <span class="text-[9px] font-semibold text-slate-400">${item.label}</span>
+        </div>
+      `;
     });
   }
-
-      last7.forEach((item, idx) => {
-        const heightPct = Math.max(12, Math.round((item.val / maxVal) * 100));
-        const isTodayBar = idx === 6;
-        chartEl.innerHTML += `
-          <div class="flex flex-col items-center gap-1 h-full justify-end">
-            <span class="text-[9px] font-extrabold text-slate-600">${item.val.toFixed(1)}</span>
-            <div class="w-full rounded-t-lg transition-all ${isTodayBar ? 'bg-teal-600' : 'bg-teal-200'}" style="height: ${heightPct}%"></div>
-            <span class="text-[9px] font-semibold text-slate-400">${item.label}</span>
-          </div>
-        `;
-      });
 
       // Render Top Customers
       ranked.sort((a, b) => b.liters - a.liters);
