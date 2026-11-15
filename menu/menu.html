@@ -20,31 +20,55 @@
 
     <!-- Menu Options List -->
     <div class="flex-1 space-y-1.5 overflow-y-auto custom-scroll">
+      <!-- 1. Profile & PIN Change -->
       <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-user-gear text-base text-teal-600"></i>
         <span>ప్రొఫైల్ & PIN మార్పు</span>
       </button>
 
+      <!-- 2. Support & Tickets -->
       <button onclick="toggleVendorMenu(); openVendorSupportModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-ticket text-base text-sky-600"></i>
         <span>సపోర్ట్ & టికెట్లు (Support)</span>
       </button>
 
+      <!-- 3. Share Customer App Link -->
       <button onclick="toggleVendorMenu(); shareCustomerAppLink();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-whatsapp-logo text-base text-emerald-600"></i>
+        <i class="ph-bold ph-share-network text-base text-emerald-600"></i>
         <span>కస్టమర్ యాప్ లింక్ షేర్ చేయి</span>
       </button>
 
+      <!-- 4. Share Vendor App Link (NEW with Share Icon) -->
+      <button onclick="toggleVendorMenu(); shareVendorAppLink();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+        <i class="ph-bold ph-share-network text-base text-teal-600"></i>
+        <span>వెండర్ యాప్ లింక్ షేర్ చేయి</span>
+      </button>
+
+      <!-- 5. About Us -->
       <button onclick="toggleVendorMenu(); openVendorAboutModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-info text-base text-teal-600"></i>
         <span>అబౌట్ అస్ (About Us)</span>
       </button>
 
+      <!-- 6. Why Choose Us -->
       <button onclick="toggleVendorMenu(); openVendorWhyChooseModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-sparkle text-base text-amber-600"></i>
         <span>ఎందుకు మమ్మల్ని ఎంచుకోవాలి?</span>
       </button>
 
+      <!-- 7. Privacy Policy (Separate Page) -->
+      <a href="./privacy.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+        <i class="ph-bold ph-shield-check text-base text-slate-600"></i>
+        <span>ప్రైవసీ పాలసీ (Privacy)</span>
+      </a>
+
+      <!-- 8. Terms & Conditions (Separate Page) -->
+      <a href="./terms.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+        <i class="ph-bold ph-file-text text-base text-slate-600"></i>
+        <span>నిబంధనలు (Terms)</span>
+      </a>
+
+      <!-- 9. Data Sync -->
       <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-arrows-clockwise text-base text-slate-600"></i>
         <span>డేటా సింక్ (Sync Data)</span>
@@ -54,7 +78,8 @@
     <!-- Menu Footer / Logout -->
     <div class="pt-3 border-t border-slate-100 mt-auto">
       <button onclick="toggleVendorMenu(); logoutVendor();" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition-all">
-        <i class="ph-bold ph-sign-out text-sm"><span>లాగౌట్ (Logout)</span></i>
+        <i class="ph-bold ph-sign-out text-sm"></i>
+        <span>లాగౌట్ (Logout)</span>
       </button>
     </div>
 
