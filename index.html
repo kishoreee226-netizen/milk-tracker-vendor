@@ -122,16 +122,15 @@
             </div>
           </div>
   
-  <!-- 1. Existing Sync Button -->
-  <button onclick="refreshAllVendorData()" class="flex items-center gap-1 bg-white/15 hover:bg-white/25 active:scale-95 text-xs px-2.5 py-1.5 rounded-lg border border-white/20 font-bold shrink-0">
-    <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
-    <span>సింక్</span>
-  </button>
+ <!-- 1. Sync Button (with title) -->
+<button onclick="refreshAllVendorData()" title="సింక్" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all shrink-0">
+  <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-base"></i>
+</button>
 
-  <!-- 2. NEW: Vertical 3-Dot Menu Button (ఇది సరిగ్గా చివరకు కుడివైపు వస్తుంది) -->
-  <button onclick="toggleVendorMenu()" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all shrink-0">
-    <i class="ph-bold ph-dots-three-vertical text-base"></i>
-  </button>
+<!-- 2. Vertical 3-Dot Menu Button (with title) -->
+<button onclick="toggleVendorMenu()" title="మెనూ" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all shrink-0">
+  <i class="ph-bold ph-dots-three-vertical text-base"></i>
+</button>
 
 </div>
 
