@@ -1,4 +1,76 @@
-// Vendor Vertical 3-Dot Menu Logic & Popups
+// Vendor Vertical 3-Dot Menu Logic & Clean DOM Injection
+(function() {
+  // Inject HTML directly to avoid CORS fetch issues in compilers
+  const menuHtml = `
+  <div id="vendorThreeDotMenuModal" class="fixed inset-0 bg-black/40 backdrop-blur-2xs z-50 flex justify-end hidden-force transition-opacity duration-200" onclick="closeVendorMenu(event)">
+    <div class="w-64 bg-white h-full shadow-2xl flex flex-col p-4 animate-in slide-in-from-right duration-200" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs">
+            <i class="ph-fill ph-truck text-amber-200"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-900 truncate" id="menuVendorNameDisplay">Vendor Menu</h4>
+            <span class="text-[9px] text-teal-700 font-semibold">MilkCount Vendor v9</span>
+          </div>
+        </div>
+        <button onclick="toggleVendorMenu()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+          <i class="ph-bold ph-x text-xs"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 space-y-1.5 overflow-y-auto custom-scroll">
+        <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-user-gear text-base text-teal-600"></i>
+          <span>ప్రొఫైల్ & PIN మార్పు</span>
+        </button>
+        <button onclick="toggleVendorMenu(); openVendorSupportModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-ticket text-base text-sky-600"></i>
+          <span>సపోర్ట్ & టికెట్లు (Support)</span>
+        </button>
+        <button onclick="toggleVendorMenu(); shareCustomerAppLink();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-share-network text-base text-emerald-600"></i>
+          <span>కస్టమర్ యాప్ లింక్ షేర్ చేయి</span>
+        </button>
+        <button onclick="toggleVendorMenu(); shareVendorAppLink();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-share-network text-base text-teal-600"></i>
+          <span>వెండర్ యాప్ లింక్ షేర్ చేయి</span>
+        </button>
+        <button onclick="toggleVendorMenu(); openVendorAboutModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-info text-base text-teal-600"></i>
+          <span>అబౌట్ అస్ (About Us)</span>
+        </button>
+        <button onclick="toggleVendorMenu(); openVendorWhyChooseModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-sparkle text-base text-amber-600"></i>
+          <span>ఎందుకు మమ్మల్ని ఎంచుకోవాలి?</span>
+        </button>
+        <a href="./privacy.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-shield-check text-base text-slate-600"></i>
+          <span>ప్రైవసీ పాలసీ (Privacy)</span>
+        </a>
+        <a href="./terms.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-file-text text-base text-slate-600"></i>
+          <span>నిబంధనలు (Terms)</span>
+        </a>
+        <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-arrows-clockwise text-base text-slate-600"></i>
+          <span>డేటా సింక్ (Sync Data)</span>
+        </button>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 mt-auto">
+        <button onclick="toggleVendorMenu(); logoutVendor();" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition-all">
+          <i class="ph-bold ph-sign-out text-sm"></i>
+          <span>లాగౌట్ (Logout)</span>
+        </button>
+      </div>
+    </div>
+  </div>`;
+
+  const container = document.createElement('div');
+  container.innerHTML = menuHtml;
+  document.body.appendChild(container.firstElementChild);
+})();
 
 function toggleVendorMenu() {
   let menuModal = document.getElementById('vendorThreeDotMenuModal');
@@ -23,7 +95,6 @@ function closeVendorMenu(event) {
   }
 }
 
-// About Us & Why Choose Us Popups
 function openVendorAboutModal() {
   alert("MilkCount Vendor v9: డెయిరీ వ్యాపారులు, పాల సేకరణ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహణ కోసం ప్రత్యేకంగా రూపొందించబడిన డిజిటల్ మేనేజ్‌మెంట్ ప్లాట్‌ఫారమ్.");
 }
@@ -31,9 +102,9 @@ function openVendorAboutModal() {
 function openVendorWhyChooseModal() {
   alert("ఎందుకు మమ్మల్ని ఎంచుకోవాలి?\n• జీరో ఎర్రర్ లెక్కలు\n• ఆటోమేటిక్ బిల్లింగ్ & లెడ్జర్\n• రియల్-టైమ్ డేటా సింక్\n• వాట్సాప్ రిపోర్ట్స్ & సపోర్ట్");
 }
-// Share Vendor App Link via WhatsApp
+
 function shareVendorAppLink() {
-  const vendorAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker-vendor/'; 
+  const vendorAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker/vendor.html'; 
   const shareText = `🚚 *MilkCount Vendor App - పాల వ్యాపారి యాప్*\nడెలివరీ రూట్, ఆటో కలెక్షన్ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహించడానికి ఈ వెండర్ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${vendorAppUrl}`;
 
   if (navigator.share) {
@@ -46,4 +117,3 @@ function shareVendorAppLink() {
     window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
   }
 }
-
