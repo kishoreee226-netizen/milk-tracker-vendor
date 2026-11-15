@@ -31,3 +31,19 @@ function openVendorAboutModal() {
 function openVendorWhyChooseModal() {
   alert("ఎందుకు మమ్మల్ని ఎంచుకోవాలి?\n• జీరో ఎర్రర్ లెక్కలు\n• ఆటోమేటిక్ బిల్లింగ్ & లెడ్జర్\n• రియల్-టైమ్ డేటా సింక్\n• వాట్సాప్ రిపోర్ట్స్ & సపోర్ట్");
 }
+// Share Vendor App Link via WhatsApp
+function shareVendorAppLink() {
+  const vendorAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker-vendor/'; 
+  const shareText = `🚚 *MilkCount Vendor App - పాల వ్యాపారి యాప్*\nడెలివరీ రూట్, ఆటో కలెక్షన్ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహించడానికి ఈ వెండర్ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${vendorAppUrl}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'MilkCount Vendor App',
+      text: shareText,
+      url: vendorAppUrl
+    }).catch(() => {});
+  } else {
+    window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
+  }
+}
+
