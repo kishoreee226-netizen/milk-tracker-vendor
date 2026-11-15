@@ -91,68 +91,99 @@
     </section>
 
     <!-- 2. MAIN VENDOR APP -->
-    <div id="vendorAppSection" class="hidden-force flex-1 flex flex-col">
+<div id="vendorAppSection" class="hidden-force flex-1 flex flex-col">
 
-      <!-- TOP HEADER -->
-      <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white p-4 sticky top-0 z-30 shadow-md">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-10 h-10 rounded-xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/25 shadow-inner shrink-0">
-              <img src="./vendor-logo.png" alt="Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
-              <i class="ph-fill ph-truck text-2xl text-amber-200 hidden-force"></i>
-            </div>
-            <div class="min-w-0">
-              <h1 class="text-base font-extrabold tracking-tight leading-tight flex items-center gap-1.5">
-                MilkCount <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-semibold">Vendor</span>
-              </h1>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="text-[11px] text-amber-200 hover:text-white font-bold flex items-center gap-1 underline decoration-amber-300/50 underline-offset-2 truncate">
-                  <span id="headerVendorName" class="truncate">Vendor</span>
-                  <i class="ph-bold ph-pencil-simple text-[10px] shrink-0"></i>
-                </button>
-                <span id="headerVendorPhone" class="text-[10px] text-teal-100 font-medium shrink-0">9876543210</span>
-              </div>
-              <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                <button onclick="openVendorProfileModal()" class="text-[10px] bg-amber-400/20 text-amber-200 border border-amber-300/30 px-1.5 py-0.5 rounded font-semibold">ప్రొఫైల్ / PIN</button>
-                <button onclick="openVendorSupportModal()" class="text-[10px] bg-sky-400/25 text-sky-100 border border-sky-300/30 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5">
-                  <i class="ph-bold ph-ticket text-[10px]"></i> సపోర్ట్
-                </button>
-                <button onclick="logoutVendor()" class="text-[10px] bg-white/15 hover:bg-white/25 px-1.5 py-0.5 rounded text-white">లాగౌట్</button>
-              </div>
-            </div>
+  <!-- TOP HEADER (ఒకే header ట్యాగ్ లోపల అన్నీ నీట్‌గా సెట్ చేశాము) -->
+  <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white px-3.5 pt-3 pb-2.5 sticky top-0 z-30 shadow-md">
+    
+    <!-- Top Row: Left Info & Right Stacked Controls -->
+    <div class="flex items-start justify-between gap-2">
+      
+      <!-- Left Section: Logo & Vendor Details -->
+      <div class="flex items-start gap-2.5 min-w-0">
+        <!-- App/Vendor Logo -->
+        <div class="w-11 h-11 rounded-xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/25 shadow-inner shrink-0 mt-0.5">
+          <img src="./vendor-logo.png" alt="Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
+          <i class="ph-fill ph-truck text-2xl text-amber-200 hidden-force"></i>
+        </div>
+
+        <!-- Title, Name, Phone & Profile Pill -->
+        <div class="min-w-0">
+          <!-- App Title & Badge -->
+          <h1 class="text-base font-extrabold tracking-tight leading-tight flex items-center gap-1.5">
+            MilkCount 
+            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-semibold tracking-wide">Vendor</span>
+          </h1>
+
+          <!-- Vendor Name & Phone -->
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="text-xs text-amber-200 hover:text-white font-bold flex items-center gap-1 underline decoration-amber-300/50 underline-offset-2 truncate">
+              <span id="headerVendorName" class="truncate">Vendor</span>
+              <i class="ph-bold ph-pencil-simple text-[10px] shrink-0"></i>
+            </button>
+            <span class="text-white/30 text-[10px]">•</span>
+            <span id="headerVendorPhone" class="text-[11px] text-teal-100 font-medium shrink-0">9876543210</span>
           </div>
-  
- <!-- 1. Sync Button (with title) -->
-<button onclick="refreshAllVendorData()" title="సింక్" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all shrink-0">
-  <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-base"></i>
-</button>
 
-<!-- 2. Vertical 3-Dot Menu Button (with title) -->
-<button onclick="toggleVendorMenu()" title="మెనూ" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all shrink-0">
-  <i class="ph-bold ph-dots-three-vertical text-base"></i>
-</button>
+          <!-- Profile / PIN Action Pill -->
+          <div class="mt-1.5">
+            <button onclick="openVendorProfileModal()" class="text-[10px] bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/30 px-2 py-0.5 rounded-md font-semibold transition-colors inline-flex items-center gap-1">
+              <i class="ph-bold ph-user-gear text-[11px]"></i> ప్రొఫైల్ / PIN
+            </button>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <!-- Right Section: Stacked Logout (Top) -> Sync + Menu (Middle) -> Raise Ticket (Bottom) -->
+      <div class="flex flex-col items-end gap-1.5 shrink-0">
+        
+        <!-- 1. Top: Logout Button -->
+        <button onclick="logoutVendor()" class="text-[10px] bg-rose-500/25 hover:bg-rose-500/40 text-rose-100 border border-rose-300/30 px-2 py-0.5 rounded-md font-semibold flex items-center gap-1 transition-colors">
+          <i class="ph-bold ph-sign-out text-[11px]"></i> లాగౌట్
+        </button>
 
-        <!-- Date / Month Selector Bar -->
-        <div id="dateSelectorBar" class="mt-3 flex items-center justify-between bg-black/20 backdrop-blur-md rounded-xl p-1.5 border border-white/10">
-          <button onclick="shiftSelectedDate(-1)" class="p-1.5 hover:bg-white/15 rounded-lg text-white active:scale-90">
-            <i class="ph-bold ph-caret-left text-base"></i>
+        <!-- 2. Middle: Grouped Sync & 3-Dot Menu Buttons -->
+        <div class="flex items-center gap-1.5">
+          <button onclick="refreshAllVendorData()" title="సింక్" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
+            <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
           </button>
-          <div class="text-center">
-            <span id="activePeriodTitle" class="text-sm font-bold tracking-wide text-white">ఈరోజు డెలివరీ</span>
-            <span id="activePeriodSub" class="text-[10px] block text-teal-200 -mt-0.5 font-medium">Today</span>
-          </div>
-          <button onclick="shiftSelectedDate(1)" class="p-1.5 hover:bg-white/15 rounded-lg text-white active:scale-90">
-            <i class="ph-bold ph-caret-right text-base"></i>
+
+          <button onclick="toggleVendorMenu()" title="మెనూ" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
+            <i class="ph-bold ph-dots-three-vertical text-sm"></i>
           </button>
         </div>
-      </header>
 
-      <!-- MAIN SCROLLABLE CONTENT -->
-      <main class="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
+        <!-- 3. Bottom: Raise Ticket / Support Button -->
+        <button onclick="openVendorSupportModal()" class="text-[10px] bg-sky-400/25 hover:bg-sky-400/35 text-sky-100 border border-sky-300/30 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 transition-colors">
+          <i class="ph-bold ph-ticket text-[11px]"></i> Raise Ticket
+        </button>
 
-        <!-- TAB 1: DAILY DELIVERY ROUTE -->
+      </div>
+
+    </div>
+
+    <!-- Highlighted Date / Month Selector Bar (Compact & Inside Header) -->
+    <div id="dateSelectorBar" class="mt-2.5 flex items-center justify-between bg-teal-950/60 backdrop-blur-md rounded-xl px-2 py-1.5 border border-amber-300/30 shadow-inner">
+      <button onclick="shiftSelectedDate(-1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
+        <i class="ph-bold ph-caret-left text-sm"></i>
+      </button>
+      
+      <div class="text-center px-2">
+        <span id="activePeriodTitle" class="text-xs font-extrabold tracking-wide text-amber-200 block leading-tight">ఈరోజు డెలివరీ</span>
+        <span id="activePeriodSub" class="text-[10px] block text-teal-100 font-medium mt-0.5">Today</span>
+      </div>
+      
+      <button onclick="shiftSelectedDate(1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
+        <i class="ph-bold ph-caret-right text-sm"></i>
+      </button>
+    </div>
+
+  </header>
+
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="flex-1 overflow-y-auto px-3 pt-2.5 pb-24 space-y-2.5">
+
+ <!-- TAB 1: DAILY DELIVERY ROUTE -->
         <div id="tabDelivery" class="space-y-3.5">
 
           <!-- FEATURE 6: CUSTOMER QUALITY ALERTS BANNER -->
