@@ -121,7 +121,13 @@
               </div>
             </div>
           </div>
-
+<!-- TOP HEADER RIGHT BUTTONS (Sync + Vertical 3-Dot Menu) -->
+<div class="flex items-center gap-1.5">
+  
+<!-- 1. NEW: Vertical 3-Dot Menu Button -->
+  <button onclick="toggleVendorMenu()" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
+    <i class="ph-bold ph-dots-three-vertical text-base"></i>
+  </button>
           <button onclick="refreshAllVendorData()" class="flex items-center gap-1 bg-white/15 hover:bg-white/25 active:scale-95 text-xs px-2.5 py-1.5 rounded-lg border border-white/20 font-bold shrink-0">
             <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
             <span>సింక్</span>
