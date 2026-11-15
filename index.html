@@ -2167,13 +2167,21 @@ ${dueLines}
       showToast('నెలవారీ ఖర్చులు & నికర లాభం సేవ్ అయ్యాయి!');
     }
 
-    function shareCustomerAppLink() {
-      const appUrl = 'https://kishoreee226-netizen.github.io/milk-tracker/';
-      const msg = encodeURIComponent(`🥛 *${vendorProfile.name} - MilkCount App*
-మీ రోజువారీ పాల లెక్కలు, సెలవులు మరియు నెలవారీ బిల్లు కోసం ఈ యాప్‌ను మీ మొబైల్ నంబర్‌తో లాగిన్ అయి వాడుకోండి:
-${appUrl}`);
-      window.location.href = `whatsapp://send?text=${msg}`;
-    }
+// కస్టమర్ యాప్ లింక్ షేర్ చేయడానికి (అన్ని షేర్ ఆప్షన్లు వచ్చేలా నేటివ్ షేర్)
+function shareCustomerAppLink() {
+  const customerAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker/'; // మీ కస్టమర్ యాప్ లైవ్ లింక్
+  const shareText = `🥛 *MilkCount Customer App - కస్టమర్ యాప్*\nమీ రోజువారీ పాల లెక్కలు, షిఫ్ట్‌లు మరియు నెలవారీ బిల్లులు చూసుకోవడానికి ఈ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${customerAppUrl}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'MilkCount Customer App',
+      text: shareText,
+      url: customerAppUrl
+    }).catch(() => {});
+  } else {
+    window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
+  }
+}
 
     // 8. VENDOR IN-APP SUPPORT TICKETS (Raise Ticket & View Admin Replies)
     function openVendorSupportModal() {
