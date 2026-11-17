@@ -2463,7 +2463,8 @@ function shareCustomerAppLink() {
         <span class="truncate">నియమ నిబంధనలు (Terms & Conditions)</span>
       </a>
 
-     
+   </div>  
+
     <!-- Menu Footer / Logout -->
     <div class="pt-3 border-t border-slate-100 mt-auto">
       <button onclick="toggleVendorMenu(); logoutVendor();" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition-all">
@@ -2504,6 +2505,88 @@ function openVendorAboutModal() {
   alert("MilkCount Vendor App: డెయిరీ వ్యాపారులు, పాల సేకరణ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహణ కోసం నోట్ బుక్ లో రాసుకోవాల్సినవసరం లేకుండా ప్రత్యేకంగా రూపొందించబడిన డిజిటల్ స్మార్ట్ మేనేజ్‌మెంట్ ప్లాట్‌ఫారమ్. రియల్-టైమ్ వెండర్ - కస్టమర్ యాప్ ల live సింక్ & without error bill type of milks with shift wise ");
 }
 
+function closeVendorMenu(event) {
+  const menuModal = document.getElementById('vendorThreeDotMenuModal');
+  if (menuModal && event.target === menuModal) {
+    menuModal.classList.add('hidden-force');
+  }
+}
+
+<!---1-12 menu batons open functions--->
+// 1-to-12 Menu Options Navigation Handler (దీనిని కొత్తగా యాడ్ చేయండి)
+function vendorMenuAction(action) {
+  toggleVendorMenu();
+
+  if (action === 'qualityAlerts') {
+    switchVendorTab('delivery');
+    setDeliveryFilter('all');
+    setTimeout(() => {
+      const banner = document.getElementById('qualityAlertsBanner');
+      if (banner && !banner.classList.contains('hidden-force')) {
+        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        showToast('ఈరోజు కస్టమర్ నాణ్యత ఫిర్యాదులు ఏవీ లేవు ✓');
+      }
+    }, 300);
+  } 
+  else if (action === 'deliveryAll') {
+    switchVendorTab('delivery');
+    setDeliveryFilter('all');
+  } 
+  else if (action === 'deliveryPending') {
+    switchVendorTab('delivery');
+    setDeliveryFilter('pending');
+  } 
+  else if (action === 'deliverySkipped') {
+    switchVendorTab('delivery');
+    setDeliveryFilter('skipped');
+  } 
+  else if (action === 'areaWise') {
+    switchVendorTab('delivery');
+    setDeliveryFilter('all');
+    setTimeout(() => {
+      const areaSel = document.getElementById('routeAreaFilter');
+      if (areaSel) {
+        areaSel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        areaSel.focus();
+        showToast('పైన ఏరియా డ్రాప్‌డౌన్ నుండి ఏరియా ఎంచుకోండి 📍');
+      }
+    }, 300);
+  } 
+  else if (action === 'paidBills') {
+    switchVendorTab('billing');
+    setBillingFilter('paid');
+  } 
+  else if (action === 'unpaidBills' || action === 'pendingAmount') {
+    switchVendorTab('billing');
+    setBillingFilter('unpaid');
+  } 
+  else if (action === 'collectedAmount') {
+    switchVendorTab('billing');
+    setBillingFilter('all');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } 
+  else if (action === 'addCustomer') {
+    switchVendorTab('customers');
+    setTimeout(() => openAddCustomerModal(), 200);
+  } 
+  else if (action === 'summary') {
+    switchVendorTab('summary');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } 
+  else if (action === 'profitLoss') {
+    switchVendorTab('summary');
+    setTimeout(() => {
+      const expInput = document.getElementById('expMilkPurchaseInput');
+      if (expInput) {
+        expInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        expInput.focus();
+      }
+    }, 300);
+  }
+}
+<!---1-12 menu batons closed functions--->
+
 function openVendorWhyChooseModal() {
   alert("ఎందుకు మమ్మల్ని ఎంచుకోవాలి?\n• జీరో ఎర్రర్ లెక్కలు\n• ఆటోమేటిక్ బిల్లింగ్ & లెడ్జర్\n• రియల్-టైమ్ డేటా సింక్\n• రియల్-టైమ్ రూట్ గైడెన్స్\n• రియల్-టైమ్ వెండర్-కస్టమర్ పాల డెలివరీ\n• Zero Hard work Zero expense\n• రియల్-టైమ్ రోజువారీ ఆదాయ-వ్యయం\n• ప్రతిరోజు ఎన్ని లీటర్ పాలు పోయాలి అనేది ముందే తెలియడం\n• కస్టమర్ ల కి ఎవరికి ఏ పాలు ఎప్పుడూ ఎలా shift wise పోస్తున్నాం అనేది easy గ తెలియడం\n• వాట్సాప్ రిపోర్ట్స్ & సపోర్ట్\n• రియల్-టైమ్ Smart payments with UPI & many more");
 }
@@ -2524,7 +2607,7 @@ function shareVendorAppLink() {
 }
 </script>
 <!-- CUSTOM BRANDED ALERT MODAL (Hides github.io URL & shows 'MilkCount') -->
-<div id="customAppAlertModal" class="hidden-force fixed inset-0 z- bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-5">
+<div id="customAppAlertModal" class="hidden-force fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-5">
   <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
     <!-- App Brand Header -->
     <div class="bg-gradient-to-r from-teal-600 to-emerald-700 text-white px-4 py-3 flex items-center gap-2">
