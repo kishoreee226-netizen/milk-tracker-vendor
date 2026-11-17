@@ -2315,150 +2315,151 @@ function shareCustomerAppLink() {
     }
 </script>
 
+<!-- CUSTOM POPUP MODAL FOR ABOUT US & WHY CHOOSE US -->
+<div id="vendorInfoPopupModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4" onclick="if(event.target===this) closeVendorInfoPopup()">
+  <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3 max-h-[82vh] flex flex-col">
+    <div class="flex justify-between items-center pb-2 border-b border-slate-100 shrink-0">
+      <h4 id="vInfoPopupTitle" class="font-extrabold text-teal-800 text-sm flex items-center gap-1.5"></h4>
+      <button onclick="closeVendorInfoPopup()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+        <i class="ph-bold ph-x text-xs"></i>
+      </button>
+    </div>
+    <div id="vInfoPopupBody" class="text-xs text-slate-700 leading-relaxed overflow-y-auto custom-scroll space-y-2 pr-1"></div>
+    <div class="pt-2 border-t border-slate-100 shrink-0">
+      <button onclick="closeVendorInfoPopup()" class="w-full py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">
+        సరే (Close)
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
 <div id="vendorThreeDotMenuModal" class="fixed inset-0 bg-black/40 backdrop-blur-2xs z-50 flex justify-end items-start pt-12 pr-2.5 pb-3 hidden-force transition-opacity duration-200" onclick="closeVendorMenu(event)">
   
-  <!-- Slimmer Width (w-56) & Taller Height (max-h-[82vh]) Floating Box -->
-  <div class="w-60 max-h-[82vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-3 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
-
-    <!-- Menu Header (Fixed at top of box, won't scroll away) -->
-    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-2.5 shrink-0">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs">
+  <!-- Compact Floating Menu Box -->
+  <div class="w-60 max-h-[82vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-2.5 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
+    
+    <!-- Menu Header -->
+    <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-2 shrink-0">
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="w-7 h-7 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs shrink-0">
           <i class="ph-fill ph-truck text-amber-200"></i>
         </div>
-        <div>
+        <div class="min-w-0">
           <h4 class="text-xs font-extrabold text-slate-900 truncate" id="menuVendorNameDisplay">Vendor Menu</h4>
-          <span class="text-[9px] text-teal-700 font-semibold">MilkCount Vendor v9</span>
+          <span class="text-[9px] text-teal-700 font-semibold block truncate">MilkCount Vendor v10</span>
         </div>
       </div>
-      <button onclick="toggleVendorMenu()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+      <button onclick="toggleVendorMenu()" class="w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors shrink-0">
         <i class="ph-bold ph-x text-xs"></i>
       </button>
     </div>
 
     <!-- Scrollable Menu Options List -->
-    <div class="flex-1 min-h-0 space-y-1 overflow-y-auto overscroll-contain custom-scroll pr-1">
-        
-      <!-- GROUP 0: vendor info -->
-      <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">
-        Vendor Support
-      </div>
-
-       <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-user-gear text-base text-teal-600"></i>
-        <span>ప్రొఫైల్ & PIN మార్పు</span>
-      </button>
-
-
-      <button onclick="toggleVendorMenu(); openVendorSupportModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-ticket text-base text-sky-600"></i>
-        <span>సపోర్ట్ & టికెట్లు (Support)</span>
-      </button>
+    <div class="flex-1 min-h-0 space-y-0.5 overflow-y-auto overscroll-contain custom-scroll pr-0.5">
       
-      <button onclick="toggleVendorMenu(); shareCustomerAppLink();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-share-network text-base text-emerald-600"></i>
-        <span>కస్టమర్ యాప్ లింక్ షేర్ చేయి</span>
+      <!-- GROUP 0: VENDOR SUPPORT & PROFILE -->
+      <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Vendor Support</div>
+
+      <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-user-gear text-sm text-teal-600 shrink-0"></i>
+        <span class="truncate">ప్రొఫైల్ & PIN మార్పు</span>
       </button>
 
-      <button onclick="toggleVendorMenu(); shareVendorAppLink();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-share-network text-base text-teal-600"></i>
-        <span>వెండర్ యాప్ లింక్ షేర్ చేయి</span>
+      <button onclick="toggleVendorMenu(); openVendorSupportModal();" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-ticket text-sm text-sky-600 shrink-0"></i>
+        <span class="truncate">సపోర్ట్ & టికెట్లు (Support)</span>
       </button>
 
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-arrows-clockwise text-base text-slate-600"></i>
-        <span>డేటా సింక్ (Sync Data)</span>
-      </button>
-
- <!-- GROUP 1: DAILY DELIVERY & ALERTS -->
-      <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">డెలివరీ & అలర్ట్స్</div>
+      <!-- GROUP 1: DAILY DELIVERY & ALERTS -->
+      <div class="px-2.5 py-1 mt-1.5 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">డెలివరీ & అలర్ట్స్</div>
 
       <!-- 1. Quality Alerts -->
-      <button onclick="toggleVendorMenu(); populateAreaDropdown();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-rose-50 text-rose-700 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-warning-circle text-base text-rose-500 shrink-0"></i>
-        <span>నాణ్యత ఫిర్యాదులు (Quality Alerts)</span>
+      <button onclick="vendorMenuAction('qualityAlerts')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-rose-50 text-rose-700 text-[11px] font-bold transition-all text-left">
+        <i class="ph-fill ph-warning-circle text-sm text-rose-500 shrink-0"></i>
+        <span class="truncate">నాణ్యత ఫిర్యాదులు (Quality Alerts)</span>
       </button>
 
       <!-- 2. Delivery List (All Today) -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-list-checks text-base text-emerald-600 shrink-0"></i>
-        <span>డెలివరీ లిస్ట్ (Delivery List)</span>
+      <button onclick="vendorMenuAction('deliveryAll')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-list-checks text-sm text-emerald-600 shrink-0"></i>
+        <span class="truncate">డెలివరీ లిస్ట్ (Delivery List)</span>
       </button>
 
       <!-- 3. Poyalsina List (Pending Today) -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-hourglass-high text-base text-amber-600 shrink-0"></i>
-        <span>పోయాల్సిన లిస్ట్ (Pending)</span>
+      <button onclick="vendorMenuAction('deliveryPending')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-hourglass-high text-sm text-amber-600 shrink-0"></i>
+        <span class="truncate">పోయాల్సిన లిస్ట్ (Pending)</span>
       </button>
 
       <!-- 4. Skip List -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-prohibit text-base text-rose-600 shrink-0"></i>
-        <span>వద్దన్న లిస్ట్ (Skip List)</span>
+      <button onclick="vendorMenuAction('deliverySkipped')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-prohibit text-sm text-rose-600 shrink-0"></i>
+        <span class="truncate">వద్దన్న లిస్ట్ (Skip List)</span>
       </button>
 
       <!-- 5. Area-wise List -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-map-pin-line text-base text-teal-600 shrink-0"></i>
-        <span>ఏరియా వారీ లిస్ట్ (Area-wise)</span>
+      <button onclick="vendorMenuAction('areaWise')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-map-pin-line text-sm text-teal-600 shrink-0"></i>
+        <span class="truncate">ఏరియా వారీ లిస్ట్ (Area-wise)</span>
       </button>
 
       <!-- GROUP 2: BILLS & COLLECTIONS -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-indigo-700 uppercase tracking-wider bg-indigo-50/70 rounded-lg">బిల్లులు & వసూళ్లు</div>
+      <div class="px-2.5 py-1 mt-1.5 text-[10px] font-extrabold text-indigo-700 uppercase tracking-wider bg-indigo-50/70 rounded-lg">బిల్లులు & వసూళ్లు</div>
 
       <!-- 6. Paid Bills -->
-      <button onclick="vendorMenuGo('paidBills')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-check-circle text-base text-emerald-600 shrink-0"></i>
-        <span>కట్టిన బిల్లులు (Paid Bills)</span>
+      <button onclick="vendorMenuAction('paidBills')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-fill ph-check-circle text-sm text-emerald-600 shrink-0"></i>
+        <span class="truncate">కట్టిన బిల్లులు (Paid Bills)</span>
       </button>
 
       <!-- 7. Unpaid Bills -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-clock-countdown text-base text-rose-600 shrink-0"></i>
-        <span>బాకీ బిల్లులు (Unpaid Bills)</span>
+      <button onclick="vendorMenuAction('unpaidBills')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-fill ph-clock-countdown text-sm text-rose-600 shrink-0"></i>
+        <span class="truncate">బాకీ బిల్లులు (Unpaid Bills)</span>
       </button>
 
       <!-- 8. Collected Amount -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-hand-coins text-base text-emerald-700 shrink-0"></i>
-        <span>వసూలైన మొత్తం (Collected ₹)</span>
+      <button onclick="vendorMenuAction('collectedAmount')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-hand-coins text-sm text-emerald-700 shrink-0"></i>
+        <span class="truncate">వసూలైన మొత్తం (Collected ₹)</span>
       </button>
 
       <!-- 9. Pending Amount -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-wallet text-base text-amber-600 shrink-0"></i>
-        <span>రావాల్సిన బాకీ (Pending ₹)</span>
+      <button onclick="vendorMenuAction('pendingAmount')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-wallet text-sm text-amber-600 shrink-0"></i>
+        <span class="truncate">రావాల్సిన బాకీ (Pending ₹)</span>
       </button>
 
       <!-- GROUP 3: CUSTOMERS & BUSINESS SUMMARY -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-purple-700 uppercase tracking-wider bg-purple-50/70 rounded-lg">కస్టమర్లు & సారాంశం</div>
+      <div class="px-2.5 py-1 mt-1.5 text-[10px] font-extrabold text-purple-700 uppercase tracking-wider bg-purple-50/70 rounded-lg">కస్టమర్లు & సారాంశం</div>
 
       <!-- 10. Add Customers -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-teal-50 text-teal-800 text-xs font-extrabold transition-all text-left">
-        <i class="ph-bold ph-user-plus text-base text-teal-600 shrink-0"></i>
-        <span>కొత్త కస్టమర్ చేర్చు (Add Customer)</span>
+      <button onclick="vendorMenuAction('addCustomer')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-teal-50 text-teal-800 text-[11px] font-extrabold transition-all text-left">
+        <i class="ph-bold ph-user-plus text-sm text-teal-600 shrink-0"></i>
+        <span class="truncate">కొత్త కస్టమర్ చేర్చు (Add Customer)</span>
       </button>
 
       <!-- 11. Saramsham -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-chart-pie-slice text-base text-sky-600 shrink-0"></i>
-        <span>సారాంశం (Monthly Summary)</span>
+      <button onclick="vendorMenuAction('summary')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-chart-pie-slice text-sm text-sky-600 shrink-0"></i>
+        <span class="truncate">సారాంశం (Monthly Summary)</span>
       </button>
 
       <!-- 12. Profit & Loss -->
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-purple-50 text-purple-800 text-xs font-extrabold transition-all text-left">
-        <i class="ph-bold ph-trend-up text-base text-purple-600 shrink-0"></i>
-        <span>లాభనష్టాలు (Profit & Loss)</span>
+      <button onclick="vendorMenuAction('profitLoss')" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-purple-50 text-purple-800 text-[11px] font-extrabold transition-all text-left">
+        <i class="ph-bold ph-trend-up text-sm text-purple-600 shrink-0"></i>
+        <span class="truncate">లాభనష్టాలు (Profit & Loss)</span>
       </button>
-      
- <!-- GROUP 4: About BUSINESS SUMMARY -->
- <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Infermation</div>
 
-      <button onclick="toggleVendorMenu(); openVendorAboutModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-info text-base text-teal-600"></i>
-        <span>మా గురించి (About Us)</span>
+      <!-- GROUP 4: INFORMATION & SHARE -->
+      <div class="px-2.5 py-1 mt-1.5 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Information & Share</div>
+
+      <button onclick="toggleVendorMenu(); openVendorAboutModal();" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-[11px] font-bold transition-all text-left">
+        <i class="ph-bold ph-info text-sm text-teal-600 shrink-0"></i>
+        <span class="truncate">మా గురించి (About Us)</span>
       </button>
+
 
       <button onclick="toggleVendorMenu(); openVendorWhyChooseModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-sparkle text-base text-amber-600"></i>
