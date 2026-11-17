@@ -2314,42 +2314,25 @@ function shareCustomerAppLink() {
       }).join('');
     }
 </script>
-<!-- CUSTOM POPUP MODAL FOR ABOUT US & WHY CHOOSE US (z-[60] so it always appears on top) -->
-<div id="vendorInfoPopupModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[60] flex items-center justify-center hidden-force p-4" onclick="if(event.target===this) closeVendorInfoPopup()">
-  <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3 max-h-[82vh] flex flex-col">
-    <div class="flex justify-between items-center pb-2 border-b border-slate-100 shrink-0">
-      <h4 id="vInfoPopupTitle" class="font-extrabold text-teal-800 text-sm flex items-center gap-1.5"></h4>
-      <button onclick="closeVendorInfoPopup()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
-        <i class="ph-bold ph-x text-xs"></i>
-      </button>
-    </div>
-    <div id="vInfoPopupBody" class="text-xs text-slate-700 leading-relaxed overflow-y-auto custom-scroll space-y-2 pr-1"></div>
-    <div class="pt-2 border-t border-slate-100 shrink-0">
-      <button onclick="closeVendorInfoPopup()" class="w-full py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">
-        సరే (Close)
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
 <div id="vendorThreeDotMenuModal" class="fixed inset-0 bg-black/40 backdrop-blur-2xs z-50 flex justify-end items-start pt-12 pr-2.5 pb-3 hidden-force transition-opacity duration-200" onclick="closeVendorMenu(event)">
   
-  <!-- Compact Floating Menu Box -->
-  <div class="w-60 max-h-[82vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-2.5 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
-    
-    <!-- Menu Header -->
-    <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-2 shrink-0">
-      <div class="flex items-center gap-2 min-w-0">
-        <div class="w-7 h-7 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs shrink-0">
+  <!-- Slimmer Width (w-60) & Taller Height (max-h-[82vh]) Floating Box -->
+  <div class="w-60 max-h-[82vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-3 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
+
+    <!-- Menu Header (Fixed at top of box, won't scroll away) -->
+    <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-2.5 shrink-0">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs">
           <i class="ph-fill ph-truck text-amber-200"></i>
         </div>
-        <div class="min-w-0">
+        <div>
           <h4 class="text-xs font-extrabold text-slate-900 truncate" id="menuVendorNameDisplay">Vendor Menu</h4>
-          <span class="text-[9px] text-teal-700 font-semibold block truncate">MilkCount Vendor v10</span>
+          <span class="text-[9px] text-teal-700 font-semibold">MilkCount Vendor v9</span>
         </div>
       </div>
-      <button onclick="toggleVendorMenu()" class="w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors shrink-0">
+      <button onclick="toggleVendorMenu()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
         <i class="ph-bold ph-x text-xs"></i>
       </button>
     </div>
@@ -2357,7 +2340,7 @@ function shareCustomerAppLink() {
     <!-- Scrollable Menu Options List -->
     <div class="flex-1 min-h-0 space-y-0.5 overflow-y-auto overscroll-contain custom-scroll pr-0.5">
       
-          <!-- GROUP 0: VENDOR SUPPORT & PROFILE -->
+ <!-- GROUP 0: VENDOR SUPPORT & PROFILE -->
       <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Vendor Support</div>
 
       <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-[11px] font-bold transition-all text-left">
