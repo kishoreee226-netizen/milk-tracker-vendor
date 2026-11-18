@@ -2469,8 +2469,11 @@ function shareCustomerAppLink() {
       if (amount <= 0) return alert('ఈ కస్టమర్‌కు బాకీ ₹0 ఉంది.');
 
       const upiUrl = `upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent(vendorProfile.name || 'MilkCount')}&am=${amount}&cu=INR`;
-      const qrApi = `https://qrserver.com{encodeURIComponent(upiUrl)}`;
-
+            
+const u = new URL('https://qrserver.com');
+  u.searchParams.set('size', '220x220');
+  u.searchParams.set('data', upiUrl);
+  const qrApi = u.toString();
       document.getElementById('qrCustomerName').innerText = custName;
       document.getElementById('qrAmountDisplay').innerText = amount.toLocaleString('en-IN');
       document.getElementById('upiQrImage').src = qrApi;
