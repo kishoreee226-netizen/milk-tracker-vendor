@@ -1597,7 +1597,8 @@ const newUpi = document.getElementById('editVendorUpiInput').value.trim();
         }`;
 
         const badgeHtml = info.status === 'skipped'
-          ? `<span class="text-xs font-extrabold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-lg">వద్దు (Skip)</span>`
+          ? `<span class="text-[11px] font-extrabold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded-lg">వద్దు (Skip)</span>`
+
           : info.status === 'none'
             ? `<span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Manual (0L)</span>`
             : `<span class="text-sm font-black ${info.isExtra ? 'text-amber-800 bg-amber-100 border border-amber-300' : 'text-teal-800 bg-teal-50 border border-teal-200'} px-2.5 py-1 rounded-lg">
