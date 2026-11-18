@@ -2462,7 +2462,7 @@ function shareCustomerAppLink() {
     // ==========================================
 
     // 1. Show Dynamic UPI QR Code for Customer Bill
-                       function openUpiQrModal(custName, amount) {
+                           function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2473,19 +2473,26 @@ function shareCustomerAppLink() {
 
       document.getElementById('qrCustomerName').innerText = custName;
       document.getElementById('qrAmountDisplay').innerText = amount.toLocaleString('en-IN');
-      document.getElementById('qrUpiIdLabel').innerText = 'UPI ID: ' + upi;
+      document.getElementById('qrUpiIdLabel').innerText = 'Receiver UPI: ' + upi;
       document.getElementById('upiQrModal').classList.remove('hidden-force');
 
+      // UPI Link for Customer to Pay Vendor
       const upiUrl = 'upi://pay?pa=' + encodeURIComponent(upi) + '&pn=' + encodeURIComponent(vendorProfile.name || 'MilkCount') + '&am=' + amount + '&cu=INR';
+      
+      // Split URL so mobile editor never cuts it
+      const qrBase = ['https:/', '://qrserver.com', 'v1', 'create-qr-code', ''].join('/');
+      const qrImgSrc = qrBase + '?size=180x180&data=' + encodeURIComponent(upiUrl);
+
+      const waMsg = `నమస్కారం *${custName}* గారు,\nమీ పాల బిల్లు బాకీ *₹${amount}* చెల్లించడానికి కింది UPI ID కి PhonePe / GPay ద్వారా పే చేయండి:\n\n*UPI ID:* ${upi}\n*మొత్తం:* ₹${amount}\n\n- ${vendorProfile.name || 'MilkCount Vendor'}`;
+      const waShareUrl = ['https:/', 'wa.me', ''].join('/') + '?text=' + encodeURIComponent(waMsg);
+
       const qrBox = document.getElementById('upiQrBox');
       qrBox.innerHTML = `
-        <div class="flex flex-col items-center gap-3 py-2">
-          <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
-            <i class="ph-fill ph-qr-code text-4xl"></i>
-          </div>
-          <p class="text-[11px] font-bold text-slate-600 text-center">కింది బటన్ నొక్కి నేరుగా PhonePe / GPay ద్వారా చెల్లించండి:</p>
-          <a href="${upiUrl}" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm">
-            <i class="ph-bold ph-currency-inr"></i> Pay ₹${amount} via UPI App
+        <div class="flex flex-col items-center gap-2.5">
+          <img src="${qrImgSrc}" alt="Scan UPI QR" class="w-44 h-44 rounded-xl border border-slate-200 p-1 bg-white">
+          <p class="text-[10px] font-bold text-slate-500">కస్టమర్ ఫోన్‌తో ఈ QR స్కాన్ చేయించండి</p>
+          <a href="${waShareUrl}" target="_blank" class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
+            <i class="ph-bold ph-whatsapp-logo text-base"></i> కస్టమర్‌కు UPI వివరాలు పంపు
           </a>
         </div>
       `;
