@@ -95,10 +95,10 @@
 
   <!-- TOP HEADER (ఒకే header ట్యాగ్ లోపల అన్నీ నీట్‌గా సెట్ చేశాము) -->
   <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white px-3 pt-2.5 pb-2 sticky top-0 z-30 shadow-md">
-  
+
   <!-- 3-Row Exact Parallel Grid Layout -->
   <div class="grid grid-cols-[auto_1fr_auto] gap-x-2.5 gap-y-1 items-center">
-    
+
  <!-- Logo: మొత్తం 3 వరుసలకు సమానంగా (Row 1, 2, 3) -->
     <div class="row-span-3 w-12 h-14 rounded-xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/25 shadow-inner shrink-0">
       <img src="./vendor-logo.png" alt="Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
@@ -159,12 +159,12 @@
     <button onclick="shiftSelectedDate(-1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
       <i class="ph-bold ph-caret-left text-sm"></i>
     </button>
-    
+
     <div class="text-center px-2">
       <span id="activePeriodTitle" class="text-xs font-extrabold tracking-wide text-amber-200 block leading-tight">ఈరోజు డెలివరీ</span>
       <span id="activePeriodSub" class="text-[10px] block text-teal-100 font-medium mt-0.5">Today</span>
     </div>
-    
+
     <button onclick="shiftSelectedDate(1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
       <i class="ph-bold ph-caret-right text-sm"></i>
     </button>
@@ -304,11 +304,18 @@
           </div>
 
           <!-- Billing Filter -->
-          <div class="flex gap-1.5 text-[11px] font-bold">
-            <button onclick="setBillingFilter('all')" id="billFilterAllBtn" class="px-3 py-1 rounded-full bg-teal-700 text-white">అందరూ</button>
-            <button onclick="setBillingFilter('unpaid')" id="billFilterUnpaidBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">బాకీ ఉన్నవారు (Unpaid)</button>
-            <button onclick="setBillingFilter('paid')" id="billFilterPaidBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">కట్టినవారు (Paid)</button>
+                    <!-- Billing Filter & Excel Download -->
+          <div class="flex items-center justify-between gap-1.5 flex-wrap">
+            <div class="flex gap-1.5 text-[11px] font-bold">
+              <button onclick="setBillingFilter('all')" id="billFilterAllBtn" class="px-3 py-1 rounded-full bg-teal-700 text-white">అందరూ</button>
+              <button onclick="setBillingFilter('unpaid')" id="billFilterUnpaidBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">బాకీ (Unpaid)</button>
+              <button onclick="setBillingFilter('paid')" id="billFilterPaidBtn" class="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600">కట్టినవి (Paid)</button>
+            </div>
+            <button onclick="exportMonthlyBillingCSV()" class="px-2.5 py-1 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-2xs active:scale-95">
+              <i class="ph-bold ph-file-xls text-xs"></i> Excel డౌన్‌లోడ్
+            </button>
           </div>
+
 
           <div id="billingCustomerList" class="space-y-2.5"></div>
         </div>
@@ -424,7 +431,7 @@
     <i class="ph-fill ph-share-fat text-sm"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
   </button>
 </div>
-       
+
 <!-- Share Vendor App Card -->
 <div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5 mt-3">
   <h3 class="text-xs font-bold text-sky-900 flex items-center gap-1.5">
@@ -461,6 +468,88 @@
       </nav>
     </div>
 
+    <!-- MODAL: UPI QR CODE FOR INSTANT CUSTOMER PAYMENT -->
+    <div id="upiQrModal" class="fixed inset-0 bg-black/65 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4" onclick="if(event.target===this) this.classList.add('hidden-force')">
+      <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl text-center space-y-3">
+        <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
+          <h4 class="font-extrabold text-teal-800 text-sm flex items-center gap-1.5">
+            <i class="ph-fill ph-qr-code text-base"></i> Smart UPI QR పేమెంట్
+          </h4>
+          <button onclick="document.getElementById('upiQrModal').classList.add('hidden-force')" class="text-slate-400 hover:text-slate-600">
+            <i class="ph-bold ph-x text-sm"></i>
+          </button>
+        </div>
+        <div>
+          <p id="qrCustomerName" class="text-xs font-bold text-slate-600">కస్టమర్ పేరు</p>
+          <p class="text-2xl font-black text-slate-900 mt-0.5">₹<span id="qrAmountDisplay">0</span></p>
+        </div>
+        <div class="bg-slate-50 border-2 border-dashed border-teal-300 rounded-2xl p-3 flex justify-center">
+          <img id="upiQrImage" src="" alt="UPI QR Code" class="w-44 h-44 rounded-lg">
+        </div>
+        <p id="qrUpiIdLabel" class="text-[11px] font-bold text-teal-800 bg-teal-50 py-1 px-2 rounded-lg"></p>
+        <p class="text-[10px] text-slate-500">PhonePe, GPay లేదా Paytm తో స్కాన్ చేసి చెల్లించవచ్చు.</p>
+      </div>
+    </div>
+
+    <!-- MODAL: MILK COLLECTION FROM FARMERS (పాల సేకరణ) -->
+    <div id="milkCollectionModal" class="fixed inset-0 bg-black/65 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4" onclick="if(event.target===this) this.classList.add('hidden-force')">
+      <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl space-y-3 max-h-[88vh] flex flex-col">
+        <div class="flex justify-between items-center pb-2 border-b border-slate-100 shrink-0">
+          <div>
+            <h4 class="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+              <i class="ph-fill ph-drop text-amber-600 text-base"></i> పాల సేకరణ (Milk Collection)
+            </h4>
+            <p class="text-[10px] text-slate-500">రైతులు / డెయిరీ నుండి సేకరించిన పాల లెక్క</p>
+          </div>
+          <button onclick="document.getElementById('milkCollectionModal').classList.add('hidden-force')" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+            <i class="ph-bold ph-x text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Add Collection Form -->
+        <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 space-y-2 shrink-0">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold text-slate-600 block">తేదీ:</label>
+              <input type="date" id="mcDateInput" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-slate-600 block">రైతు / కేంద్రం పేరు:</label>
+              <input type="text" id="mcFarmerInput" placeholder="ఉదా: వెంకటయ్య" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-1.5">
+            <div>
+              <label class="text-[10px] font-bold text-slate-600 block">రకం:</label>
+              <select id="mcMilkTypeInput" class="w-full px-1.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+                <option value="Buffalo">🐃 గేదె</option>
+                <option value="Cow">🐄 ఆవు</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-slate-600 block">లీటర్లు (L):</label>
+              <input type="number" id="mcLitersInput" step="0.5" placeholder="20" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-slate-600 block">రేటు (₹/L):</label>
+              <input type="number" id="mcRateInput" placeholder="60" class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold">
+            </div>
+          </div>
+          <button id="saveMcBtn" onclick="saveMilkCollectionEntry()" class="w-full py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold active:scale-95">
+            + పాల సేకరణ నమోదు చేయి
+          </button>
+        </div>
+
+        <!-- Collection Summary & History List -->
+        <div class="flex items-center justify-between text-xs font-extrabold text-slate-700 px-1 shrink-0">
+          <span>ఈ నెల సేకరణ: <span id="mcMonthTotalLiters" class="text-teal-700">0 L</span></span>
+          <span>మొత్తం: <span id="mcMonthTotalAmt" class="text-rose-700">₹0</span></span>
+        </div>
+
+        <div id="mcHistoryList" class="flex-1 min-h-0 overflow-y-auto custom-scroll space-y-1.5 pr-0.5"></div>
+      </div>
+    </div>
+
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300 pointer-events-none opacity-0 translate-y-4 flex items-center gap-2">
       <i class="ph-bold ph-check text-emerald-400"></i>
@@ -492,6 +581,11 @@
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">కొత్త 4-డిజిట్ PIN:</label>
             <input type="tel" id="editVendorPinInput" maxlength="4" inputmode="numeric" placeholder="4 అంకెల PIN" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-black tracking-widest focus:outline-none focus:border-teal-600">
           </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">మీ UPI ID (PhonePe / GPay QR కోసం):</label>
+            <input type="text" id="editVendorUpiInput" placeholder="ఉదా: 9876543210@ybl" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
+          </div>
+          
         </div>
 
         <div class="flex gap-2 pt-1">
@@ -569,6 +663,21 @@
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">ఏరియా / రూట్ (Area / Route):</label>
             <input type="text" id="custAreaInput" placeholder="ఉదా: హన్మకొండ / కాజీపేట" value="General" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
           </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">Google Maps లొకేషన్ లింక్ (Optional):</label>
+            <input type="url" id="custMapLinkInput" placeholder="https://google.com..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600">
+          </div>
+
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 mb-1 block">Google Maps లొకేషన్ (ఇంటి దారి కోసం):</label>
+            <div class="flex gap-1.5">
+              <input type="text" id="custMapLinkInput" placeholder="GPS నొక్కండి లేదా లింక్ పేస్ట్ చేయండి" class="flex-1 px-2.5 py-2 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600">
+              <button type="button" onclick="captureCustomerCurrentGPS()" class="px-2.5 py-2 rounded-xl bg-teal-700 text-white text-[10px] font-extrabold shrink-0 active:scale-95">
+                📍 GPS
+              </button>
+            </div>
+          </div>
+          
           <div id="custPinFieldGroup">
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">కస్టమర్ లాగిన్ PIN (4 అంకెలు):</label>
             <input type="text" id="custPinInput" maxlength="4" value="1234" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
@@ -894,6 +1003,7 @@
       document.getElementById('editVendorPhoneDisplay').value = vendorProfile.phone;
       document.getElementById('editVendorNameInput').value = vendorProfile.name;
       document.getElementById('editVendorPinInput').value = vendorProfile.pin;
+      document.getElementById('editVendorUpiInput').value = vendorProfile.upi_id || '';
       document.getElementById('vendorProfileModal').classList.remove('hidden-force');
     }
 
@@ -904,6 +1014,10 @@
     async function saveVendorProfileChanges() {
       const newName = document.getElementById('editVendorNameInput').value.trim();
       const newPin = document.getElementById('editVendorPinInput').value.trim();
+
+const newUpi = document.getElementById('editVendorUpiInput').value.trim();
+// update లో: .update({ name: newName, pin: newPin, upi_id: newUpi })
+// మరియు vendorProfile.upi_id = newUpi;
 
       if (!newName) return alert('దయచేసి డెయిరీ / వెండర్ పేరు నమోదు చేయండి.');
       if (newPin.length !== 4 || isNaN(newPin)) return alert('PIN ఖచ్చితంగా 4 అంకెలు మాత్రమే ఉండాలి.');
@@ -924,6 +1038,7 @@
 
       vendorProfile.name = newName;
       vendorProfile.pin = newPin;
+      vendorProfile.upi_id = newUpi;
       localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: newName, phone: vendorProfile.phone }));
       localStorage.setItem('milkcount_vendor_session', JSON.stringify(vendorProfile));
 
@@ -1508,6 +1623,8 @@
                 <span>${shiftIcon} ${custShift}</span>
                 <span>• 📍 ${custArea}</span>
                 <a href="tel:${cust.phone}" class="hover:text-teal-700 font-semibold">• 📞 ${cust.phone}</a>
+            <button onclick="openCustomerMap('${cust.id}')" class="text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded font-extrabold">🗺️ Map</button>
+
               </div>
               ${info.quality_note ? `<div class="text-[10px] text-amber-800 font-bold mt-0.5">⚠️ ${info.quality_note}</div>` : ''}
             </div>
@@ -1778,6 +1895,10 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*\n` : ''}${shift !== 'all' ? 
             <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, '${stats.rate}', ${stats.amount}, ${ledger.prev_due}, ${ledger.paid_amount}, ${balanceDue})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
               <i class="ph-fill ph-whatsapp-logo"></i> వాట్సాప్ బిల్
             </button>
+<button onclick="openUpiQrModal('${(cust.name || cust.phone).replace(/'/g, '')}', ${balanceDue})" class="py-1.5 px-2 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-bold flex items-center justify-center gap-1">
+  <i class="ph-bold ph-qr-code"></i> QR
+</button>
+
           </div>
         `;
         listEl.appendChild(card);
@@ -1904,7 +2025,8 @@ ${dueLines}
         card.innerHTML = `
           <div class="min-w-0">
             <h4 class="font-bold text-slate-800 text-sm truncate">${cust.name || 'Customer'}</h4>
-            <p class="text-[11px] text-slate-500">📞 ${cust.phone} • 📍 ${cArea}</p>
+<p class="text-[11px] text-slate-500">📞 ${cust.phone} • 📍 ${cArea} ${cust.map_link ? `<a href="${cust.map_link}" target="_blank" class="text-teal-700 font-extrabold underline ml-1">🗺️ Map</a>` : ''}</p>
+
             <p class="text-[10px] font-bold text-teal-800 mt-0.5">${[mBadge, eBadge].filter(Boolean).join(' • ')}</p>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
@@ -2006,6 +2128,7 @@ ${dueLines}
       const editId = document.getElementById('editCustomerId').value;
       const name = document.getElementById('custNameInput').value.trim();
       const phone = document.getElementById('custPhoneInput').value.trim();
+      const map_link = document.getElementById('custMapLinkInput').value.trim();
       const morning_milk_type = document.getElementById('custMorningMilkType').value;
       const morning_qty = Math.max(0, parseFloat(document.getElementById('custMorningQuota').value) || 0);
       const morning_rate = Math.max(1, parseFloat(document.getElementById('custMorningRate').value) || 75);
@@ -2029,6 +2152,7 @@ ${dueLines}
       const payload = {
         name,
         pin,
+        map_link,
         milk_type,
         shift,
         route_area,
@@ -2313,11 +2437,156 @@ function shareCustomerAppLink() {
         `;
       }).join('');
     }
+    
+        // ==========================================
+    // NEW V12 FEATURES: UPI QR, MAPS, CSV EXPORT & MILK COLLECTION
+    // ==========================================
+
+    // 1. Show Dynamic UPI QR Code for Customer Bill
+    function openUpiQrModal(custName, amount) {
+      const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
+      if (!upi) {
+        alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
+        openVendorProfileModal();
+        return;
+      }
+      if (amount <= 0) return alert('ఈ కస్టమర్‌కు బాకీ ₹0 ఉంది.');
+
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent(vendorProfile.name || 'MilkCount')}&am=${amount}&cu=INR`;
+      const qrApi = `https://qrserver.com{encodeURIComponent(upiUrl)}`;
+
+      document.getElementById('qrCustomerName').innerText = custName;
+      document.getElementById('qrAmountDisplay').innerText = amount.toLocaleString('en-IN');
+      document.getElementById('upiQrImage').src = qrApi;
+      document.getElementById('qrUpiIdLabel').innerText = `UPI ID: ${upi}`;
+      document.getElementById('upiQrModal').classList.remove('hidden-force');
+    }
+
+    // 2. Export Monthly Billing Report as Excel (CSV)
+    function exportMonthlyBillingCSV() {
+      if (!allCustomers || allCustomers.length === 0) return alert('కస్టమర్ల డేటా లేదు.');
+      const y = selectedBillingMonth.getFullYear();
+      const m = selectedBillingMonth.getMonth();
+      const monthName = `${ENGLISH_MONTHS[m]}_${y}`;
+
+      let csv = '\uFEFFCustomer Name,Phone,Area,Delivered Days,Total Liters,Current Bill (Rs),Prev Due (Rs),Paid (Rs),Balance Due (Rs),Mode\n';
+
+      allCustomers.forEach(cust => {
+        const st = calculateCustomerMonthStats(cust, y, m);
+        const led = billingLedgerByUser[cust.id] || { prev_due: 0, paid_amount: 0, payment_mode: 'Cash' };
+        const totalPay = st.amount + led.prev_due;
+        const bal = Math.max(0, totalPay - led.paid_amount);
+        csv += `"${cust.name || ''}","${cust.phone}","${cust.route_area || 'General'}",${st.deliveredDays},${st.totalLiters},${st.amount},${led.prev_due},${led.paid_amount},${bal},"${led.payment_mode}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MilkCount_Billing_${monthName}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Excel (CSV) బిల్లింగ్ రిపోర్ట్ డౌన్‌లోడ్ అయ్యింది!');
+    }
+
+    // 3. Milk Collection from Farmers (పాల సేకరణ)
+    function openMilkCollectionModal() {
+      document.getElementById('mcDateInput').value = formatDateISO(new Date());
+      document.getElementById('mcFarmerInput').value = '';
+      document.getElementById('mcLitersInput').value = '';
+      document.getElementById('milkCollectionModal').classList.remove('hidden-force');
+      loadMilkCollections();
+    }
+
+    async function saveMilkCollectionEntry() {
+      const cDate = document.getElementById('mcDateInput').value;
+      const farmer = document.getElementById('mcFarmerInput').value.trim();
+      const mType = document.getElementById('mcMilkTypeInput').value;
+      const liters = parseFloat(document.getElementById('mcLitersInput').value) || 0;
+      const rate = parseFloat(document.getElementById('mcRateInput').value) || 0;
+
+      if (!cDate || !farmer || liters <= 0 || rate <= 0) {
+        return alert('దయచేసి తేదీ, రైతు పేరు, లీటర్లు మరియు రేటు నమోదు చేయండి.');
+      }
+
+      const totalAmt = Math.round(liters * rate);
+      const btn = document.getElementById('saveMcBtn');
+      btn.disabled = true;
+      btn.innerText = 'సేవ్ అవుతోంది...';
+
+      const { error } = await db.from('vendor_milk_collections').insert([{
+        vendor_phone: vendorProfile.phone,
+        collection_date: cDate,
+        farmer_name: farmer,
+        milk_type: mType,
+        liters: liters,
+        rate_per_ltr: rate,
+        total_amount: totalAmt
+      }]);
+
+      btn.disabled = false;
+      btn.innerText = '+ పాల సేకరణ నమోదు చేయి';
+
+      if (error) return alert('Error: ' + error.message);
+      document.getElementById('mcLitersInput').value = '';
+      showToast('పాల సేకరణ వివరాలు సేవ్ అయ్యాయి!');
+      loadMilkCollections();
+    }
+
+    async function loadMilkCollections() {
+      const listEl = document.getElementById('mcHistoryList');
+      listEl.innerHTML = '<p class="text-center text-xs text-slate-400 py-3">లోడ్ అవుతోంది...</p>';
+
+      const { data, error } = await db.from('vendor_milk_collections')
+        .select('*')
+        .eq('vendor_phone', vendorProfile.phone)
+        .order('collection_date', { ascending: false })
+        .limit(30);
+
+      if (error || !data || data.length === 0) {
+        document.getElementById('mcMonthTotalLiters').innerText = '0 L';
+        document.getElementById('mcMonthTotalAmt').innerText = '₹0';
+        listEl.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">ఇంకా పాల సేకరణ ఎంట్రీలు లేవు.</p>';
+        return;
+      }
+
+      let sumL = 0;
+      let sumAmt = 0;
+      listEl.innerHTML = data.map(row => {
+        sumL += parseFloat(row.liters || 0);
+        sumAmt += parseFloat(row.total_amount || 0);
+        return `
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex items-center justify-between text-xs">
+            <div>
+              <span class="font-extrabold text-slate-800">${row.farmer_name}</span>
+              <span class="text-[10px] text-slate-500 block">${row.collection_date} • ${row.milk_type === 'Cow' ? '🐄 ఆవు' : '🐃 గేదె'} (${row.liters}L × ₹${row.rate_per_ltr})</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-black text-teal-800">₹${row.total_amount}</span>
+              <button onclick="deleteMilkCollection('${row.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+                <i class="ph-bold ph-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('mcMonthTotalLiters').innerText = `${sumL.toFixed(1)} L`;
+      document.getElementById('mcMonthTotalAmt').innerText = `₹${sumAmt.toLocaleString('en-IN')}`;
+    }
+
+    async function deleteMilkCollection(id) {
+      if (!confirm('ఈ సేకరణ ఎంట్రీని తొలగించాలా?')) return;
+      await db.from('vendor_milk_collections').delete().eq('id', id);
+      loadMilkCollections();
+    }
+    
 </script>
 
 <!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
 <div id="vendorThreeDotMenuModal" class="fixed inset-0 bg-black/40 backdrop-blur-2xs z-50 flex justify-end items-start pt-12 pr-2.5 pb-3 hidden-force transition-opacity duration-200" onclick="closeVendorMenu(event)">
-  
+
   <!-- Wider (w-[265px]) & Taller (max-h-[84vh]) Floating Box -->
   <div class="w-[265px] max-h-[84vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-3 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
 
@@ -2339,7 +2608,7 @@ function shareCustomerAppLink() {
 
     <!-- Scrollable Menu Options List -->
     <div class="flex-1 min-h-0 space-y-1 overflow-y-auto overscroll-contain custom-scroll pr-0.5">
-      
+
       <!-- GROUP 0: VENDOR SUPPORT & PROFILE -->
       <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Vendor Support</div>
 
@@ -2409,6 +2678,18 @@ function shareCustomerAppLink() {
         <span>రావాల్సిన బాకీ (Pending ₹)</span>
       </button>
 
+      <!-- 13. Milk Collection from Farmers -->
+      <button onclick="toggleVendorMenu(); openMilkCollectionModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-900 text-xs font-extrabold transition-all text-left">
+        <i class="ph-bold ph-buckets text-base text-amber-600 shrink-0"></i>
+        <span>పాల సేకరణ (Milk Collection)</span>
+      </button>
+
+      <!-- 14. Export Excel Report -->
+      <button onclick="toggleVendorMenu(); exportMonthlyBillingCSV();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition-all text-left">
+        <i class="ph-bold ph-file-xls text-base text-emerald-600 shrink-0"></i>
+        <span>నెలవారీ బిల్లు Excel డౌన్‌లోడ్</span>
+      </button>
+
       <!-- GROUP 3: CUSTOMERS & BUSINESS SUMMARY -->
       <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-purple-700 uppercase tracking-wider bg-purple-50/70 rounded-lg">కస్టమర్లు & సారాంశం</div>
 
@@ -2426,6 +2707,7 @@ function shareCustomerAppLink() {
         <i class="ph-bold ph-trend-up text-base text-purple-600 shrink-0"></i>
         <span>లాభనష్టాలు (Profit & Loss)</span>
       </button>
+
 
       <!-- GROUP 4: SHARE APP LINKS -->
       <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider bg-emerald-50/70 rounded-lg">యాప్ లింక్ షేర్ (Share App)</div>
@@ -2452,7 +2734,7 @@ function shareCustomerAppLink() {
         <i class="ph-bold ph-sparkle text-base text-amber-600 shrink-0"></i>
     <span>ఎందుకు మమ్మల్ని ఎంచుకోవాలి?</span>
       </button>
-   
+
             <a href="./privacy.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-shield-check text-base text-slate-600 shrink-0"></i>
         <span>గోప్యతా విధానం (Privacy Policy)</span>
@@ -2638,6 +2920,49 @@ function shareVendorAppLink() {
       modal.classList.remove('hidden-force');
     }
   };
+  
+      // 1. Capture Current GPS Location for Customer House
+    function captureCustomerCurrentGPS() {
+      if (!navigator.geolocation) {
+        return alert('మీ ఫోన్‌లో GPS లొకేషన్ సపోర్ట్ లేదు.');
+      }
+      showToast('మీ ప్రస్తుత GPS లొకేషన్ తీసుకుంటోంది...');
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          // Save exact coordinates format: "lat,lng"
+          document.getElementById('custMapLinkInput').value = `${lat},${lng}`;
+          showToast('ఇంటి GPS లొకేషన్ క్యాప్చర్ అయ్యింది! సేవ్ చేయండి ✓');
+        },
+        (err) => {
+          alert('దయచేసి ఫోన్‌లో Location (GPS) ఆన్ చేసి మళ్ళీ ప్రయత్నించండి.');
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    // 2. Open Exact Turn-by-Turn Route in Google Maps App
+    function openCustomerMap(custId) {
+      const cust = allCustomers.find(c => c.id === custId);
+      if (!cust) return;
+      const loc = (cust.map_link || '').trim();
+
+      if (!loc) {
+        alert(`"${cust.name}" ఇంటి లొకేషన్ ఇంకా సేవ్ చేయలేదు!\n\nకస్టమర్లు ట్యాబ్‌లో ఎడిట్ (✏️) నొక్కి వారి ఇంటి దగ్గర "📍 GPS" బటన్ నొక్కి సేవ్ చేయండి.`);
+        return;
+      }
+
+      // If user pasted a full https:// map link
+      if (loc.startsWith('http')) {
+        window.open(loc, '_blank');
+      } else {
+        // Opens Google Maps Turn-by-Turn Navigation directly to lat,lng
+        const navUrl = 'https://google.com' + encodeURIComponent(loc);
+        window.open(navUrl, '_blank');
+      }
+    }
+    
 </script>
 
 </body>
