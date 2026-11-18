@@ -2461,7 +2461,7 @@ function shareCustomerAppLink() {
     // NEW V12 FEATURES: UPI QR, CSV EXPORT & MILK COLLECTION
     // ==========================================
 
-        function openUpiQrModal(custName, amount) {
+            function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2497,7 +2497,6 @@ function shareCustomerAppLink() {
         </div>
       `;
 
-      // Load lightweight qrcode-generator from Cloudflare CDN
       if (window.qrcode) {
         buildSvgFromLib(upiUrl);
       } else {
@@ -2505,7 +2504,13 @@ function shareCustomerAppLink() {
         sc.src = 'https://cloudflare.com';
         sc.onload = function() { buildSvgFromLib(upiUrl); };
         sc.onerror = function() {
-          document.getElementById('actualQrCanvasBox').innerHTML = `<p class="text-sm font-black text-slate-900 p-3">${upi}</p>`;
+          document.getElementById('actualQrCanvasBox').innerHTML = `
+            <div class="p-3 text-center">
+              <i class="ph-fill ph-qr-code text-4xl text-teal-700 mb-1 block"></i>
+              <span class="text-[10px] text-slate-500 block">UPI ID ద్వారా చెల్లించండి:</span>
+              <strong class="text-sm text-slate-900 select-all">${upi}</strong>
+            </div>
+          `;
         };
         document.body.appendChild(sc);
       }
