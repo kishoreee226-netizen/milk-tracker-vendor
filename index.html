@@ -21,6 +21,9 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- QR Code Generator CDN -->
+  <script src="https://cloudflare.com"></script>
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -484,7 +487,8 @@
           <p class="text-2xl font-black text-slate-900 mt-0.5">₹<span id="qrAmountDisplay">0</span></p>
         </div>
         <div class="bg-slate-50 border-2 border-dashed border-teal-300 rounded-2xl p-3 flex justify-center">
-          <img id="upiQrImage" src="" alt="UPI QR Code" class="w-44 h-44 rounded-lg">
+         <div id="upiQrBox" class="bg-white p-2 rounded-lg"></div>
+
         </div>
         <p id="qrUpiIdLabel" class="text-[11px] font-bold text-teal-800 bg-teal-50 py-1 px-2 rounded-lg"></p>
         <p class="text-[10px] text-slate-500">PhonePe, GPay లేదా Paytm తో స్కాన్ చేసి చెల్లించవచ్చు.</p>
