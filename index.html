@@ -588,7 +588,7 @@
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">మీ UPI ID (PhonePe / GPay QR కోసం):</label>
             <input type="text" id="editVendorUpiInput" placeholder="ఉదా: 9876543210@ybl" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
           </div>
-          
+
         </div>
 
         <div class="flex gap-2 pt-1">
@@ -681,7 +681,7 @@
               </button>
             </div>
           </div>
-          
+
           <div id="custPinFieldGroup">
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">కస్టమర్ లాగిన్ PIN (4 అంకెలు):</label>
             <input type="text" id="custPinInput" maxlength="4" value="1234" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
@@ -2456,13 +2456,14 @@ function shareCustomerAppLink() {
         `;
       }).join('');
     }
-    
+
         // ==========================================
     // NEW V12 FEATURES: UPI QR, MAPS, CSV EXPORT & MILK COLLECTION
     // ==========================================
 
     // 1. Show Dynamic UPI QR Code for Customer Bill
                                    function openUpiQrModal(custName, amount) {
+          function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2476,26 +2477,48 @@ function shareCustomerAppLink() {
       document.getElementById('qrUpiIdLabel').innerText = 'Receiver UPI: ' + upi;
       document.getElementById('upiQrModal').classList.remove('hidden-force');
 
+      const upiUrl = 'upi://pay?pa=' + encodeURIComponent(upi) + '&pn=' + encodeURIComponent(vendorProfile.name || 'MilkCount') + '&am=' + amount + '&cu=INR';
       const waMsg = `నమస్కారం *${custName}* గారు,\nమీ పాల బిల్లు బాకీ *₹${amount}* చెల్లించడానికి కింది UPI ID కి PhonePe / GPay ద్వారా పే చేయండి:\n\n*UPI ID:* ${upi}\n*మొత్తం:* ₹${amount}\n\n- ${vendorProfile.name || 'MilkCount Vendor'}`;
       const waShareUrl = 'whatsapp://send?text=' + encodeURIComponent(waMsg);
 
       const qrBox = document.getElementById('upiQrBox');
       qrBox.innerHTML = `
-        <div class="flex flex-col items-center gap-3 py-2 w-full">
-          <div class="w-full bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
-            <span class="text-[10px] font-bold text-teal-700 uppercase block">PhonePe / GPay / Paytm Number & UPI</span>
-            <p class="text-sm font-black text-slate-900 mt-1 select-all">${upi}</p>
-          </div>
+        <div class="flex flex-col items-center gap-2.5 py-1 w-full">
+          <div id="liveQrHolder" class="p-2 bg-white rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center"></div>
           <div class="w-full flex gap-2">
-            <button onclick="navigator.clipboard.writeText('${upi}'); showToast('UPI ID కాపీ అయ్యింది ✓');" class="flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
+            <button onclick="navigator.clipboard.writeText('${upi}'); showToast('UPI ID కాపీ అయ్యింది ✓');" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
               <i class="ph-bold ph-copy text-sm"></i> UPI కాపీ
             </button>
-            <a href="${waShareUrl}" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
+            <a href="${waShareUrl}" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
               <i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp
             </a>
           </div>
         </div>
       `;
+
+      // Load QR generator script dynamically if not loaded yet (non-blocking, never slows app!)
+      if (window.QRious) {
+        drawUpiQrCanvas(upiUrl);
+      } else {
+        const s = document.createElement('script');
+        s.src = 'https://unpkg.com';
+        s.onload = function() { drawUpiQrCanvas(upiUrl); };
+        document.body.appendChild(s);
+      }
+    }
+
+    function drawUpiQrCanvas(upiUrl) {
+      const holder = document.getElementById('liveQrHolder');
+      if (!holder || !window.QRious) return;
+      const canvas = document.createElement('canvas');
+      holder.innerHTML = '';
+      holder.appendChild(canvas);
+      new QRious({
+        element: canvas,
+        value: upiUrl,
+        size: 165,
+        level: 'M'
+      });
     }
 
 
@@ -2618,7 +2641,7 @@ function shareCustomerAppLink() {
       await db.from('vendor_milk_collections').delete().eq('id', id);
       loadMilkCollections();
     }
-    
+}
 </script>
 
 <!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
@@ -2717,7 +2740,7 @@ function shareCustomerAppLink() {
 
       <!-- 13. Milk Collection from Farmers -->
       <button onclick="toggleVendorMenu(); openMilkCollectionModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-900 text-xs font-extrabold transition-all text-left">
-        <i class="ph-bold ph-buckets text-base text-amber-600 shrink-0"></i>
+        <i class="ph-bold ph-drop text-base text-amber-600 shrink-0"></i>
         <span>పాల సేకరణ (Milk Collection)</span>
       </button>
 
@@ -2957,7 +2980,7 @@ function shareVendorAppLink() {
       modal.classList.remove('hidden-force');
     }
   };
-  
+
           // 1. Capture Current GPS Location for Customer House
     function captureCustomerCurrentGPS() {
       const input = document.getElementById('custMapLinkInput');
@@ -2999,7 +3022,7 @@ function shareVendorAppLink() {
         window.location.href = 'geo:0,0?q=' + loc;
       }
     }
-    
+
 </script>
 
 </body>
