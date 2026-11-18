@@ -145,7 +145,7 @@
     <!-- ROW 3 LEFT: Phone Number (నేరుగా Ashok కింద నుండి, ఒకే ఐకాన్‌తో) -->
     <div class="min-w-0 flex items-center text-[11px] text-teal-100 font-semibold">
       <span id="headerVendorPhone" class="truncate">9876543210</span>
-      <span onclick="openUpiQrModal('', 0, 'quick')" title="Scan QR" role="button" class="inline-flex items-center justify-center text-amber-300 hover:text-white active:scale-90 transition-transform cursor-pointer px-1.5">
+      <span onclick="openUpiQrModal('', 0, 'quick')" title="Scan QR" role="button" class="inline-flex items-center justify-center text-amber-300 hover:text-white active:scale-90 transition-transform cursor-pointer ml-5 px-1.5">
   <i class="ph-bold ph-qr-code text-xl"></i>
 </span>
 
@@ -2734,6 +2734,11 @@ function shareCustomerAppLink() {
         <span>సపోర్ట్ & టికెట్లు (Support)</span>
       </button>
 
+<button onclick="toggleVendorMenu(); openVendorFeedbackModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-800 text-xs font-extrabold transition-all text-left">
+  <i class="ph-bold ph-star text-base text-amber-500 shrink-0"></i>
+  <span>ఫీడ్‌బ్యాక్ & సలహాలు (Feedback)</span>
+</button>
+
       <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-arrows-clockwise text-base text-slate-600 shrink-0"></i>
         <span>డేటా సింక్ (Sync Data)</span>
@@ -3077,5 +3082,109 @@ function shareVendorAppLink() {
 
 </script>
 
+  <!-- V12 Vendor Feedback Modal -->
+  <div id="vendorFeedbackModal" class="hidden-force fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-fade-in">
+      <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="ph-fill ph-star text-xl"></i>
+          <h3 class="font-extrabold text-sm">యాప్ ఫీడ్‌బ్యాక్ (Feedback)</h3>
+        </div>
+        <button onclick="document.getElementById('vendorFeedbackModal').classList.add('hidden-force')" class="p-1 rounded-lg bg-white/20 hover:bg-white/30">
+          <i class="ph-bold ph-x text-sm"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3.5">
+        <div class="text-center">
+          <p class="text-xs font-bold text-slate-600 mb-2">MilkCount యాప్ మీకు ఎలా ఉపయోగపడుతోంది?</p>
+          <div class="flex items-center justify-center gap-2" id="fbStarRow">
+            <button type="button" onclick="setFeedbackRating(1)" class="fb-star text-2xl text-amber-400 active:scale-90">★</button>
+            <button type="button" onclick="setFeedbackRating(2)" class="fb-star text-2xl text-amber-400 active:scale-90">★</button>
+            <button type="button" onclick="setFeedbackRating(3)" class="fb-star text-2xl text-amber-400 active:scale-90">★</button>
+            <button type="button" onclick="setFeedbackRating(4)" class="fb-star text-2xl text-amber-400 active:scale-90">★</button>
+            <button type="button" onclick="setFeedbackRating(5)" class="fb-star text-2xl text-amber-400 active:scale-90">★</button>
+          </div>
+          <span id="fbRatingLabel" class="text-[11px] font-extrabold text-amber-700 mt-1 block">5 / 5 - చాలా బాగుంది!</span>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-slate-600 mb-1 block">మీ అభిప్రాయం లేదా కొత్త సలహా రాయండి:</label>
+          <textarea id="fbMessageInput" rows="3" placeholder="ఉదా: యాప్ చాలా బాగుంది, ఇంకా ఏదైనా కొత్త ఆప్షన్ కావాలంటే ఇక్కడ రాయండి..." class="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <button id="submitFbBtn" onclick="submitVendorFeedback()" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-extrabold shadow-sm flex items-center justify-center gap-1.5">
+          <i class="ph-bold ph-paper-plane-tilt text-sm"></i> ఫీడ్‌బ్యాక్ పంపండి
+        </button>
+      </div>
+    </div>
+  </div>
+  
+<script>
+             // ==========================================
+    // VENDOR FEEDBACK & RATING SYSTEM
+    // ==========================================
+    let currentFbRating = 5;
+
+    function openVendorFeedbackModal() {
+      currentFbRating = 5;
+      setFeedbackRating(5);
+      document.getElementById('fbMessageInput').value = '';
+      document.getElementById('vendorFeedbackModal').classList.remove('hidden-force');
+    }
+
+    function setFeedbackRating(stars) {
+      currentFbRating = stars;
+      const labels = {
+        1: '1 / 5 - మార్పులు అవసరం',
+        2: '2 / 5 - పర్వాలేదు',
+        3: '3 / 5 - బాగుంది',
+        4: '4 / 5 - చాలా బాగుంది',
+        5: '5 / 5 - అద్భుతంగా ఉంది!'
+      };
+      document.getElementById('fbRatingLabel').innerText = labels[stars] || '';
+      const starBtns = document.querySelectorAll('.fb-star');
+      starBtns.forEach((btn, idx) => {
+        btn.style.color = (idx < stars) ? '#f59e0b' : '#cbd5e1';
+      });
+    }
+
+        async function submitVendorFeedback() {
+      const msg = (document.getElementById('fbMessageInput').value || '').trim();
+      if (!msg) return alert('దయచేసి మీ అభిప్రాయం లేదా సలహా రాయండి.');
+
+      const btn = document.getElementById('submitFbBtn');
+      btn.disabled = true;
+      btn.innerText = 'పంపుతోంది...';
+
+      const ticketCode = 'FB-' + Math.floor(1000 + Math.random() * 9000);
+
+      try {
+        const { error } = await db.from('support_tickets').insert({
+          ticket_code: ticketCode,
+          user_role: 'vendor',
+          user_name: vendorProfile.name || 'Vendor',
+          user_phone: vendorProfile.phone,
+          category: 'Feedback',
+          description: `⭐ Rating: ${currentFbRating}/5 Stars\n💬 Feedback: ${msg}`,
+          status: 'Open'
+        });
+
+        if (error) {
+          alert('Error: ' + error.message);
+        } else {
+          document.getElementById('vendorFeedbackModal').classList.add('hidden-force');
+          showToast('మీ విలువైన ఫీడ్‌బ్యాక్‌కు ధన్యవాదాలు! 🙏');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph-bold ph-paper-plane-tilt text-sm"></i> ఫీడ్‌బ్యాక్ పంపండి';
+      }
+    }
+    
+   </script> 
+    
 </body>
 </html>
