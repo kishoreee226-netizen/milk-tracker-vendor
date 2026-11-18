@@ -2461,7 +2461,7 @@ function shareCustomerAppLink() {
     // NEW V12 FEATURES: UPI QR, CSV EXPORT & MILK COLLECTION
     // ==========================================
 
-            function openUpiQrModal(custName, amount) {
+                function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2479,14 +2479,21 @@ function shareCustomerAppLink() {
       const waMsg = `నమస్కారం *${custName}* గారు,\nమీ పాల బిల్లు బాకీ *₹${amount}* చెల్లించడానికి కింది UPI ID కి PhonePe / GPay ద్వారా పే చేయండి:\n\n*UPI ID:* ${upi}\n*మొత్తం:* ₹${amount}\n\n- ${vendorProfile.name || 'MilkCount Vendor'}`;
       const waShareUrl = 'whatsapp://send?text=' + encodeURIComponent(waMsg);
 
+      const savedQrImg = localStorage.getItem('mc_vendor_qr_photo');
       const qrBox = document.getElementById('upiQrBox');
       qrBox.innerHTML = `
-        <div class="flex flex-col items-center gap-2.5 py-1 w-full">
-          <div id="actualQrCanvasBox" class="p-2 bg-white rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center min-h-[160px] min-w-[160px]">
-            <span class="text-[10px] text-slate-400 font-bold">QR తయారవుతోంది...</span>
+        <div class="flex flex-col items-center gap-2 py-1 w-full">
+          <div id="actualQrCanvasBox" class="p-2 bg-white rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center min-h-[165px] min-w-[165px]">
+            ${savedQrImg ? `<img src="${savedQrImg}" class="w-40 h-40 object-contain rounded-lg">` : `<span class="text-[10px] text-slate-400 font-bold">QR లోడ్ అవుతోంది...</span>`}
           </div>
-          <p class="text-[10px] font-bold text-slate-500">కస్టమర్ ఫోన్‌తో ఈ QR స్కాన్ చేయించండి</p>
-          <div class="w-full flex gap-2">
+          <div class="flex items-center gap-2">
+            <label class="text-[10px] font-extrabold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-lg cursor-pointer">
+              📷 ${savedQrImg ? 'QR ఫోటో మార్చు' : 'నా QR ఫోటో అప్‌లోడ్'}
+              <input type="file" accept="image/*" class="hidden" onchange="uploadVendorQrPhoto(event)">
+            </label>
+            ${savedQrImg ? `<button onclick="localStorage.removeItem('mc_vendor_qr_photo'); openUpiQrModal('${custName}', ${amount});" class="text-[10px] font-bold text-rose-600 underline">Auto QR వాడు</button>` : ''}
+          </div>
+          <div class="w-full flex gap-2 mt-1">
             <button onclick="navigator.clipboard.writeText('${upi}'); showToast('UPI ID కాపీ అయ్యింది ✓');" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
               <i class="ph-bold ph-copy text-sm"></i> UPI కాపీ
             </button>
@@ -2497,22 +2504,20 @@ function shareCustomerAppLink() {
         </div>
       `;
 
-      if (window.qrcode) {
-        buildSvgFromLib(upiUrl);
-      } else {
-        const sc = document.createElement('script');
-        sc.src = 'https://cloudflare.com';
-        sc.onload = function() { buildSvgFromLib(upiUrl); };
-        sc.onerror = function() {
-          document.getElementById('actualQrCanvasBox').innerHTML = `
-            <div class="p-3 text-center">
-              <i class="ph-fill ph-qr-code text-4xl text-teal-700 mb-1 block"></i>
-              <span class="text-[10px] text-slate-500 block">UPI ID ద్వారా చెల్లించండి:</span>
-              <strong class="text-sm text-slate-900 select-all">${upi}</strong>
-            </div>
-          `;
-        };
-        document.body.appendChild(sc);
+      // If no custom QR photo uploaded, generate dynamic amount QR safely
+      if (!savedQrImg) {
+        if (window.qrcode) {
+          buildSvgFromLib(upiUrl);
+        } else {
+          const sc = document.createElement('script');
+          sc.src = ['https:/', '://cloudflare.com', 'ajax', 'libs', 'qrcode-generator', '1.4.4', 'qrcode.min.js'].join('/');
+          sc.onload = function() { buildSvgFromLib(upiUrl); };
+          sc.onerror = function() {
+            const box = document.getElementById('actualQrCanvasBox');
+            if (box) box.innerHTML = `<div class="p-3 text-center"><span class="text-[10px] text-slate-500 block">UPI ID:</span><strong class="text-sm text-slate-900">${upi}</strong></div>`;
+          };
+          document.body.appendChild(sc);
+        }
       }
     }
 
@@ -2524,9 +2529,20 @@ function shareCustomerAppLink() {
       qr.make();
       box.innerHTML = qr.createSvgTag(4, 2);
     }
+
+    function uploadVendorQrPhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        localStorage.setItem('mc_vendor_qr_photo', e.target.result);
+        const box = document.getElementById('actualQrCanvasBox');
+        if (box) box.innerHTML = `<img src="${e.target.result}" class="w-40 h-40 object-contain rounded-lg">`;
+        showToast('మీ QR ఫోటో సేవ్ అయ్యింది ✓');
+      };
+      reader.readAsDataURL(file);
+    }
     
-
-
     // 2. Export Monthly Billing Report as Excel (CSV)
     function exportMonthlyBillingCSV() {
       if (!allCustomers || allCustomers.length === 0) return alert('కస్టమర్ల డేటా లేదు.');
