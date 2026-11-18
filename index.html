@@ -2510,7 +2510,8 @@ function shareCustomerAppLink() {
           buildSvgFromLib(upiUrl);
         } else {
           const sc = document.createElement('script');
-          sc.src = ['https:/', '://cloudflare.com', 'ajax', 'libs', 'qrcode-generator', '1.4.4', 'qrcode.min.js'].join('/');
+          sc.src = ['https:/', 'unpkg.com', 'qrcode-generator@1.4.4', 'qrcode.js'].join('/');
+
           sc.onload = function() { buildSvgFromLib(upiUrl); };
           sc.onerror = function() {
             const box = document.getElementById('actualQrCanvasBox');
