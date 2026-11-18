@@ -2457,13 +2457,11 @@ function shareCustomerAppLink() {
       }).join('');
     }
 
-        // ==========================================
-    // NEW V12 FEATURES: UPI QR, MAPS, CSV EXPORT & MILK COLLECTION
+        // ==========================================    // ==========================================
+    // NEW V12 FEATURES: UPI QR, CSV EXPORT & MILK COLLECTION
     // ==========================================
 
-    // 1. Show Dynamic UPI QR Code for Customer Bill
-                                   function openUpiQrModal(custName, amount) {
-                  function openUpiQrModal(custName, amount) {
+        function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2483,23 +2481,46 @@ function shareCustomerAppLink() {
 
       const qrBox = document.getElementById('upiQrBox');
       qrBox.innerHTML = `
-        <div class="flex flex-col items-center gap-3 py-2 w-full">
-          <div class="w-full bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
-            <span class="text-[10px] font-bold text-teal-700 uppercase block">PhonePe / GPay / Paytm UPI ID</span>
-            <p class="text-sm font-black text-slate-900 mt-1 select-all">${upi}</p>
+        <div class="flex flex-col items-center gap-2.5 py-1 w-full">
+          <div id="actualQrCanvasBox" class="p-2 bg-white rounded-xl border border-slate-200 shadow-2xs flex items-center justify-center min-h-[160px] min-w-[160px]">
+            <span class="text-[10px] text-slate-400 font-bold">QR తయారవుతోంది...</span>
           </div>
+          <p class="text-[10px] font-bold text-slate-500">కస్టమర్ ఫోన్‌తో ఈ QR స్కాన్ చేయించండి</p>
           <div class="w-full flex gap-2">
-            <button onclick="navigator.clipboard.writeText('${upi}'); showToast('UPI ID కాపీ అయ్యింది ✓');" class="flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
+            <button onclick="navigator.clipboard.writeText('${upi}'); showToast('UPI ID కాపీ అయ్యింది ✓');" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
               <i class="ph-bold ph-copy text-sm"></i> UPI కాపీ
             </button>
-            <a href="${waShareUrl}" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
+            <a href="${waShareUrl}" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
               <i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp
             </a>
           </div>
         </div>
       `;
+
+      // Load lightweight qrcode-generator from Cloudflare CDN
+      if (window.qrcode) {
+        buildSvgFromLib(upiUrl);
+      } else {
+        const sc = document.createElement('script');
+        sc.src = 'https://cloudflare.com';
+        sc.onload = function() { buildSvgFromLib(upiUrl); };
+        sc.onerror = function() {
+          document.getElementById('actualQrCanvasBox').innerHTML = `<p class="text-sm font-black text-slate-900 p-3">${upi}</p>`;
+        };
+        document.body.appendChild(sc);
+      }
+    }
+
+    function buildSvgFromLib(upiUrl) {
+      const box = document.getElementById('actualQrCanvasBox');
+      if (!box || !window.qrcode) return;
+      const qr = window.qrcode(0, 'M');
+      qr.addData(upiUrl);
+      qr.make();
+      box.innerHTML = qr.createSvgTag(4, 2);
     }
     
+
 
     // 2. Export Monthly Billing Report as Excel (CSV)
     function exportMonthlyBillingCSV() {
@@ -2620,7 +2641,7 @@ function shareCustomerAppLink() {
       await db.from('vendor_milk_collections').delete().eq('id', id);
       loadMilkCollections();
     }
-}
+
 </script>
 
 <!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
