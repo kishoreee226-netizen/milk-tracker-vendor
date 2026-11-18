@@ -22,7 +22,6 @@
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- QR Code Generator CDN -->
- <script src="https://jsdelivr.net"></script>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2463,7 +2462,7 @@ function shareCustomerAppLink() {
     // ==========================================
 
     // 1. Show Dynamic UPI QR Code for Customer Bill
-           function openUpiQrModal(custName, amount) {
+               function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2475,25 +2474,23 @@ function shareCustomerAppLink() {
       document.getElementById('qrCustomerName').innerText = custName;
       document.getElementById('qrAmountDisplay').innerText = amount.toLocaleString('en-IN');
       document.getElementById('qrUpiIdLabel').innerText = 'UPI ID: ' + upi;
-      
-      // ముందుగా పాప్-అప్ విండో ఓపెన్ చేస్తుంది
       document.getElementById('upiQrModal').classList.remove('hidden-force');
 
       const upiUrl = 'upi://pay?pa=' + encodeURIComponent(upi) + '&pn=' + encodeURIComponent(vendorProfile.name || 'MilkCount') + '&am=' + amount + '&cu=INR';
-      const qrBox = document.getElementById('upiQrBox');
-      qrBox.innerHTML = '';
+      
+      const qrImgUrl = new URL('https://quickchart.io');
+      qrImgUrl.searchParams.set('text', upiUrl);
+      qrImgUrl.searchParams.set('size', '200');
 
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrBox, {
-          text: upiUrl,
-          width: 175,
-          height: 175,
-          colorDark: '#0f172a',
-          colorLight: '#ffffff'
-        });
-      } else {
-        qrBox.innerHTML = '<p class="text-xs text-rose-600 font-bold p-4">QR లైబ్రరీ లోడ్ కాలేదు. దయచేసి యాప్‌ను ఒకసారి Refresh చేయండి.</p>';
-      }
+      const qrBox = document.getElementById('upiQrBox');
+      qrBox.innerHTML = `
+        <div class="flex flex-col items-center gap-2">
+          <img src="${qrImgUrl.toString()}" alt="UPI QR" class="w-44 h-44 rounded-lg border border-slate-100">
+          <a href="${upiUrl}" class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
+            <i class="ph-bold ph-currency-inr"></i> Pay via PhonePe / GPay
+          </a>
+        </div>
+      `;
     }
 
     // 2. Export Monthly Billing Report as Excel (CSV)
