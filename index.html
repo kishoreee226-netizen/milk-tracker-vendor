@@ -2935,57 +2935,45 @@ function shareVendorAppLink() {
     }
   };
   
-      // 1. Capture Current GPS Location for Customer House
-           function openCustomerMap(custId) {
+          // 1. Capture Current GPS Location for Customer House
+    function captureCustomerCurrentGPS() {
+      const input = document.getElementById('custMapLinkInput');
+      if (!navigator.geolocation) {
+        alert('మీ ఫోన్‌లో GPS సపోర్ట్ లేదు.');
+        return;
+      }
+      input.value = 'లొకేషన్ తీసుకుంటోంది...';
+
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          input.value = lat + ',' + lng;
+          if (typeof showToast === 'function') showToast('GPS లొకేషన్ వచ్చింది! ✓');
+        },
+        function(err) {
+          input.value = '';
+          alert('GPS సిగ్నల్ రాలేదు. ఫోన్‌లో Location ఆన్ ఉందో లేదో చూసి మళ్ళీ నొక్కండి.');
+        },
+        { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
+      );
+    }
+
+    // 2. Open Exact Turn-by-Turn Route in Google Maps App
+    function openCustomerMap(custId) {
       const cust = allCustomers.find(c => String(c.id) === String(custId));
       if (!cust) return;
       const loc = (cust.map_link || '').trim();
 
       if (!loc) {
-        alert(`"${cust.name}" ఇంటి లొకేషన్ ఇంకా సేవ్ చేయలేదు!\n\nకస్టమర్లు ట్యాబ్‌లో ఎడిట్ (✏️) నొక్కి వారి ఇంటి దగ్గర "📍 GPS" బటన్ నొక్కి సేవ్ చేయండి.`);
+        alert(cust.name + ' ఇంటి లొకేషన్ ఇంకా సేవ్ చేయలేదు!\n\nకస్టమర్లు ట్యాబ్‌లో ఎడిట్ నొక్కి వారి ఇంటి దగ్గర 📍 GPS బటన్ నొక్కి సేవ్ చేయండి.');
         return;
       }
 
-      let finalUrl = '';
       if (loc.startsWith('http')) {
-        finalUrl = loc;
+        window.location.href = loc;
       } else {
-        // Builds exact Google Maps Navigation URL safely without getting cut
-        const u = new URL('https://google.com');
-        u.searchParams.set('api', '1');
-        u.searchParams.set('destination', loc);
-        finalUrl = u.toString();
-      }
-
-      // PWA friendly link click to launch native Google Maps App directly
-      const a = document.createElement('a');
-      a.href = finalUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-
-    // 2. Open Exact Turn-by-Turn Route in Google Maps App
-    function openCustomerMap(custId) {
-      const cust = allCustomers.find(c => c.id === custId);
-      if (!cust) return;
-      const loc = (cust.map_link || '').trim();
-
-      if (!loc) {
-        alert(`"${cust.name}" ఇంటి లొకేషన్ ఇంకా సేవ్ చేయలేదు!\n\nకస్టమర్లు ట్యాబ్‌లో ఎడిట్ (✏️) నొక్కి వారి ఇంటి దగ్గర "📍 GPS" బటన్ నొక్కి సేవ్ చేయండి.`);
-        return;
-      }
-
-      // If user pasted a full https:// map link
-      if (loc.startsWith('http')) {
-        window.open(loc, '_blank');
-      } else {
-        // Opens Google Maps Turn-by-Turn Navigation directly to lat,lng
-        const navUrl = 'https://google.com' + encodeURIComponent(loc);
-        window.open(navUrl, '_blank');
+        window.location.href = 'geo:0,0?q=' + loc;
       }
     }
     
