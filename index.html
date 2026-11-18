@@ -2462,7 +2462,8 @@ function shareCustomerAppLink() {
     // ==========================================
 
     // 1. Show Dynamic UPI QR Code for Customer Bill
-                                       function openUpiQrModal(custName, amount) {
+                                   function openUpiQrModal(custName, amount) {
+                  function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2498,7 +2499,7 @@ function shareCustomerAppLink() {
         </div>
       `;
     }
-
+    
 
     // 2. Export Monthly Billing Report as Excel (CSV)
     function exportMonthlyBillingCSV() {
