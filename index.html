@@ -1625,6 +1625,7 @@ const newUpi = document.getElementById('editVendorUpiInput').value.trim();
                 <span>• 📍 ${custArea}</span>
                 <a href="tel:${cust.phone}" class="hover:text-teal-700 font-semibold">• 📞 ${cust.phone}</a>
             <button onclick="openCustomerMap('${cust.id}')" class="text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded font-extrabold">🗺️ Map</button>
+${cust.landmark ? `<div class="text-[10px] text-slate-600 font-semibold mt-0.5">🏠 ${cust.landmark}</div>` : ''}
 
               </div>
               ${info.quality_note ? `<div class="text-[10px] text-amber-800 font-bold mt-0.5">⚠️ ${info.quality_note}</div>` : ''}
