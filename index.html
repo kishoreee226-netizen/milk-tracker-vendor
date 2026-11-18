@@ -2463,7 +2463,7 @@ function shareCustomerAppLink() {
     // ==========================================
 
     // 1. Show Dynamic UPI QR Code for Customer Bill
-    function openUpiQrModal(custName, amount) {
+        function openUpiQrModal(custName, amount) {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       if (!upi) {
         alert('ముందుగా మీ PROFILE లో మీ UPI ID (ఉదా: 9876543210@ybl) సేవ్ చేసుకోండి!');
@@ -2473,16 +2473,21 @@ function shareCustomerAppLink() {
       if (amount <= 0) return alert('ఈ కస్టమర్‌కు బాకీ ₹0 ఉంది.');
 
       const upiUrl = `upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent(vendorProfile.name || 'MilkCount')}&am=${amount}&cu=INR`;
-            
-const u = new URL('https://qrserver.com');
-  u.searchParams.set('size', '220x220');
-  u.searchParams.set('data', upiUrl);
-  const qrApi = u.toString();
+
       document.getElementById('qrCustomerName').innerText = custName;
       document.getElementById('qrAmountDisplay').innerText = amount.toLocaleString('en-IN');
-      document.getElementById('upiQrImage').src = qrApi;
       document.getElementById('qrUpiIdLabel').innerText = `UPI ID: ${upi}`;
-      document.getElementById('upiQrModal').classList.remove('hidden-force');
+
+      const qrBox = document.getElementById('upiQrBox');
+      qrBox.innerHTML = '';
+      new QRCode(qrBox, {
+        text: upiUrl,
+        width: 175,
+        height: 175,
+        colorDark: '#0f172a',
+        colorLight: '#ffffff'
+      });
+    document.getElementById('upiQrModal').classList.remove('hidden-force');
     }
 
     // 2. Export Monthly Billing Report as Excel (CSV)
