@@ -2097,6 +2097,7 @@ ${dueLines}
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.add('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
+document.getElementById('custLandmarkInput').value = '';
     }
 
     function openEditCustomerModal(userId) {
@@ -2119,6 +2120,7 @@ ${dueLines}
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.remove('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
+document.getElementById('custLandmarkInput').value = cust.landmark || '';
     }
 
     function closeCustomerModal() {
