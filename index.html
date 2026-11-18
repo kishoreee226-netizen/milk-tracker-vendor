@@ -2028,7 +2028,13 @@ ${dueLines}
         card.innerHTML = `
           <div class="min-w-0">
             <h4 class="font-bold text-slate-800 text-sm truncate">${cust.name || 'Customer'}</h4>
-<p class="text-[11px] text-slate-500">📞 ${cust.phone} • 📍 ${cArea} ${cust.map_link ? `<a href="${cust.map_link}" target="_blank" class="text-teal-700 font-extrabold underline ml-1">🗺️ Map</a>` : ''}</p>
+
+<p class="text-[11px] text-slate-500 flex items-center gap-1 flex-wrap mt-0.5">
+  <span>📞 ${cust.phone} • 📍 ${cArea}</span>
+  ${cust.map_link ? `<button onclick="openCustomerMap('${cust.id}')" class="text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded font-extrabold">🗺️ Map</button>` : ''}
+</p>
+${cust.landmark ? `<p class="text-[10px] text-teal-800 font-bold mt-0.5">🏠 ${cust.landmark}</p>` : ''}
+
 
             <p class="text-[10px] font-bold text-teal-800 mt-0.5">${[mBadge, eBadge].filter(Boolean).join(' • ')}</p>
           </div>
