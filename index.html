@@ -2130,6 +2130,8 @@ ${dueLines}
       const name = document.getElementById('custNameInput').value.trim();
       const phone = document.getElementById('custPhoneInput').value.trim();
       const map_link = document.getElementById('custMapLinkInput').value.trim();
+const landmark = (document.getElementById('custLandmarkInput').value || '').trim();
+
       const morning_milk_type = document.getElementById('custMorningMilkType').value;
       const morning_qty = Math.max(0, parseFloat(document.getElementById('custMorningQuota').value) || 0);
       const morning_rate = Math.max(1, parseFloat(document.getElementById('custMorningRate').value) || 75);
