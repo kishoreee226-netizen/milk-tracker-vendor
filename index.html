@@ -2568,6 +2568,91 @@ function shareCustomerAppLink() {
       box.innerHTML = qr.createSvgTag(4, 2);
     }
     
+        // Generates complete Business Payment Card JPG (Name + QR + UPI ID) and shares directly
+    async function shareCompleteVendorQrCard() {
+      const vName = (vendorProfile && vendorProfile.name) ? vendorProfile.name : 'MilkCount Vendor';
+      const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 620;
+        const ctx = canvas.getContext('2d');
+
+        // Background & Border
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 500, 620);
+        ctx.strokeStyle = '#0d9488';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(10, 10, 480, 600);
+
+        // Top Header Band
+        ctx.fillStyle = '#0f766e';
+        ctx.fillRect(10, 10, 480, 85);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 26px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(vName.toUpperCase(), 250, 62);
+
+        // Draw QR Code in the center
+        const savedQrImg = localStorage.getItem('mc_vendor_qr_photo');
+        const svgEl = document.querySelector('#actualQrCanvasBox svg');
+
+        if (savedQrImg) {
+          const img = new Image();
+          await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = savedQrImg; });
+          ctx.drawImage(img, 95, 125, 310, 310);
+        } else if (svgEl) {
+          const clonedSvg = svgEl.cloneNode(true);
+          clonedSvg.setAttribute('width', '310');
+          clonedSvg.setAttribute('height', '310');
+          const svgStr = new XMLSerializer().serializeToString(clonedSvg);
+          const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
+          const img = new Image();
+          await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+          ctx.drawImage(img, 95, 125, 310, 310);
+          URL.revokeObjectURL(url);
+        }
+
+        // Bottom UPI ID Box
+        ctx.fillStyle = '#f0fdfa';
+        ctx.fillRect(40, 465, 420, 95);
+        ctx.strokeStyle = '#99f6e4';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(40, 465, 420, 95);
+
+        ctx.fillStyle = '#0f766e';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('SCAN & PAY VIA PHONEPE / GPAY / PAYTM', 250, 498);
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillText(upi || 'Scan QR Above', 250, 538);
+
+        // Convert Canvas to JPG File & Share directly
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+        const imageFile = new File([blob], 'MilkCount_Payment_QR.jpg', { type: 'image/jpeg' });
+
+        if (navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+          await navigator.share({
+            files: [imageFile],
+            title: vName + ' Payment QR'
+          });
+        } else {
+          const dlLink = document.createElement('a');
+          dlLink.href = URL.createObjectURL(blob);
+          dlLink.download = 'MilkCount_Payment_QR.jpg';
+          dlLink.click();
+          showToast('QR కార్డ్ ఫోటో డౌన్‌లోడ్ అయ్యింది ✓');
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          alert('Image Share Error: ' + err.message);
+        }
+      }
+    }
+    
 
     // 2. Export Monthly Billing Report as Excel (CSV)
     function exportMonthlyBillingCSV() {
