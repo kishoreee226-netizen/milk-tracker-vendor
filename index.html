@@ -21,7 +21,7 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +49,7 @@
   <!-- Mobile App Wrapper Frame -->
   <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
 
-    <!-- 1. VENDOR AUTH SCREEN (Sign Up & Login Tabs) -->
+       <!-- 1. VENDOR AUTH SCREEN (Quick PIN Unlock + Full Login/Sign Up) -->
     <section id="vendorAuthSection" class="p-6 flex-1 flex flex-col justify-center items-center bg-white">
       <div class="w-20 h-20 rounded-2xl overflow-hidden bg-teal-700 flex items-center justify-center mb-4 shadow-lg shadow-teal-600/20 border-2 border-teal-100">
         <img src="./vendor-logo.png" alt="MilkCount Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
@@ -58,36 +58,62 @@
       <h2 class="text-xl font-extrabold text-slate-900 text-center">MilkCount Vendor</h2>
       <p class="text-xs text-slate-500 mb-5 text-center">పాల వ్యాపారి డెలివరీ, కలెక్షన్ & బిజినెస్ డాష్‌బోర్డ్</p>
 
-      <!-- Login / Sign Up Switcher Tabs -->
-      <div class="w-full grid grid-cols-2 bg-slate-100 p-1 rounded-xl mb-4 border border-slate-200">
-        <button id="authTabLogin" onclick="switchAuthMode('login')" class="py-2 rounded-lg text-xs font-extrabold bg-white text-teal-800 shadow-2xs transition-all">
-          లాగిన్ (Login)
+      <!-- A. Customer-Style Quick PIN Unlock Card (Shows automatically if logged in before) -->
+      <div id="vendorQuickPinBox" class="hidden-force w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs text-center space-y-3.5">
+        <div class="w-12 h-12 mx-auto rounded-full bg-teal-100 border border-teal-200 flex items-center justify-center text-teal-700">
+          <i class="ph-bold ph-user text-2xl"></i>
+        </div>
+        <div>
+          <h3 id="quickVendorNameDisplay" class="text-base font-extrabold text-slate-900">Vendor Name</h3>
+          <p id="quickVendorPhoneDisplay" class="text-xs font-bold text-slate-500 mt-0.5">9876543210</p>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-700 block mb-1.5">4-అంకెల పిన్ (PIN) నమోదు చేయండి</label>
+          <input type="password" id="quickVendorPinInput" maxlength="4" inputmode="numeric" placeholder="••••"
+            onkeyup="if(this.value.length===4) unlockQuickVendorPin()"
+            class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-center text-lg font-black tracking-[0.5em] focus:outline-none focus:border-teal-600">
+        </div>
+        <button onclick="unlockQuickVendorPin()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
+          అన్‌లాక్ / లాగిన్
         </button>
-        <button id="authTabSignup" onclick="switchAuthMode('signup')" class="py-2 rounded-lg text-xs font-bold text-slate-500 transition-all">
-          కొత్త రిజిస్ట్రేషన్ (Sign Up)
+        <button type="button" onclick="switchVendorAccountMode()" class="text-xs font-extrabold text-teal-700 hover:underline pt-1 block mx-auto">
+          వేరే నంబర్‌తో లాగిన్ అవ్వండి (Switch Account)
         </button>
       </div>
 
-      <div class="w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs space-y-3.5">
-        <div id="signupNameGroup" class="hidden-force">
-          <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (Dairy Name) *</label>
-          <input type="text" id="vendorNameInput" placeholder="ఉదా: శ్రీ లక్ష్మీ డెయిరీ" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
+      <!-- B. Full Login / Sign Up Box (Shows for first-time or Switch Account) -->
+      <div id="vendorFullAuthBox" class="w-full">
+        <!-- Login / Sign Up Switcher Tabs -->
+        <div class="w-full grid grid-cols-2 bg-slate-100 p-1 rounded-xl mb-4 border border-slate-200">
+          <button id="authTabLogin" onclick="switchAuthMode('login')" class="py-2 rounded-lg text-xs font-extrabold bg-white text-teal-800 shadow-2xs transition-all">
+            లాగిన్ (Login)
+          </button>
+          <button id="authTabSignup" onclick="switchAuthMode('signup')" class="py-2 rounded-lg text-xs font-bold text-slate-500 transition-all">
+            కొత్త రిజిస్ట్రేషన్ (Sign Up)
+          </button>
         </div>
 
-        <div>
-          <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ మొబైల్ నంబర్ (10 అంకెలు) *</label>
-          <input type="tel" id="vendorPhoneInput" maxlength="10" placeholder="ఉదా: 9876543210" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
-        </div>
+        <div class="w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs space-y-3.5">
+          <div id="signupNameGroup" class="hidden-force">
+            <label class="text-xs font-bold text-slate-600 block mb-1">డెయిరీ / వెండర్ పేరు (Dairy Name) *</label>
+            <input type="text" id="vendorNameInput" placeholder="ఉదా: శ్రీ లక్ష్మీ డెయిరీ" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
+          </div>
 
-        <div>
-          <label id="vendorPinLabel" class="text-xs font-bold text-slate-600 block mb-1">మీ 4-అంకెల PIN *</label>
-          <input type="password" id="vendorPinInput" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-black tracking-widest focus:outline-none focus:border-teal-600">
-          <p id="vendorAuthHint" class="text-[10px] text-slate-500 mt-1">కొత్త వెండర్ అయితే పైన "కొత్త రిజిస్ట్రేషన్ (Sign Up)" నొక్కండి.</p>
-        </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1">వెండర్ మొబైల్ నంబర్ (10 అంకెలు) *</label>
+            <input type="tel" id="vendorPhoneInput" maxlength="10" placeholder="ఉదా: 9876543210" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-teal-600">
+          </div>
 
-        <button id="vendorLoginBtn" onclick="handleVendorAuthSubmit()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
-          లాగిన్ చేయండి
-        </button>
+          <div>
+            <label id="vendorPinLabel" class="text-xs font-bold text-slate-600 block mb-1">మీ 4-అంకెల PIN *</label>
+            <input type="password" id="vendorPinInput" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-black tracking-widest focus:outline-none focus:border-teal-600">
+            <p id="vendorAuthHint" class="text-[10px] text-slate-500 mt-1">కొత్త వెండర్ అయితే పైన "కొత్త రిజిస్ట్రేషన్ (Sign Up)" నొక్కండి.</p>
+          </div>
+
+          <button id="vendorLoginBtn" onclick="handleVendorAuthSubmit()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-700 hover:from-teal-700 hover:to-emerald-800 active:scale-95 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all">
+            లాగిన్ చేయండి
+          </button>
+        </div>
       </div>
     </section>
 
@@ -1115,11 +1141,50 @@
       startVendorAutoLiveSync();
     }
 
-       function logoutVendor() {
+           // Show Customer-Style Quick PIN Screen if saved credentials exist
+    function checkVendorQuickPinScreen() {
+      const creds = JSON.parse(localStorage.getItem('milkcount_vendor_creds') || 'null');
+      const quickBox = document.getElementById('vendorQuickPinBox');
+      const fullBox = document.getElementById('vendorFullAuthBox');
+
+      if (creds && creds.phone && quickBox && fullBox) {
+        document.getElementById('quickVendorNameDisplay').innerText = creds.name || 'MilkCount Vendor';
+        document.getElementById('quickVendorPhoneDisplay').innerText = creds.phone;
+        quickBox.classList.remove('hidden-force');
+        fullBox.classList.add('hidden-force');
+        const qPin = document.getElementById('quickVendorPinInput');
+        if (qPin) { qPin.value = ''; setTimeout(() => qPin.focus(), 150); }
+      } else if (quickBox && fullBox) {
+        quickBox.classList.add('hidden-force');
+        fullBox.classList.remove('hidden-force');
+      }
+    }
+
+    function unlockQuickVendorPin() {
+      const creds = JSON.parse(localStorage.getItem('milkcount_vendor_creds') || '{}');
+      const pinVal = (document.getElementById('quickVendorPinInput').value || '').trim();
+      if (pinVal.length !== 4) return alert('దయచేసి 4-అంకెల PIN నమోదు చేయండి.');
+
+      if (typeof switchAuthMode === 'function') switchAuthMode('login');
+      document.getElementById('vendorPhoneInput').value = creds.phone || '';
+      document.getElementById('vendorPinInput').value = pinVal;
+      handleVendorAuthSubmit();
+    }
+
+    function switchVendorAccountMode() {
+      localStorage.removeItem('milkcount_vendor_creds');
+      document.getElementById('vendorQuickPinBox').classList.add('hidden-force');
+      document.getElementById('vendorFullAuthBox').classList.remove('hidden-force');
+      document.getElementById('vendorPhoneInput').value = '';
+      document.getElementById('vendorPinInput').value = '';
+    }
+
+    function logoutVendor() {
       const savedCreds = JSON.parse(localStorage.getItem('milkcount_vendor_creds') || '{}');
       const phoneToKeep = (vendorProfile && vendorProfile.phone) ? vendorProfile.phone : (savedCreds.phone || '');
+      const nameToKeep = (vendorProfile && vendorProfile.name) ? vendorProfile.name : (savedCreds.name || '');
       if (phoneToKeep) {
-        localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: (vendorProfile && vendorProfile.name) || savedCreds.name || '', phone: phoneToKeep }));
+        localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: nameToKeep, phone: phoneToKeep }));
       }
       stopVendorAutoLiveSync();
       localStorage.removeItem('milkcount_vendor_session');
@@ -1128,11 +1193,8 @@
       monthLogsByUser = {};
       document.getElementById('vendorAppSection').classList.add('hidden-force');
       document.getElementById('vendorAuthSection').classList.remove('hidden-force');
-      if (phoneToKeep) document.getElementById('vendorPhoneInput').value = phoneToKeep;
-      document.getElementById('vendorPinInput').value = '';
-      document.getElementById('vendorPinInput').focus();
+      checkVendorQuickPinScreen();
     }
-
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -2572,7 +2634,7 @@ function shareCustomerAppLink() {
       qr.make();
       box.innerHTML = qr.createSvgTag(4, 2);
     }
-    
+
         // Generates complete Business Payment Card JPG (Name + QR + UPI ID) and shares directly
     async function shareCompleteVendorQrCard() {
       const vName = (vendorProfile && vendorProfile.name) ? vendorProfile.name : 'MilkCount Vendor';
@@ -2657,7 +2719,7 @@ function shareCustomerAppLink() {
         }
       }
     }
-    
+
 
     // 2. Export Monthly Billing Report as Excel (CSV)
     function exportMonthlyBillingCSV() {
@@ -3209,7 +3271,7 @@ function shareVendorAppLink() {
       </div>
     </div>
   </div>
-  
+
 <script>
              // ==========================================
     // VENDOR FEEDBACK & RATING SYSTEM
@@ -3273,8 +3335,11 @@ function shareVendorAppLink() {
         btn.innerHTML = '<i class="ph-bold ph-paper-plane-tilt text-sm"></i> ఫీడ్‌బ్యాక్ పంపండి';
       }
     }
-    
+
+    // Run on startup so closed app also opens straight to Quick PIN
+    checkVendorQuickPinScreen();
+
    </script> 
-    
+
 </body>
 </html>
