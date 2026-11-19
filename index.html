@@ -1020,13 +1020,10 @@
       document.getElementById('vendorProfileModal').classList.add('hidden-force');
     }
 
-    async function saveVendorProfileChanges() {
+        async function saveVendorProfileChanges() {
       const newName = document.getElementById('editVendorNameInput').value.trim();
       const newPin = document.getElementById('editVendorPinInput').value.trim();
-
-const newUpi = document.getElementById('editVendorUpiInput').value.trim();
-// update లో: .update({ name: newName, pin: newPin, upi_id: newUpi })
-// మరియు vendorProfile.upi_id = newUpi;
+      const newUpi = document.getElementById('editVendorUpiInput').value.trim();
 
       if (!newName) return alert('దయచేసి డెయిరీ / వెండర్ పేరు నమోదు చేయండి.');
       if (newPin.length !== 4 || isNaN(newPin)) return alert('PIN ఖచ్చితంగా 4 అంకెలు మాత్రమే ఉండాలి.');
@@ -1037,7 +1034,7 @@ const newUpi = document.getElementById('editVendorUpiInput').value.trim();
 
       const { error } = await db
         .from('vendors')
-        .update({ name: newName, pin: newPin })
+        .update({ name: newName, pin: newPin, upi_id: newUpi })
         .eq('phone', vendorProfile.phone);
 
       btn.disabled = false;
@@ -1053,8 +1050,9 @@ const newUpi = document.getElementById('editVendorUpiInput').value.trim();
 
       document.getElementById('headerVendorName').innerText = newName;
       closeVendorProfileModal();
-      showToast('వెండర్ పేరు & PIN అప్‌డేట్ అయ్యాయి!');
+      showToast('వెండర్ ప్రొఫైల్ & UPI ID అప్‌డేట్ అయ్యాయి! ✓');
     }
+
 
     function stopVendorAutoLiveSync() {
       if (vendorAutoSyncTimer) {
@@ -1118,7 +1116,12 @@ const newUpi = document.getElementById('editVendorUpiInput').value.trim();
       startVendorAutoLiveSync();
     }
 
-    function logoutVendor() {
+       function logoutVendor() {
+      const savedCreds = JSON.parse(localStorage.getItem('milkcount_vendor_creds') || '{}');
+      const phoneToKeep = (vendorProfile && vendorProfile.phone) ? vendorProfile.phone : (savedCreds.phone || '');
+      if (phoneToKeep) {
+        localStorage.setItem('milkcount_vendor_creds', JSON.stringify({ name: (vendorProfile && vendorProfile.name) || savedCreds.name || '', phone: phoneToKeep }));
+      }
       stopVendorAutoLiveSync();
       localStorage.removeItem('milkcount_vendor_session');
       vendorProfile = null;
@@ -1126,8 +1129,11 @@ const newUpi = document.getElementById('editVendorUpiInput').value.trim();
       monthLogsByUser = {};
       document.getElementById('vendorAppSection').classList.add('hidden-force');
       document.getElementById('vendorAuthSection').classList.remove('hidden-force');
+      if (phoneToKeep) document.getElementById('vendorPhoneInput').value = phoneToKeep;
       document.getElementById('vendorPinInput').value = '';
+      document.getElementById('vendorPinInput').focus();
     }
+
 
     function showToast(msg) {
       const t = document.getElementById('toast');
