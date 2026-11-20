@@ -9,7 +9,6 @@ on:
 jobs:
   build-android-twa:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -31,69 +30,56 @@ jobs:
       - name: Install Google Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
-      - name: Generate Signing Keystore
+      - name: Generate Keystore & Build APK + AAB
         run: |
-          keytool -genkeypair -v \
-            -keystore android.keystore \
-            -alias milkcount \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass MilkCount@2026 \
-            -keypass MilkCount@2026 \
-            -dname "CN=MilkCount, OU=Mobile, O=MilkCount, L=Hanamkonda, ST=Telangana, C=IN"
-
-      - name: Initialize & Build TWA (APK + AAB)
-        run: |
-          mkdir twa-build && cd twa-build
-          cp ../android.keystore ./android.keystore
-          cat << 'EOF' > twa-manifest.json
-          {
-            "packageId": "com.milkcount.vendor",
-            "host": "kishoreee226-netizen.github.io",
-            "name": "MilkCount Vendor",
-            "launcherName": "MilkVendor",
-            "display": "standalone",
-            "themeColor": "#0F766E",
-            "themeColorDark": "#0F766E",
-            "navigationColor": "#0F766E",
-            "navigationColorDark": "#0F766E",
-            "navigationDividerColor": "#0F766E",
-            "navigationDividerColorDark": "#0F766E",
-            "backgroundColor": "#0F766E",
-            "enableNotifications": true,
-            "startUrl": "/milk-tracker-vendor/index.html",
-            "iconUrl": "https://github.io",
-            "maskableIconUrl": "https://github.io",
-            "splashScreenFadeOutDuration": 300,
-            "signingKey": {
-              "path": "./android.keystore",
-              "alias": "milkcount"
-            },
-            "appVersionName": "1.0.0",
-            "appVersionCode": 1,
-            "shortcuts": [],
-            "generatorApp": "bubblewrap-cli",
-            "webManifestUrl": "https://github.io",
-            "fallbackType": "customtabs",
-            "features": {},
-            "alphaDependencies": {
-              "enabled": false
-            },
-            "enableSiteSettingsShortcut": true,
-            "isChromeOSOnly": false,
-            "isMetaQuest": false,
-            "fullScopeUrl": "https://github.io",
-            "minSdkVersion": 21,
-            "orientation": "portrait",
-            "fingerprints": []
-          }
-          EOF
+          keytool -genkeypair -v -keystore android.keystore -alias milkcount -keyalg RSA -keysize 2048 -validity 10000 -storepass MilkCount@2026 -keypass MilkCount@2026 -dname "CN=MilkCount, OU=Mobile, O=MilkCount, L=Hanamkonda, ST=Telangana, C=IN"
+          mkdir twa-build
+          cp android.keystore twa-build/android.keystore
+          cd twa-build
+          node -e '
+            const base = "https://github.io";
+            const manifest = {
+              packageId: "com.milkcount.vendor",
+              host: "kishoreee226-netizen.github.io",
+              name: "MilkCount Vendor",
+              launcherName: "MilkVendor",
+              display: "standalone",
+              themeColor: "#0F766E",
+              themeColorDark: "#0F766E",
+              navigationColor: "#0F766E",
+              navigationColorDark: "#0F766E",
+              navigationDividerColor: "#0F766E",
+              navigationDividerColorDark: "#0F766E",
+              backgroundColor: "#0F766E",
+              enableNotifications: true,
+              startUrl: "/milk-tracker-vendor/index.html",
+              iconUrl: base + "/vendor-logo.png",
+              maskableIconUrl: base + "/vendor-logo.png",
+              splashScreenFadeOutDuration: 300,
+              signingKey: { path: "./android.keystore", alias: "milkcount" },
+              appVersionName: "1.0.0",
+              appVersionCode: 1,
+              shortcuts: [],
+              generatorApp: "bubblewrap-cli",
+              webManifestUrl: base + "/manifest.json",
+              fallbackType: "customtabs",
+              features: {},
+              alphaDependencies: { enabled: false },
+              enableSiteSettingsShortcut: true,
+              isChromeOSOnly: false,
+              isMetaQuest: false,
+              fullScopeUrl: base + "/",
+              minSdkVersion: 21,
+              orientation: "portrait",
+              fingerprints: []
+            };
+            require("fs").writeFileSync("twa-manifest.json", JSON.stringify(manifest, null, 2));
+          '
           bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
-          echo -e "MilkCount@2026\nMilkCount@2026" | bubblewrap build
-          cp ../android.keystore ./output-keystore.keystore
+          printf "MilkCount@2026\nMilkCount@2026\n" | bubblewrap build
+          cp android.keystore output-keystore.keystore
 
-      - name: Upload APK, AAB & Keystore Artifacts
+      - name: Upload APK, AAB & Keystore
         uses: actions/upload-artifact@v4
         with:
           name: MilkCount-Vendor-Android-Package
