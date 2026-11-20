@@ -2,6 +2,9 @@ name: Build MilkCount TWA APK & AAB
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-twa.yml'
 
 jobs:
   build-android-twa:
