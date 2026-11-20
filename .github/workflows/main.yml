@@ -17,12 +17,13 @@ jobs:
           node-version: '22'
 
       - name: Build TWA APK and AAB
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
           npm install -g @bubblewrap/cli
+          SDK_DIR="${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
+          JDK_DIR="${JAVA_HOME_17_X64:-/usr/lib/jvm/temurin-17-jdk-amd64}"
+          yes | "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --licenses || true
           mkdir -p ~/.bubblewrap
-          node -e 'require("fs").writeFileSync(process.env.HOME + "/.bubblewrap/config.json", JSON.stringify({jdkPath:"/usr/lib/jvm/temurin-17-jdk-amd64",androidSdkPath:"/usr/local/lib/android/sdk"}))'
+          node -e 'require("fs").writeFileSync(process.env.HOME + "/.bubblewrap/config.json", JSON.stringify({jdkPath: process.env.JDK_DIR, androidSdkPath: process.env.SDK_DIR}))'
           keytool -genkeypair -v -keystore android.keystore -alias milkcount -keyalg RSA -keysize 2048 -validity 10000 -storepass MilkCount2026 -keypass MilkCount2026 -dname "CN=MilkCount, OU=App, O=MilkCount, L=Hanamkonda, ST=TS, C=IN"
           mkdir twa && cp android.keystore twa/ && cd twa
           node -e '
@@ -63,7 +64,7 @@ jobs:
               fingerprints: []
             }, null, 2));
           '
-          yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+          bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
           printf "MilkCount2026\nMilkCount2026\n" | bubblewrap build
 
       - uses: actions/upload-artifact@v4
