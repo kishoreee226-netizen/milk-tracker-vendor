@@ -66,7 +66,12 @@ jobs:
           '
                                         yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
           sed -i 's/compileSdkVersion 36/compileSdkVersion 34/g; s/targetSdkVersion 36/targetSdkVersion 34/g; s/compileSdk = 36/compileSdk = 34/g; s/targetSdk = 36/targetSdk = 34/g' app/build.gradle
-          BUBBLEWRAP_KEYSTORE_PASSWORD=MilkCount2026 BUBBLEWRAP_KEY_PASSWORD=MilkCount2026 bubblewrap build --skipPwaValidation
+                    yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+          sed -i 's/36/34/g' app/build.gradle
+          ./gradlew assembleRelease bundleRelease -Pandroid.injected.signing.store.file=$(pwd)/android.keystore -Pandroid.injected.signing.store.password=MilkCount2026 -Pandroid.injected.signing.key.alias=milkcount -Pandroid.injected.signing.key.password=MilkCount2026
+          cp app/build/outputs/apk/release/app-release.apk ./app-release-signed.apk
+          cp app/build/outputs/bundle/release/app-release.aab ./app-release-bundle.aab
+
 
       - uses: actions/upload-artifact@v4
         with:
