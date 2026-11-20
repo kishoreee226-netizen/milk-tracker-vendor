@@ -64,8 +64,9 @@ jobs:
               fingerprints: []
             }, null, 2));
           '
-                                                  yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
-          sed -i 's/36/34/g' app/build.gradle
+                                                            yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+          SDK_VER=$(ls /usr/local/lib/android/sdk/platforms | grep -oE '[0-9]+' | sort -nr | head -n1)
+          sed -i "s/compileSdkVersion [0-9]*/compileSdkVersion $SDK_VER/g; s/targetSdkVersion [0-9]*/targetSdkVersion $SDK_VER/g; s/compileSdk = [0-9]*/compileSdk = $SDK_VER/g; s/targetSdk = [0-9]*/targetSdk = $SDK_VER/g" app/build.gradle
           JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64 ./gradlew assembleRelease bundleRelease -Pandroid.injected.signing.store.file=$(pwd)/android.keystore -Pandroid.injected.signing.store.password=MilkCount2026 -Pandroid.injected.signing.key.alias=milkcount -Pandroid.injected.signing.key.password=MilkCount2026
           cp app/build/outputs/apk/release/app-release.apk ./app-release-signed.apk
           cp app/build/outputs/bundle/release/app-release.aab ./app-release-bundle.aab
