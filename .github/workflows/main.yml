@@ -20,7 +20,8 @@ jobs:
         run: |
           npm install -g @bubblewrap/cli
           keytool -genkeypair -v -keystore android.keystore -alias milkcount -keyalg RSA -keysize 2048 -validity 10000 -storepass MilkCount2026 -keypass MilkCount2026 -dname "CN=MilkCount, OU=App, O=MilkCount, L=Hanamkonda, ST=TS, C=IN"
-          SHA256=$(keytool -list -v -keystore android.keystore -alias milkcount -storepass MilkCount2026 | grep "SHA256:" | awk '{print $2}')
+                    export SHA256=$(keytool -list -v -keystore android.keystore -alias milkcount -storepass MilkCount2026 | sed -n 's/.*SHA256:[[:space:]]*//p' | head -n1)
+
           mkdir twa && cp android.keystore twa/ && cd twa
           node -e '
             require("fs").writeFileSync("assetlinks.json", JSON.stringify([{
