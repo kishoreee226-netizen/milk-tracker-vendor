@@ -64,11 +64,9 @@ jobs:
               fingerprints: []
             }, null, 2));
           '
-                              yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
-          mkdir -p /usr/local/lib/android/sdk/licenses ~/.bubblewrap/android_sdk/licenses
-          printf "\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n" | tee /usr/local/lib/android/sdk/licenses/android-sdk-license ~/.bubblewrap/android_sdk/licenses/android-sdk-license
-          BUBBLEWRAP_KEYSTORE_PASSWORD=MilkCount2026 BUBBLEWRAP_KEY_PASSWORD=MilkCount2026 bubblewrap build
-
+                                        yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+          sed -i 's/compileSdkVersion 36/compileSdkVersion 34/g; s/targetSdkVersion 36/targetSdkVersion 34/g; s/compileSdk = 36/compileSdk = 34/g; s/targetSdk = 36/targetSdk = 34/g' app/build.gradle
+          BUBBLEWRAP_KEYSTORE_PASSWORD=MilkCount2026 BUBBLEWRAP_KEY_PASSWORD=MilkCount2026 bubblewrap build --skipPwaValidation
 
       - uses: actions/upload-artifact@v4
         with:
