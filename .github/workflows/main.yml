@@ -65,8 +65,9 @@ jobs:
             }, null, 2));
           '
                     yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
-                    BUBBLEWRAP_KEYSTORE_PASSWORD=MilkCount2026 BUBBLEWRAP_KEY_PASSWORD=MilkCount2026 bubblewrap build
-
+                              yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+          yes | ~/.bubblewrap/android_sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          BUBBLEWRAP_KEYSTORE_PASSWORD=MilkCount2026 BUBBLEWRAP_KEY_PASSWORD=MilkCount2026 bubblewrap build
 
       - uses: actions/upload-artifact@v4
         with:
