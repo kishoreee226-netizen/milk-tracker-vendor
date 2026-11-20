@@ -64,12 +64,13 @@ jobs:
               fingerprints: []
             }, null, 2));
           '
-                                                                      yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+                                                                                yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
           echo "sdk.dir=/usr/local/lib/android/sdk" > local.properties
-          sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 34/g; s/targetSdkVersion [0-9]*/targetSdkVersion 34/g; s/compileSdk = [0-9]*/compileSdk = 34/g; s/targetSdk = [0-9]*/targetSdk = 34/g' app/build.gradle
+          sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 35/g; s/targetSdkVersion [0-9]*/targetSdkVersion 35/g; s/compileSdk = [0-9]*/compileSdk = 35/g; s/targetSdk = [0-9]*/targetSdk = 35/g' app/build.gradle
           JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64 ./gradlew assembleRelease bundleRelease -Pandroid.injected.signing.store.file=$(pwd)/android.keystore -Pandroid.injected.signing.store.password=MilkCount2026 -Pandroid.injected.signing.key.alias=milkcount -Pandroid.injected.signing.key.password=MilkCount2026
           cp app/build/outputs/apk/release/app-release.apk ./app-release-signed.apk
           cp app/build/outputs/bundle/release/app-release.aab ./app-release-bundle.aab
+
 
       - uses: actions/upload-artifact@v4
         with:
