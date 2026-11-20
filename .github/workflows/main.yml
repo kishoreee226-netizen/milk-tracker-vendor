@@ -16,17 +16,21 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Build TWA APK and AAB
+      - name: Build 4 Files (APK, AAB, AssetLinks, Keystore)
         run: |
           npm install -g @bubblewrap/cli
-          SDK_DIR="${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
-          JDK_DIR="${JAVA_HOME_17_X64:-/usr/lib/jvm/temurin-17-jdk-amd64}"
-          yes | "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" --licenses || true
-          mkdir -p ~/.bubblewrap
-          node -e 'require("fs").writeFileSync(process.env.HOME + "/.bubblewrap/config.json", JSON.stringify({jdkPath: process.env.JDK_DIR, androidSdkPath: process.env.SDK_DIR}))'
           keytool -genkeypair -v -keystore android.keystore -alias milkcount -keyalg RSA -keysize 2048 -validity 10000 -storepass MilkCount2026 -keypass MilkCount2026 -dname "CN=MilkCount, OU=App, O=MilkCount, L=Hanamkonda, ST=TS, C=IN"
+          SHA256=$(keytool -list -v -keystore android.keystore -alias milkcount -storepass MilkCount2026 | grep "SHA256:" | awk '{print $2}')
           mkdir twa && cp android.keystore twa/ && cd twa
           node -e '
+            require("fs").writeFileSync("assetlinks.json", JSON.stringify([{
+              relation: ["delegate_permission/common.handle_all_urls"],
+              target: {
+                namespace: "android_app",
+                package_name: "com.milkcount.vendor",
+                sha256_cert_fingerprints: [process.env.SHA256]
+              }
+            }], null, 2));
             const site = "https:" + "//kishoreee226-netizen.github.io/milk-tracker-vendor";
             require("fs").writeFileSync("twa-manifest.json", JSON.stringify({
               packageId: "com.milkcount.vendor",
@@ -63,13 +67,12 @@ jobs:
               orientation: "portrait",
               fingerprints: []
             }, null, 2));
-          '
-                                                                                          yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
+          ' SHA256="$SHA256"
+          yes | bubblewrap update --manifest=./twa-manifest.json --skipVersionUpgrade
           echo "sdk.dir=/usr/local/lib/android/sdk" > local.properties
           JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64 ./gradlew assembleRelease bundleRelease -Pandroid.injected.signing.store.file=$(pwd)/android.keystore -Pandroid.injected.signing.store.password=MilkCount2026 -Pandroid.injected.signing.key.alias=milkcount -Pandroid.injected.signing.key.password=MilkCount2026
           cp app/build/outputs/apk/release/app-release.apk ./app-release-signed.apk
           cp app/build/outputs/bundle/release/app-release.aab ./app-release-bundle.aab
-
 
       - uses: actions/upload-artifact@v4
         with:
