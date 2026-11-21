@@ -9,18 +9,19 @@
   "orientation": "portrait",
   "background_color": "#0f766e",
   "theme_color": "#0f766e",
-  "icons": [
-    {
-      "src": "./vendor-logo.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./vendor-logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ]
+ "icons": [
+  {
+    "src": "./vendor-logo-192.png",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "any"
+  },
+  {
+    "src": "./vendor-logo.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "any maskable"
+  }
+]
+
 }
