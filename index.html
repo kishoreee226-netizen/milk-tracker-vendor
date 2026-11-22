@@ -3378,123 +3378,113 @@ function shareVendorAppLink() {
       }
     }
 
-        // Compress & Save Vendor Profile Photo (Local + Supabase Cloud Sync)
-    function handleVendorProfilePhotoUpload(event) {
-      const file = event.target.files.item(0);
-      if (!file || !vendorProfile) return;
+// Compress & Save Vendor Profile Photo (Local + Supabase Cloud Sync)
+function handleVendorProfilePhotoUpload(event) {
+  const file = event.target.files && event.target.files.item(0);
+  if (!file || typeof vendorProfile === 'undefined' || !vendorProfile || !vendorProfile.phone) return;
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement('canvas');
-          canvas.width = 160;
-          canvas.height = 160;
-          const ctx = canvas.getContext('2d');
-          const minSide = Math.min(img.width, img.height);
-          const sx = (img.width - minSide) / 2;
-          const sy = (img.height - minSide) / 2;
-          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 160, 160);
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = async function() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 160;
+      canvas.height = 160;
+      const ctx = canvas.getContext('2d');
+      const minSide = Math.min(img.width, img.height);
+      const sx = (img.width - minSide) / 2;
+      const sy = (img.height - minSide) / 2;
+      ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 160, 160);
 
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
-          localStorage.setItem('mc_vendor_photo_' + vendorProfile.phone, compressedDataUrl);
-          vendorProfile.profile_pic = compressedDataUrl;
-          applyVendorProfilePhotoUI(vendorProfile.phone);
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
+      localStorage.setItem('mc_vendor_photo_' + vendorProfile.phone, compressedDataUrl);
+      vendorProfile.profile_pic = compressedDataUrl;
+      applyVendorProfilePhotoUI(vendorProfile.phone);
 
-          if (typeof db !== 'undefined' && db) {
-            const { error } = await db
-              .from('vendors')
-              .update({ profile_pic: compressedDataUrl })
-              .eq('phone', vendorProfile.phone);
-            if (!error) showToast('ప్రొఫైల్ ఫోటో క్లౌడ్‌లో సేవ్ అయ్యింది! ✓');
-          }
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+      if (typeof db !== 'undefined' && db) {
+        const { error } = await db
+          .from('vendors')
+          .update({ profile_pic: compressedDataUrl })
+          .eq('phone', vendorProfile.phone);
+        if (!error && typeof showToast === 'function') {
+          showToast('ప్రొఫైల్ ఫోటో క్లౌడ్‌లో సేవ్ అయ్యింది! ✓');
+        }
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
-    // Apply Saved Photo (Checks LocalStorage first, then fetches from Supabase Cloud)
-    async function applyVendorProfilePhotoUI(phone) {
-      if (!phone) return;
-      let photoUrl = localStorage.getItem('mc_vendor_photo_' + phone);
+// Apply Saved Photo (Checks LocalStorage first, then fetches from Supabase Cloud)
+async function applyVendorProfilePhotoUI(phone) {
+  if (!phone) return;
+  let photoUrl = localStorage.getItem('mc_vendor_photo_' + phone);
 
-      if (!photoUrl) {
-        if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.profile_pic) {
-          photoUrl = vendorProfile.profile_pic;
+  if (!photoUrl) {
+    if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.profile_pic) {
+      photoUrl = vendorProfile.profile_pic;
+      localStorage.setItem('mc_vendor_photo_' + phone, photoUrl);
+    } else if (typeof db !== 'undefined' && db) {
+      try {
+        const { data } = await db
+          .from('vendors')
+          .select('profile_pic')
+          .eq('phone', phone)
+          .maybeSingle();
+        if (data && data.profile_pic) {
+          photoUrl = data.profile_pic;
           localStorage.setItem('mc_vendor_photo_' + phone, photoUrl);
-        } else if (typeof db !== 'undefined' && db) {
-          const { data } = await db
-            .from('vendors')
-            .select('profile_pic')
-            .eq('phone', phone)
-            .maybeSingle();
-          if (data && data.profile_pic) {
-            photoUrl = data.profile_pic;
-            localStorage.setItem('mc_vendor_photo_' + phone, photoUrl);
-          }
         }
-      }
-
-      const bigLogoImg = document.getElementById('headerVendorBigLogoImg');
-      const defaultTruckIcon = document.getElementById('headerVendorDefaultTruckIcon');
-      if (bigLogoImg && defaultTruckIcon) {
-        if (photoUrl) {
-          bigLogoImg.src = photoUrl;
-          bigLogoImg.classList.remove('hidden-force');
-          defaultTruckIcon.classList.add('hidden-force');
-        } else {
-          bigLogoImg.classList.add('hidden-force');
-          defaultTruckIcon.classList.remove('hidden-force');
-        }
-      }
-
-      const editImg = document.getElementById('editVendorPhotoPreview');
-      const editIcon = document.getElementById('editVendorPhotoIcon');
-      if (editImg && editIcon) {
-        if (photoUrl) {
-          editImg.src = photoUrl;
-          editImg.classList.remove('hidden-force');
-          editIcon.classList.add('hidden-force');
-        } else {
-          editImg.classList.add('hidden-force');
-          editIcon.classList.remove('hidden-force');
-        }
-      }
-
-      const quickImg = document.getElementById('quickVendorPhotoImg');
-      const quickIcon = document.getElementById('quickVendorPhotoIcon');
-      if (quickImg && quickIcon) {
-        if (photoUrl) {
-          quickImg.src = photoUrl;
-          quickImg.classList.remove('hidden-force');
-          quickIcon.classList.add('hidden-force');
-        } else {
-          quickImg.classList.add('hidden-force');
-          quickIcon.classList.remove('hidden-force');
-        }
+      } catch (err) {
+        console.log('Vendor photo fetch skipped:', err);
       }
     }
+  }
+
+  const targets = [
+    { imgId: 'headerVendorBigLogoImg', iconId: 'headerVendorDefaultTruckIcon' },
+    { imgId: 'editVendorPhotoPreview', iconId: 'editVendorPhotoIcon' },
+    { imgId: 'quickVendorPhotoImg', iconId: 'quickVendorPhotoIcon' }
+  ];
+
+  targets.forEach(({ imgId, iconId }) => {
+    const imgEl = document.getElementById(imgId);
+    const iconEl = document.getElementById(iconId);
+    if (imgEl && iconEl) {
+      if (photoUrl) {
+        imgEl.src = photoUrl;
+        imgEl.classList.remove('hidden-force');
+        iconEl.classList.add('hidden-force');
+      } else {
+        imgEl.classList.add('hidden-force');
+        iconEl.classList.remove('hidden-force');
+      }
+    }
+  });
+}
 
 // Auto-hook into showVendorDashboard & openVendorProfileModal without editing old functions!
 (function() {
   if (typeof showVendorDashboard === 'function') {
     const _origShowVendorDashboard = showVendorDashboard;
-    window.showVendorDashboard = async function() {
-      await _origShowVendorDashboard();
-      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+    window.showVendorDashboard = async function(...args) {
+      const res = await _origShowVendorDashboard.apply(this, args);
+      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone) {
         await applyVendorProfilePhotoUI(vendorProfile.phone);
       }
+      return res;
     };
   }
 
   if (typeof openVendorProfileModal === 'function') {
     const _origOpenVendorProfileModal = openVendorProfileModal;
-    window.openVendorProfileModal = function() {
-      _origOpenVendorProfileModal();
-      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+    window.openVendorProfileModal = function(...args) {
+      const res = _origOpenVendorProfileModal.apply(this, args);
+      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone) {
         applyVendorProfilePhotoUI(vendorProfile.phone);
       }
+      return res;
     };
   }
 })();
