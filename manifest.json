@@ -3,12 +3,20 @@
   "name": "MilkCount Vendor - Dairy Manager",
   "short_name": "MilkVendor",
   "description": "Daily Milk Delivery, Farmer Collection and Smart UPI Billing Tracker",
+  "lang": "te",
+  "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#0f766e",
   "theme_color": "#0f766e",
+  "categories": ["business", "finance", "productivity"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
   "icons": [
     {
       "src": "./vendor-logo-192.png",
@@ -28,7 +36,36 @@
       "src": "./screenshot-vendor.png",
       "sizes": "540x720",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "MilkCount Vendor Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ఈరోజు డెలివరీ",
+      "short_name": "Delivery",
+      "description": "ఈరోజు పాల డెలివరీ లిస్ట్ చూడండి",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./vendor-logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "కొత్త కస్టమర్",
+      "short_name": "Customers",
+      "description": "కస్టమర్ల జాబితా నిర్వహించండి",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./vendor-logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
