@@ -36,3 +36,29 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(event.request))
   );
 });
+
+// Background Sync Listener
+self.addEventListener('sync', event => {
+  if (event.tag === 'milkcount-sync') {
+    event.waitUntil(Promise.resolve());
+  }
+});
+
+// Periodic Background Sync Listener
+self.addEventListener('periodicsync', event => {
+  if (event.tag === 'milkcount-periodic-sync') {
+    event.waitUntil(Promise.resolve());
+  }
+});
+
+// Push Notifications Listener
+self.addEventListener('push', event => {
+  const title = 'MilkCount Vendor';
+  const options = {
+    body: event.data ? event.data.text() : 'కొత్త పాల లెక్కల అప్‌డేట్ వచ్చింది!',
+    icon: './vendor-logo-192.png',
+    badge: './vendor-logo-192.png'
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
