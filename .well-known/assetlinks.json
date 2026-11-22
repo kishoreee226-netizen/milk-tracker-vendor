@@ -1,14 +1,8 @@
-[
-  {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.milkcount.vendor",
-      "sha256_cert_fingerprints": [
-        "4A:6A:B4:F7:13:87:67:04:1D:F2:D8:69:24:1C:AE:76:5C:AF:23:63:0D:A4:29:2F:8A:15:A6:87:8C:3E:34:7F"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.kishoreee226_netizen.twa",
+        "sha256_cert_fingerprints": ["52:45:CC:73:65:C7:68:75:3E:69:E8:2A:A4:66:5B:34:44:9E:8F:1B:E0:91:1E:56:A6:66:C0:38:04:BB:0B:6A"]
+      }
+    }]
