@@ -3037,6 +3037,11 @@ function shareCustomerAppLink() {
     <span>ఎందుకు మమ్మల్ని ఎంచుకోవాలి?</span>
       </button>
 
+<button onclick="toggleVendorMenu(); openVendorContactModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+  <i class="ph-bold ph-envelope-simple text-base text-teal-600"></i>
+  <span>సంప్రదించండి (Contact Us)</span>
+</button>
+
             <a href="./privacy.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
         <i class="ph-bold ph-shield-check text-base text-slate-600 shrink-0"></i>
         <span>గోప్యతా విధానం (Privacy Policy)</span>
@@ -3173,6 +3178,10 @@ function vendorMenuAction(action) {
 
 function openVendorWhyChooseModal() {
   alert("ఎందుకు మమ్మల్ని ఎంచుకోవాలి?\n• జీరో ఎర్రర్ లెక్కలు\n• ఆటోమేటిక్ బిల్లింగ్ & లెడ్జర్\n• రియల్-టైమ్ డేటా సింక్\n• రియల్-టైమ్ రూట్ గైడెన్స్\n• రియల్-టైమ్ వెండర్-కస్టమర్ పాల డెలివరీ\n• Zero Hard work Zero expense\n• రియల్-టైమ్ రోజువారీ ఆదాయ-వ్యయం\n• ప్రతిరోజు ఎన్ని లీటర్ పాలు పోయాలి అనేది ముందే తెలియడం\n• కస్టమర్ ల కి ఎవరికి ఏ పాలు ఎప్పుడూ ఎలా shift wise పోస్తున్నాం అనేది easy గ తెలియడం\n• వాట్సాప్ రిపోర్ట్స్ & సపోర్ట్\n• రియల్-టైమ్ Smart payments with UPI & many more");
+}
+
+function openVendorContactModal() {
+  alert("సంప్రదించండి (Contact Us)\n\nఏదైనా సమాచారం లేదా సహాయం కోసం మమ్మల్ని సంప్రదించండి:\n📧 Email: milkcount.saport@gmail.com");
 }
 
 function shareVendorAppLink() {
