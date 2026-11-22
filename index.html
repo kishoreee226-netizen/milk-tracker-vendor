@@ -175,6 +175,10 @@
       <span onclick="openUpiQrModal('', 0, 'quick')" title="Scan QR" role="button" class="inline-flex items-center justify-center text-amber-300 hover:text-white active:scale-90 transition-transform cursor-pointer ml-5 px-1.5">
         <i class="ph-bold ph-qr-code text-xl"></i>
       </span>
+        <button onclick="openVendorNotificationsModal()" title="నోటిఫికేషన్లు" class="relative w-6 h-6 rounded-lg bg-amber-300/20 hover:bg-amber-300/30 active:scale-95 flex items-center justify-center text-yellow-300 border border-yellow-300/40 transition-all shrink-0 ml-2">
+    <i class="ph-fill ph-bell text-sm text-yellow-300"></i>
+    <span id="vendorNotifBadge" class="hidden-force absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center">0</span>
+  </button>
     </div>
 
     <!-- ROW 3 RIGHT: Raise Ticket -->
@@ -1037,7 +1041,6 @@
   upi_id: existingVendor.upi_id || '',
   profile_pic: existingVendor.profile_pic || null
 };
-
       }
 
       btn.disabled = false;
@@ -2932,6 +2935,11 @@ function shareCustomerAppLink() {
         <span>డేటా సింక్ (Sync Data)</span>
       </button>
 
+<button onclick="toggleVendorMenu(); openVendorNotificationsModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
+  <i class="ph-fill ph-bell text-base text-amber-500 shrink-0"></i>
+  <span>నోటిఫికేషన్లు (Notifications)</span>
+</button>
+
       <!-- GROUP 1: DAILY DELIVERY & ALERTS -->
       <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">డెలివరీ & అలర్ట్స్</div>
 
@@ -3317,6 +3325,34 @@ function shareVendorAppLink() {
     </div>
   </div>
 
+<!-- V12.8 Vendor Notifications Modal -->
+<div id="vendorNotificationsModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+  <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+    <div class="bg-gradient-to-r from-teal-700 to-emerald-800 text-white px-4 py-3 flex items-center justify-between">
+      <h3 class="text-xs font-extrabold flex items-center gap-1.5">
+        <i class="ph-fill ph-bell text-amber-300 text-base"></i> వెండర్ నోటిఫికేషన్లు
+      </h3>
+      <div class="flex items-center gap-1.5">
+        <button onclick="enableVendorPhoneAlert()" class="text-[10px] bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg font-bold">
+          🔔 Phone Alert
+        </button>
+        <button onclick="markAllVendorNotificationsRead()" class="text-[10px] bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg font-bold">
+          చదివినట్టు ✓
+        </button>
+        <button onclick="clearVendorNotifications()" class="text-[10px] bg-rose-500/30 hover:bg-rose-500/45 px-2 py-1 rounded-lg font-bold">
+          క్లియర్
+        </button>
+        <button onclick="closeVendorNotificationsModal()" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center">
+          <i class="ph-bold ph-x text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <div id="vendorNotificationsList" class="p-3.5 overflow-y-auto space-y-2 text-xs flex-1">
+      <p class="text-center text-slate-400 py-6">కొత్త నోటిఫికేషన్లు ఏవీ లేవు.</p>
+    </div>
+  </div>
+</div>
+
 <script>
              // ==========================================
     // VENDOR FEEDBACK & RATING SYSTEM
@@ -3380,6 +3416,171 @@ function shareVendorAppLink() {
         btn.innerHTML = '<i class="ph-bold ph-paper-plane-tilt text-sm"></i> ఫీడ్‌బ్యాక్ పంపండి';
       }
     }
+
+ // VENDOR NOTIFICATIONS JAVASCRIPTS SYSTEM
+(function() {
+  function getVendorNotifKey() {
+    const phone = (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone)
+      ? vendorProfile.phone
+      : 'guest';
+    return 'mc_vendor_notifications_' + phone;
+  }
+
+  function getVendorNotifications() {
+    try {
+      return JSON.parse(localStorage.getItem(getVendorNotifKey()) || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveVendorNotifications(items) {
+    localStorage.setItem(getVendorNotifKey(), JSON.stringify(items.slice(0, 30)));
+    renderVendorNotificationsList();
+renderVendorNotificationBadge();
+  }
+
+  window.enableVendorPhoneAlert = async function() {
+    if (!('Notification' in window)) return alert('ఈ బ్రౌజర్‌లో ఫోన్ నోటిఫికేషన్ సపోర్ట్ లేదు.');
+    const perm = await Notification.requestPermission();
+    showToast(perm === 'granted' ? 'ఫోన్ నోటిఫికేషన్లు ఆన్ అయ్యాయి! 🔔' : 'Notification అనుమతి ఇవ్వలేదు.');
+  };
+
+  function triggerVendorPhoneBanner(title, message) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(title, {
+          body: message,
+          icon: './vendor-logo.png',
+          badge: './vendor-logo.png',
+          vibrate: [200, 100, 200]
+        });
+      }).catch(() => new Notification(title, { body: message, icon: './vendor-logo.png' }));
+    } else {
+      new Notification(title, { body: message, icon: './vendor-logo.png' });
+    }
+  }
+
+  function pushVendorNotification(id, title, message, timeLabel) {
+    if (!id || !message) return;
+    const list = getVendorNotifications();
+    if (list.some(n => n.id === id)) return;
+    list.unshift({
+      id,
+      title: title || 'MilkCount Vendor',
+      message,
+      time: timeLabel || new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+      read: false
+    });
+    saveVendorNotifications(list);
+    triggerVendorPhoneBanner(title || 'MilkCount Vendor', message);
+  }
+
+function renderVendorNotificationBadge() {
+  const badge = document.getElementById('vendorNotifBadge');
+  if (!badge) return;
+  const unread = getVendorNotifications().filter(n => !n.read).length;
+  if (unread > 0) {
+    badge.innerText = unread > 9 ? '9+' : String(unread);
+    badge.classList.remove('hidden-force');
+  } else {
+    badge.classList.add('hidden-force');
+  }
+}
+
+    function renderVendorNotificationsList() {
+    const el = document.getElementById('vendorNotificationsList');
+    if (!el) return;
+    const list = getVendorNotifications();
+    if (!list.length) {
+      el.innerHTML = '<p class="text-center text-slate-400 py-6">కొత్త నోటిఫికేషన్లు ఏవీ లేవు.</p>';
+      return;
+    }
+    el.innerHTML = list.map(n => `
+      <div class="border ${n.read ? 'border-slate-200 bg-slate-50/70' : 'border-teal-200 bg-teal-50/60'} rounded-xl p-2.5 space-y-1">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-extrabold text-slate-800 text-[11px]">${n.title}</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="text-[9px] text-slate-400">${n.time}</span>
+            ${n.read
+              ? `<span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">✓ చదివారు</span>`
+              : `<button onclick="markSingleVendorNotificationRead('${String(n.id).replace(/'/g, "\\'")}')" title="చదివినట్టు మార్క్ చేయండి" class="text-[10px] font-extrabold text-teal-800 bg-teal-100 hover:bg-teal-200 active:scale-95 px-1.5 py-0.5 rounded-md transition-all">✓</button>`
+            }
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-700 leading-snug">${n.message}</p>
+      </div>
+    `).join('');
+  }
+
+  window.markSingleVendorNotificationRead = function(id) {
+    if (!id) return;
+    const updated = getVendorNotifications().map(n =>
+      n.id === id ? Object.assign({}, n, { read: true }) : n
+    );
+    saveVendorNotifications(updated);
+  };
+
+  window.openVendorNotificationsModal = function() {
+    renderVendorNotificationsList();
+    const m = document.getElementById('vendorNotificationsModal');
+    if (m) m.classList.remove('hidden-force');
+  };
+
+  window.closeVendorNotificationsModal = function() {
+    const m = document.getElementById('vendorNotificationsModal');
+    if (m) m.classList.add('hidden-force');
+  };
+
+  window.markAllVendorNotificationsRead = function() {
+    saveVendorNotifications(getVendorNotifications().map(n => Object.assign({}, n, { read: true })));
+  };
+
+  window.clearVendorNotifications = function() {
+    localStorage.removeItem(getVendorNotifKey());
+    renderVendorNotificationsList();
+document.getElementById('vendorNotifBadge')?.classList.add('hidden-force');
+  };
+
+  function syncVendorAlertsFromLogs() {
+    if (typeof allCustomers === 'undefined' || typeof monthLogsByUser === 'undefined') return;
+    allCustomers.forEach(cust => {
+      const userLogs = monthLogsByUser[cust.id];
+      if (!userLogs) return;
+      Object.keys(userLogs).forEach(dateStr => {
+        const log = userLogs[dateStr];
+        if (!log) return;
+        if (log.quality_note && String(log.quality_note).trim()) {
+          pushVendorNotification(
+            `v_qual_${cust.id}_${dateStr}_${encodeURIComponent(String(log.quality_note).trim())}`,
+            '⚠️ కస్టమర్ క్వాలిటీ అలర్ట్',
+            `${cust.name} (${dateStr}): ${log.quality_note}`,
+            dateStr
+          );
+        }
+        if (log.status === 'skipped') {
+          pushVendorNotification(
+            `v_skip_${cust.id}_${dateStr}`,
+            '⏸️ కస్టమర్ Skip / సెలవు',
+            `${cust.name} (${dateStr}) రోజు పాలు వద్దు (Skip) అని అప్‌డేట్ చేశారు.`,
+            dateStr
+          );
+        }
+      });
+    });
+renderVendorNotificationBadge();
+  }
+
+  if (typeof refreshAllVendorData === 'function') {
+    const _origRefreshVendorNotif = refreshAllVendorData;
+    window.refreshAllVendorData = async function(...args) {
+      const res = await _origRefreshVendorNotif.apply(this, args);
+      syncVendorAlertsFromLogs();
+      return res;
+    };
+  }
+})();
 
         // Compress & Save Vendor Profile Photo (Local + Supabase Cloud Sync)
     function handleVendorProfilePhotoUpload(event) {
@@ -3478,8 +3679,8 @@ function shareVendorAppLink() {
         }
       }
     }
-
-// Auto-hook into showVendorDashboard & openVendorProfileModal without editing old functions!
+  
+  // Auto-hook into showVendorDashboard & openVendorProfileModal without editing old functions!
 (function() {
   if (typeof showVendorDashboard === 'function') {
     const _origShowVendorDashboard = showVendorDashboard;
