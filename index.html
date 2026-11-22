@@ -3476,6 +3476,29 @@ function shareVendorAppLink() {
       }
     }
 
+// Auto-hook into showVendorDashboard & openVendorProfileModal without editing old functions!
+(function() {
+  if (typeof showVendorDashboard === 'function') {
+    const _origShowVendorDashboard = showVendorDashboard;
+    window.showVendorDashboard = async function() {
+      await _origShowVendorDashboard();
+      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+        await applyVendorProfilePhotoUI(vendorProfile.phone);
+      }
+    };
+  }
+
+  if (typeof openVendorProfileModal === 'function') {
+    const _origOpenVendorProfileModal = openVendorProfileModal;
+    window.openVendorProfileModal = function() {
+      _origOpenVendorProfileModal();
+      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+        applyVendorProfilePhotoUI(vendorProfile.phone);
+      }
+    };
+  }
+})();
+
     // Run on startup so closed app also opens straight to Quick PIN
     checkVendorQuickPinScreen();
 
