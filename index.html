@@ -3680,12 +3680,34 @@ renderVendorNotificationBadge();
       }
     }
   
-  // Auto-hook into showVendorDashboard & openVendorProfileModal without editing old functions!
+// Auto-hook into showVendorDashboard, openVendorProfileModal & Hold/Unblock check without editing old functions!
 (function() {
+  async function enforceVendorHoldStatus() {
+    if (typeof vendorProfile === 'undefined' || !vendorProfile || !vendorProfile.phone || typeof db === 'undefined') {
+      return false;
+    }
+    try {
+      const { data: vFresh } = await db
+        .from('vendors')
+        .select('is_blocked, block_reason')
+        .eq('phone', vendorProfile.phone)
+        .maybeSingle();
+
+      if (vFresh && vFresh.is_blocked) {
+        alert('⚠️ మీ వెండర్ అకౌంట్ Hold లో ఉంది.' + (vFresh.block_reason ? '\nకారణం: ' + vFresh.block_reason : ''));
+        if (typeof logoutVendor === 'function') logoutVendor();
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
   if (typeof showVendorDashboard === 'function') {
     const _origShowVendorDashboard = showVendorDashboard;
     window.showVendorDashboard = async function(...args) {
       const res = await _origShowVendorDashboard.apply(this, args);
+      const isBlocked = await enforceVendorHoldStatus();
+      if (isBlocked) return;
       if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
         await applyVendorProfilePhotoUI(vendorProfile.phone);
       }
@@ -3696,10 +3718,22 @@ renderVendorNotificationBadge();
   if (typeof openVendorProfileModal === 'function') {
     const _origOpenVendorProfileModal = openVendorProfileModal;
     window.openVendorProfileModal = function(...args) {
-      _origOpenVendorProfileModal();
-      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
-        applyVendorProfilePhotoUI(vendorProfile.phone);
-      }
+      _origOpenVendorProfileModal.apply(this, args);
+      enforceVendorHoldStatus().then((isBlocked) => {
+        if (isBlocked) return;
+        if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+          applyVendorProfilePhotoUI(vendorProfile.phone);
+        }
+      });
+    };
+  }
+
+  if (typeof refreshAllVendorData === 'function') {
+    const _origRefreshAllVendorData = refreshAllVendorData;
+    window.refreshAllVendorData = async function(...args) {
+      const isBlocked = await enforceVendorHoldStatus();
+      if (isBlocked) return;
+      return await _origRefreshAllVendorData.apply(this, args);
     };
   }
 })();
