@@ -70,7 +70,7 @@
               <h1 class="text-base font-extrabold tracking-tight flex items-center gap-1.5">
                 MilkCount <span class="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold">ADMIN</span>
               </h1>
-              <div class="flex items-center gap-2 mt-0.5">
+              <div class="flex items-center gap-2 mt-0.5 flex-wrap">
                 <span class="text-[10px] text-emerald-300 flex items-center gap-1">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ఆటో-సింక్ ఆన్
                 </span>
@@ -86,31 +86,52 @@
           </button>
         </div>
 
-        <!-- LIVE KPI SUMMARY GRID -->
-        <div class="grid grid-cols-3 gap-2 mt-3.5">
+        <!-- GLOBAL SHARE APP CONTROL BAR (PAUSE / RESUME) -->
+        <div class="mt-2.5 bg-white/10 border border-white/15 rounded-xl px-3 py-1.5 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold">
+            <i class="ph-bold ph-share-network text-amber-300 text-sm"></i>
+            <span>Share App ఫీచర్:</span>
+            <span id="shareFeatureStatusBadge" class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30">Active</span>
+          </div>
+          <button id="toggleShareFeatureBtn" onclick="toggleGlobalSharePause()" class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/30 active:scale-95">
+            Pause చేయి
+          </button>
+        </div>
+
+        <!-- LIVE KPI SUMMARY GRID: పైన 4 + కింద 4 -->
+        <div class="grid grid-cols-4 gap-1.5 mt-2.5">
           <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
-            <span class="text-[9px] text-indigo-200 uppercase font-bold block">ఓపెన్ టికెట్లు</span>
-            <span id="kpiOpenTickets" class="text-lg font-black text-amber-300">0</span>
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">ఓపెన్ టికెట్లు</span>
+            <span id="kpiOpenTickets" class="text-base font-black text-amber-300">0</span>
           </div>
           <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
-            <span class="text-[9px] text-indigo-200 uppercase font-bold block">వెండర్లు</span>
-            <span id="kpiTotalVendors" class="text-lg font-black text-teal-300">0</span>
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">వెండర్లు</span>
+            <span id="kpiTotalVendors" class="text-base font-black text-teal-300">0</span>
           </div>
           <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
-            <span class="text-[9px] text-indigo-200 uppercase font-bold block">కస్టమర్లు</span>
-            <span id="kpiTotalCustomers" class="text-lg font-black text-sky-300">0</span>
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">కస్టమర్లు</span>
+            <span id="kpiTotalCustomers" class="text-base font-black text-sky-300">0</span>
           </div>
           <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
-            <span class="text-[9px] text-indigo-200 uppercase font-bold block">యాప్ వ్యూస్</span>
-            <span id="kpiTotalViews" class="text-sm font-black text-white">0</span>
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">యాప్ వ్యూస్</span>
+            <span id="kpiTotalViews" class="text-base font-black text-white">0</span>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">ఇన్‌స్టాల్స్ (PWA)</span>
+            <span id="kpiTotalInstalls" class="text-base font-black text-emerald-300">0</span>
           </div>
           <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
-            <span class="text-[9px] text-indigo-200 uppercase font-bold block">ఇన్‌స్టాల్స్ (PWA)</span>
-            <span id="kpiTotalInstalls" class="text-sm font-black text-emerald-300">0</span>
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">మొత్తం లాగిన్స్</span>
+            <span id="kpiTotalLogins" class="text-base font-black text-purple-300">0</span>
           </div>
           <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
-            <span class="text-[9px] text-indigo-200 uppercase font-bold block">మొత్తం లాగిన్స్</span>
-            <span id="kpiTotalLogins" class="text-sm font-black text-purple-300">0</span>
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">On Hold (V/C)</span>
+            <span id="kpiTotalHold" class="text-base font-black text-rose-300">0</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-xs border border-white/10 rounded-xl p-2 text-center">
+            <span class="text-[8.5px] text-indigo-200 uppercase font-bold block leading-tight">పరిష్కృత టికెట్లు</span>
+            <span id="kpiResolvedTickets" class="text-base font-black text-lime-300">0</span>
           </div>
         </div>
       </header>
@@ -118,9 +139,9 @@
       <!-- MAIN SCROLLABLE CONTENT -->
       <main class="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
 
-        <!-- TAB 1: SUPPORT TICKETS INBOX -->
+        <!-- TAB 1: SUPPORT TICKETS INBOX + QUICK REPLY TEMPLATES -->
         <div id="adminTabTickets" class="space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-1.5 flex-wrap">
             <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
               <i class="ph-fill ph-ticket text-amber-600 text-base"></i> సపోర్ట్ టికెట్లు (Support Inbox)
             </h2>
@@ -131,33 +152,61 @@
             </div>
           </div>
 
+          <div class="flex gap-1.5">
+            <div class="relative flex-1">
+              <i class="ph ph-magnifying-glass absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+              <input type="text" id="adminTicketSearch" onkeyup="renderAdminTickets()" placeholder="టికెట్ కోడ్, పేరు లేదా ఫోన్..." class="w-full pl-8 pr-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-semibold focus:outline-none focus:border-indigo-600">
+            </div>
+            <select id="adminTicketRoleFilter" onchange="renderAdminTickets()" class="px-2 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-700 focus:outline-none focus:border-indigo-600">
+              <option value="all">అన్ని రోల్స్</option>
+              <option value="customer">Customer</option>
+              <option value="vendor">Vendor</option>
+            </select>
+          </div>
+
           <div id="adminTicketsList" class="space-y-2.5"></div>
         </div>
 
-        <!-- TAB 2: VENDORS LIST & PIN RESET -->
+        <!-- TAB 2: VENDORS LIST, CUSTOMER DRILL-DOWN, SUB NOTE, HOLD/UNBLOCK & CSV -->
         <div id="adminTabVendors" class="hidden-force space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-2">
             <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
               <i class="ph-fill ph-truck text-teal-700 text-base"></i> రిజిస్టర్డ్ వెండర్లు (<span id="vendorCountBadge">0</span>)
             </h2>
+            <button onclick="exportAdminUsersCSV('vendors')" class="px-2.5 py-1 rounded-full bg-teal-700 hover:bg-teal-800 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-2xs active:scale-95">
+              <i class="ph-bold ph-download-simple text-xs"></i> CSV డౌన్‌లోడ్
+            </button>
           </div>
           <div class="relative">
             <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
             <input type="text" id="adminVendorSearch" onkeyup="renderAdminVendors()" placeholder="వెండర్ పేరు లేదా ఫోన్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">
           </div>
+          <div class="flex gap-1.5 text-[10px] font-bold">
+            <button onclick="setVendorHoldFilter('all')" id="vFilterAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
+            <button onclick="setVendorHoldFilter('active')" id="vFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
+            <button onclick="setVendorHoldFilter('hold')" id="vFilterHold" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">On Hold</button>
+          </div>
           <div id="adminVendorsList" class="space-y-2.5"></div>
         </div>
 
-        <!-- TAB 3: CUSTOMERS LIST & PIN RESET -->
+        <!-- TAB 3: CUSTOMERS LIST, SUB NOTE, HOLD/UNBLOCK & CSV -->
         <div id="adminTabCustomers" class="hidden-force space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-2">
             <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
               <i class="ph-fill ph-users text-sky-600 text-base"></i> రిజిస్టర్డ్ కస్టమర్లు (<span id="customerCountBadge">0</span>)
             </h2>
+            <button onclick="exportAdminUsersCSV('customers')" class="px-2.5 py-1 rounded-full bg-sky-700 hover:bg-sky-800 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-2xs active:scale-95">
+              <i class="ph-bold ph-download-simple text-xs"></i> CSV డౌన్‌లోడ్
+            </button>
           </div>
           <div class="relative">
             <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
             <input type="text" id="adminCustomerSearch" onkeyup="renderAdminCustomers()" placeholder="కస్టమర్ పేరు, ఫోన్ లేదా వెండర్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">
+          </div>
+          <div class="flex gap-1.5 text-[10px] font-bold">
+            <button onclick="setCustomerHoldFilter('all')" id="cFilterAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
+            <button onclick="setCustomerHoldFilter('active')" id="cFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
+            <button onclick="setCustomerHoldFilter('hold')" id="cFilterHold" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">On Hold</button>
           </div>
           <div id="adminCustomersList" class="space-y-2.5"></div>
         </div>
@@ -169,7 +218,6 @@
           </h2>
 
           <div class="grid grid-cols-2 gap-2.5">
-            <!-- Customer App Breakdown -->
             <div class="bg-white border border-sky-200 rounded-2xl p-3.5 shadow-2xs space-y-1.5">
               <span class="text-[10px] font-extrabold text-sky-700 uppercase block">👤 Customer App</span>
               <div class="flex justify-between text-xs">
@@ -186,7 +234,6 @@
               </div>
             </div>
 
-            <!-- Vendor App Breakdown -->
             <div class="bg-white border border-teal-200 rounded-2xl p-3.5 shadow-2xs space-y-1.5">
               <span class="text-[10px] font-extrabold text-teal-700 uppercase block">🚚 Vendor App</span>
               <div class="flex justify-between text-xs">
@@ -204,10 +251,18 @@
             </div>
           </div>
 
-          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs space-y-2">
-            <span class="text-xs font-extrabold text-slate-800 block">🕒 తాజా యాక్టివిటీ & లాగిన్ హిస్టరీ (Recent Activity)</span>
-            <div id="adminActivityFeed" class="space-y-2 max-h-96 overflow-y-auto"></div>
-          </div>
+<div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+  <div class="flex items-center justify-between gap-2 flex-wrap">
+    <span class="text-xs font-extrabold text-slate-800">🕒 తాజా యాక్టివిటీ లిస్ట్</span>
+    <div class="flex gap-1 text-[10px] font-bold">
+      <button onclick="setAnalyticsListMode('all')" id="aModeAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
+      <button onclick="setAnalyticsListMode('vendor')" id="aModeVendor" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">🚚 Vendors</button>
+      <button onclick="setAnalyticsListMode('customer')" id="aModeCustomer" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">👤 Customers</button>
+    </div>
+  </div>
+  <div id="adminActivityFeed" class="space-y-2 max-h-96 overflow-y-auto"></div>
+</div>
+
         </div>
 
       </main>
@@ -249,6 +304,10 @@
 
     let activeAdminTab = 'Tickets';
     let ticketFilter = 'all';
+    let vendorHoldFilter = 'all';
+    let customerHoldFilter = 'all';
+    let expandedVendorPhones = {};
+    let shareFeaturePaused = false;
     let allTickets = [];
     let allVendors = [];
     let allCustomers = [];
@@ -313,6 +372,7 @@
           .on('postgres_changes', { event: '*', schema: 'public', table: 'app_analytics' }, () => refreshAdminData(false))
           .on('postgres_changes', { event: '*', schema: 'public', table: 'vendors' }, () => refreshAdminData(false))
           .on('postgres_changes', { event: '*', schema: 'public', table: 'customer_users' }, () => refreshAdminData(false))
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'app_settings' }, () => refreshAdminData(false))
           .subscribe();
       } catch (e) {}
 
@@ -347,21 +407,61 @@
       const icon = document.getElementById('adminSyncIcon');
       if (icon) icon.classList.add('animate-spin');
 
-      const [tRes, vRes, cRes, aRes] = await Promise.all([
+      const [tRes, vRes, cRes, aRes, sRes] = await Promise.all([
         db.from('support_tickets').select('*').order('created_at', { ascending: false }),
         db.from('vendors').select('*').order('created_at', { ascending: false }),
         db.from('customer_users').select('*').order('created_at', { ascending: false }),
-        db.from('app_analytics').select('*').order('created_at', { ascending: false }).limit(500)
+        db.from('app_analytics').select('*').order('created_at', { ascending: false }).limit(500),
+        db.from('app_settings').select('*').eq('id', 1).maybeSingle()
       ]);
 
       allTickets = tRes.data || [];
       allVendors = vRes.data || [];
       allCustomers = cRes.data || [];
       allAnalytics = aRes.data || [];
+      if (sRes && sRes.data && typeof sRes.data.share_paused === 'boolean') {
+        shareFeaturePaused = sRes.data.share_paused;
+      }
 
       if (icon) icon.classList.remove('animate-spin');
       if (manual) showToast('అడ్మిన్ డేటా సింక్ అయ్యింది!');
       renderAllAdminViews();
+    }
+
+    function renderShareFeatureBanner() {
+      const badge = document.getElementById('shareFeatureStatusBadge');
+      const btn = document.getElementById('toggleShareFeatureBtn');
+      if (!badge || !btn) return;
+      if (shareFeaturePaused) {
+        badge.innerText = 'Paused';
+        badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-rose-500/30 text-rose-200 border border-rose-400/30';
+        btn.innerText = 'Resume (ఆన్ చేయి)';
+        btn.className = 'text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 border border-emerald-400/30 active:scale-95';
+      } else {
+        badge.innerText = 'Active';
+        badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30';
+        btn.innerText = 'Pause చేయి';
+        btn.className = 'text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/30 active:scale-95';
+      }
+    }
+
+    async function toggleGlobalSharePause() {
+      const nextPaused = !shareFeaturePaused;
+      const msg = nextPaused
+        ? 'Share App ఫీచర్‌ను తాత్కాలికంగా Pause (నిలిపివేయడం) చేయాలా?'
+        : 'Share App ఫీచర్‌ను మళ్ళీ Active (ప్రారంభం) చేయాలా?';
+      if (!confirm(msg)) return;
+
+      const { error } = await db.from('app_settings').upsert({
+        id: 1,
+        share_paused: nextPaused,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+
+      if (error) return alert('Error: ' + error.message);
+      shareFeaturePaused = nextPaused;
+      renderShareFeatureBanner();
+      showToast(nextPaused ? 'Share App ఫీచర్ Pause చేయబడింది!' : 'Share App ఫీచర్ తిరిగి Active అయ్యింది!');
     }
 
     function formatDateTime(iso) {
@@ -371,11 +471,16 @@
     }
 
     function renderAllAdminViews() {
-      // KPIs
+      renderShareFeatureBanner();
+
       const openCount = allTickets.filter(t => t.status !== 'Resolved').length;
+      const resolvedCount = allTickets.filter(t => t.status === 'Resolved').length;
       const viewsCount = allAnalytics.filter(a => a.event_type === 'visit').length;
       const installsCount = allAnalytics.filter(a => a.event_type === 'install').length;
       const loginsCount = allAnalytics.filter(a => a.event_type === 'login').length;
+      const holdCount =
+        allVendors.filter(v => !!v.is_blocked).length +
+        allCustomers.filter(c => !!c.is_blocked).length;
 
       document.getElementById('kpiOpenTickets').innerText = openCount;
       document.getElementById('kpiTotalVendors').innerText = allVendors.length;
@@ -383,6 +488,8 @@
       document.getElementById('kpiTotalViews').innerText = viewsCount;
       document.getElementById('kpiTotalInstalls').innerText = installsCount;
       document.getElementById('kpiTotalLogins').innerText = loginsCount;
+      document.getElementById('kpiTotalHold').innerText = holdCount;
+      document.getElementById('kpiResolvedTickets').innerText = resolvedCount;
 
       renderAdminTickets();
       renderAdminVendors();
@@ -390,7 +497,7 @@
       renderAdminAnalytics();
     }
 
-    // TAB 1: SUPPORT TICKETS
+    // TAB 1: SUPPORT TICKETS + QUICK REPLY TEMPLATES
     function setTicketFilter(f) {
       ticketFilter = f;
       ['all', 'Open', 'Resolved'].forEach(k => {
@@ -402,9 +509,29 @@
       renderAdminTickets();
     }
 
+    function applyQuickTicketReply(ticketId, sampleText) {
+      const el = document.getElementById('replyInput_' + ticketId);
+      if (!el) return;
+      el.value = sampleText;
+      el.focus();
+      showToast('క్విక్ రిప్లై నింపబడింది!');
+    }
+
     function renderAdminTickets() {
       const listEl = document.getElementById('adminTicketsList');
-      const filtered = allTickets.filter(t => ticketFilter === 'all' ? true : t.status === ticketFilter);
+      const q = (document.getElementById('adminTicketSearch')?.value || '').toLowerCase();
+      const roleFilter = document.getElementById('adminTicketRoleFilter')?.value || 'all';
+
+      const filtered = allTickets.filter(t => {
+        const matchesStatus = ticketFilter === 'all' ? true : t.status === ticketFilter;
+        const matchesRole = roleFilter === 'all' ? true : (t.user_role || 'customer') === roleFilter;
+        const matchesSearch = !q ||
+          (t.ticket_code || '').toLowerCase().includes(q) ||
+          (t.user_name || '').toLowerCase().includes(q) ||
+          (t.user_phone || '').includes(q) ||
+          (t.description || '').toLowerCase().includes(q);
+        return matchesStatus && matchesRole && matchesSearch;
+      });
 
       if (filtered.length === 0) {
         listEl.innerHTML = `<div class="bg-white border border-slate-200 rounded-2xl p-6 text-center text-xs text-slate-400">సపోర్ట్ టికెట్లు ఏవీ లేవు.</div>`;
@@ -439,6 +566,17 @@
             </div>
 
             <div class="space-y-1.5 pt-1">
+              <div class="flex gap-1 flex-wrap">
+                <button type="button" onclick="applyQuickTicketReply('${t.id}', 'మీ సమస్యను పరిశీలించాము. దయచేసి యాప్‌లో సింక్ (↻) చేసి ఒకసారి చెక్ చేయండి.')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-bold">
+                  ↻ సింక్ చెక్
+                </button>
+                <button type="button" onclick="applyQuickTicketReply('${t.id}', 'మీ PIN అప్‌డేట్ చేయబడింది. కొత్త PIN తో లాగిన్ అవ్వండి.')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-bold">
+                  🔑 PIN అప్‌డేట్
+                </button>
+                <button type="button" onclick="applyQuickTicketReply('${t.id}', 'మీ ఫీడ్‌బ్యాక్‌కు ధన్యవాదాలు! MilkCount వాడుతున్నందుకు సంతోషం.')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-bold">
+                  🙏 ధన్యవాదాలు
+                </button>
+              </div>
               <textarea id="replyInput_${t.id}" rows="2" placeholder="ఇక్కడ మీ సమాధానం (Admin Reply) టైప్ చేయండి..." class="w-full p-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">${t.admin_reply || ''}</textarea>
               <div class="flex gap-2">
                 <button onclick="saveTicketReply('${t.id}', 'Resolved')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold">
@@ -467,13 +605,34 @@
       refreshAdminData(false);
     }
 
-    // TAB 2: VENDORS LIST & PIN RESET
+    // TAB 2: VENDORS LIST, CUSTOMERS DRILL-DOWN, SUB NOTE, HOLD/UNBLOCK & PIN RESET
+    function setVendorHoldFilter(mode) {
+      vendorHoldFilter = mode;
+      ['all', 'active', 'hold'].forEach(k => {
+        const btnId = 'vFilter' + k.charAt(0).toUpperCase() + k.slice(1);
+        document.getElementById(btnId).className = (k === mode)
+          ? 'px-2.5 py-1 rounded-full bg-indigo-600 text-white'
+          : 'px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+      });
+      renderAdminVendors();
+    }
+
+    function toggleVendorCustomersView(phone) {
+      expandedVendorPhones[phone] = !expandedVendorPhones[phone];
+      renderAdminVendors();
+    }
+
     function renderAdminVendors() {
       document.getElementById('vendorCountBadge').innerText = allVendors.length;
       const q = (document.getElementById('adminVendorSearch').value || '').toLowerCase();
-      const filtered = allVendors.filter(v =>
-        (v.name || '').toLowerCase().includes(q) || (v.phone || '').includes(q)
-      );
+      const filtered = allVendors.filter(v => {
+        const matchesSearch = (v.name || '').toLowerCase().includes(q) || (v.phone || '').includes(q);
+        const matchesStatus =
+          vendorHoldFilter === 'all' ? true :
+          vendorHoldFilter === 'hold' ? !!v.is_blocked :
+          !v.is_blocked;
+        return matchesSearch && matchesStatus;
+      });
 
       const listEl = document.getElementById('adminVendorsList');
       if (filtered.length === 0) {
@@ -482,23 +641,103 @@
       }
 
       listEl.innerHTML = filtered.map(v => {
-        const custCount = allCustomers.filter(c => c.vendor_phone === v.phone).length;
+        const vendorCusts = allCustomers.filter(c => c.vendor_phone === v.phone && !c.family_head_id);
+        const isHold = !!v.is_blocked;
+        const isExpanded = !!expandedVendorPhones[v.phone];
+
+        const custListHtml = isExpanded ? `
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1.5">
+            <p class="text-[10px] font-extrabold text-slate-700">👥 ఈ వెండర్ కస్టమర్లు (${vendorCusts.length}):</p>
+            ${vendorCusts.length === 0
+              ? `<p class="text-[10px] text-slate-400">ఈ వెండర్ కింద ఇంకా కస్టమర్లు లేరు.</p>`
+              : vendorCusts.map((c, idx) => `
+                <div class="flex items-center justify-between text-[10px] bg-white border border-slate-200/80 rounded-lg px-2 py-1.5">
+                  <div>
+                    <span class="font-bold text-slate-800">${idx + 1}. ${c.name || 'Customer'}</span>
+                    <span class="text-slate-500 ml-1">• 📞 ${c.phone}</span>
+                    ${c.route_area ? `<span class="text-[9px] text-teal-700 ml-1">(${c.route_area})</span>` : ''}
+                  </div>
+                  <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${c.is_blocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
+                    ${c.is_blocked ? 'Hold' : 'Active'}
+                  </span>
+                </div>
+              `).join('')
+            }
+          </div>
+        ` : '';
+
         return `
-          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <h4 class="font-bold text-slate-800 text-sm truncate">${v.name || 'Vendor'}</h4>
-              <p class="text-[11px] text-slate-600">📞 ${v.phone} • 👥 కస్టమర్లు: <strong>${custCount}</strong></p>
-              <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(v.last_login_at)}</p>
+          <div class="bg-white border ${isHold ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h4 class="font-bold text-slate-800 text-sm truncate">${v.name || 'Vendor'}</h4>
+                  <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${isHold ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
+                    ${isHold ? 'On Hold' : 'Active'}
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">📞 ${v.phone} • 👥 కస్టమర్లు: <strong>${vendorCusts.length}</strong></p>
+                <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(v.last_login_at)}</p>
+                ${v.subscription_note ? `<p class="text-[10px] text-indigo-700 font-semibold mt-0.5">📋 Sub: ${v.subscription_note}</p>` : ''}
+                ${isHold && v.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold mt-0.5">కారణం: ${v.block_reason}</p>` : ''}
+              </div>
+              <div class="text-right shrink-0 space-y-1">
+                <span class="text-[10px] bg-amber-50 border border-amber-200 text-amber-900 font-black px-2 py-0.5 rounded block">PIN: ${v.pin || '----'}</span>
+                <button onclick="resetVendorPinAdmin('${v.phone}', '${v.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
+                  PIN మార్చు
+                </button>
+              </div>
             </div>
-            <div class="text-right shrink-0 space-y-1">
-              <span class="text-[10px] bg-amber-50 border border-amber-200 text-amber-900 font-black px-2 py-0.5 rounded block">PIN: ${v.pin || '----'}</span>
-              <button onclick="resetVendorPinAdmin('${v.phone}', '${v.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
-                PIN మార్చు
+
+            ${custListHtml}
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 flex-wrap">
+              <button onclick="toggleVendorCustomersView('${v.phone}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200">
+                ${isExpanded ? '▲ కస్టమర్లను దాచు' : `👥 కస్టమర్లను చూడు (${vendorCusts.length})`}
               </button>
+              <div class="flex items-center gap-1.5">
+                <button onclick="editVendorSubNoteAdmin('${v.phone}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+                  📋 Sub నోట్
+                </button>
+                <button onclick="toggleHoldVendorAdmin('${v.phone}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
+                  ${isHold ? 'Unblock' : 'Hold / ఆపు'}
+                </button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    async function editVendorSubNoteAdmin(phone, currentNote) {
+      const updated = prompt(`వెండర్ (${phone}) సబ్‌స్క్రిప్షన్ / గడువు నోట్ రాయండి:`, currentNote || '');
+      if (updated === null) return;
+      const { error } = await db.from('vendors')
+        .update({ subscription_note: updated.trim() })
+        .eq('phone', phone);
+      if (error) return alert('Error: ' + error.message);
+      showToast('వెండర్ సబ్‌స్క్రిప్షన్ నోట్ సేవ్ అయ్యింది!');
+      refreshAdminData(false);
+    }
+
+    async function toggleHoldVendorAdmin(phone, currentlyBlocked) {
+      if (!currentlyBlocked) {
+        const reason = prompt(`వెండర్ (${phone}) ను Hold చేయడానికి కారణం రాయండి:`, 'సబ్‌స్క్రిప్షన్ / పేమెంట్ పెండింగ్');
+        if (reason === null) return;
+        const { error } = await db.from('vendors')
+          .update({ is_blocked: true, block_reason: reason.trim() || 'Admin Hold' })
+          .eq('phone', phone);
+        if (error) return alert('Error: ' + error.message);
+        showToast(`వెండర్ (${phone}) Hold లో పెట్టబడ్డారు!`);
+      } else {
+        if (!confirm(`వెండర్ (${phone}) అకౌంట్‌ను తిరిగి Unblock చేయాలా?`)) return;
+        const { error } = await db.from('vendors')
+          .update({ is_blocked: false, block_reason: '' })
+          .eq('phone', phone);
+        if (error) return alert('Error: ' + error.message);
+        showToast(`వెండర్ (${phone}) తిరిగి Active అయ్యారు!`);
+      }
+      refreshAdminData(false);
     }
 
     async function resetVendorPinAdmin(phone, currentPin) {
@@ -511,15 +750,32 @@
       refreshAdminData(false);
     }
 
-    // TAB 3: CUSTOMERS LIST & PIN RESET
+    // TAB 3: CUSTOMERS LIST, SUB NOTE, HOLD/UNBLOCK & PIN RESET
+    function setCustomerHoldFilter(mode) {
+      customerHoldFilter = mode;
+      ['all', 'active', 'hold'].forEach(k => {
+        const btnId = 'cFilter' + k.charAt(0).toUpperCase() + k.slice(1);
+        document.getElementById(btnId).className = (k === mode)
+          ? 'px-2.5 py-1 rounded-full bg-indigo-600 text-white'
+          : 'px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+      });
+      renderAdminCustomers();
+    }
+
     function renderAdminCustomers() {
       document.getElementById('customerCountBadge').innerText = allCustomers.length;
       const q = (document.getElementById('adminCustomerSearch').value || '').toLowerCase();
-      const filtered = allCustomers.filter(c =>
-        (c.name || '').toLowerCase().includes(q) ||
-        (c.phone || '').includes(q) ||
-        (c.vendor_phone || '').includes(q)
-      );
+      const filtered = allCustomers.filter(c => {
+        const matchesSearch =
+          (c.name || '').toLowerCase().includes(q) ||
+          (c.phone || '').includes(q) ||
+          (c.vendor_phone || '').includes(q);
+        const matchesStatus =
+          customerHoldFilter === 'all' ? true :
+          customerHoldFilter === 'hold' ? !!c.is_blocked :
+          !c.is_blocked;
+        return matchesSearch && matchesStatus;
+      });
 
       const listEl = document.getElementById('adminCustomersList');
       if (filtered.length === 0) {
@@ -528,22 +784,71 @@
       }
 
       listEl.innerHTML = filtered.map(c => {
+        const isHold = !!c.is_blocked;
         return `
-          <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <h4 class="font-bold text-slate-800 text-sm truncate">${c.name || 'Customer'}</h4>
-              <p class="text-[11px] text-slate-600">📞 ${c.phone} • 🚚 వెండర్: <strong>${c.vendor_phone || 'Unlinked'}</strong></p>
-              <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(c.last_login_at)}</p>
+          <div class="bg-white border ${isHold ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h4 class="font-bold text-slate-800 text-sm truncate">${c.name || 'Customer'}</h4>
+                  <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${isHold ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
+                    ${isHold ? 'On Hold' : 'Active'}
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">📞 ${c.phone} • 🚚 వెండర్: <strong>${c.vendor_phone || 'Unlinked'}</strong></p>
+                <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(c.last_login_at)}</p>
+                ${c.subscription_note ? `<p class="text-[10px] text-indigo-700 font-semibold mt-0.5">📋 Sub: ${c.subscription_note}</p>` : ''}
+                ${isHold && c.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold mt-0.5">కారణం: ${c.block_reason}</p>` : ''}
+              </div>
+              <div class="text-right shrink-0 space-y-1">
+                <span class="text-[10px] bg-sky-50 border border-sky-200 text-sky-900 font-black px-2 py-0.5 rounded block">PIN: ${c.pin || '----'}</span>
+                <button onclick="resetCustomerPinAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${c.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
+                  PIN మార్చు
+                </button>
+              </div>
             </div>
-            <div class="text-right shrink-0 space-y-1">
-              <span class="text-[10px] bg-sky-50 border border-sky-200 text-sky-900 font-black px-2 py-0.5 rounded block">PIN: ${c.pin || '----'}</span>
-              <button onclick="resetCustomerPinAdmin('${c.id}', '${c.name || c.phone}', '${c.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
-                PIN మార్చు
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
+              <button onclick="editCustomerSubNoteAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+                📋 Sub నోట్
+              </button>
+              <button onclick="toggleHoldCustomerAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
+                ${isHold ? 'Unblock (Active చేయి)' : 'Hold / ఆపు'}
               </button>
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    async function editCustomerSubNoteAdmin(custId, custLabel, currentNote) {
+      const updated = prompt(`కస్టమర్ (${custLabel}) సబ్‌స్క్రిప్షన్ / గడువు నోట్ రాయండి:`, currentNote || '');
+      if (updated === null) return;
+      const { error } = await db.from('customer_users')
+        .update({ subscription_note: updated.trim() })
+        .eq('id', custId);
+      if (error) return alert('Error: ' + error.message);
+      showToast('కస్టమర్ సబ్‌స్క్రిప్షన్ నోట్ సేవ్ అయ్యింది!');
+      refreshAdminData(false);
+    }
+
+    async function toggleHoldCustomerAdmin(custId, custLabel, currentlyBlocked) {
+      if (!currentlyBlocked) {
+        const reason = prompt(`కస్టమర్ (${custLabel}) ను Hold చేయడానికి కారణం రాయండి:`, 'నియమాల ఉల్లంఘన / అడ్మిన్ రివ్యూ');
+        if (reason === null) return;
+        const { error } = await db.from('customer_users')
+          .update({ is_blocked: true, block_reason: reason.trim() || 'Admin Hold' })
+          .eq('id', custId);
+        if (error) return alert('Error: ' + error.message);
+        showToast(`${custLabel} Hold లో పెట్టబడ్డారు!`);
+      } else {
+        if (!confirm(`${custLabel} అకౌంట్‌ను తిరిగి Unblock చేయాలా?`)) return;
+        const { error } = await db.from('customer_users')
+          .update({ is_blocked: false, block_reason: '' })
+          .eq('id', custId);
+        if (error) return alert('Error: ' + error.message);
+        showToast(`${custLabel} తిరిగి Active అయ్యారు!`);
+      }
+      refreshAdminData(false);
     }
 
     async function resetCustomerPinAdmin(custId, custLabel, currentPin) {
@@ -556,47 +861,105 @@
       refreshAdminData(false);
     }
 
-    // TAB 4: ANALYTICS & RECENT ACTIVITY
-    function renderAdminAnalytics() {
-      const cViews = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'visit').length;
-      const cInstalls = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'install').length;
-      const cLogins = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'login').length;
+    // CSV EXPORT (VENDORS & CUSTOMERS)
+    function exportAdminUsersCSV(type) {
+      const isVendor = type === 'vendors';
+      const rows = isVendor ? allVendors : allCustomers;
+      if (!rows || rows.length === 0) return alert('ఎగుమతి చేయడానికి డేటా లేదు.');
 
-      const vViews = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'visit').length;
-      const vInstalls = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'install').length;
-      const vLogins = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'login').length;
+      const headers = isVendor
+        ? ['Name', 'Phone', 'PIN', 'Status', 'SubscriptionNote', 'HoldReason', 'LastLogin']
+        : ['Name', 'Phone', 'VendorPhone', 'PIN', 'Status', 'SubscriptionNote', 'HoldReason', 'LastLogin'];
 
-      document.getElementById('statCustViews').innerText = cViews;
-      document.getElementById('statCustInstalls').innerText = cInstalls;
-      document.getElementById('statCustLogins').innerText = cLogins;
+      const csvLines = [headers.join(',')];
+      rows.forEach(r => {
+        const status = r.is_blocked ? 'On Hold' : 'Active';
+        const subNote = (r.subscription_note || '').replace(/"/g, '""');
+        const reason = (r.block_reason || '').replace(/"/g, '""');
+        const name = (r.name || '').replace(/"/g, '""');
+        const line = isVendor
+          ? `"${name}","${r.phone || ''}","${r.pin || ''}","${status}","${subNote}","${reason}","${r.last_login_at || ''}"`
+          : `"${name}","${r.phone || ''}","${r.vendor_phone || ''}","${r.pin || ''}","${status}","${subNote}","${reason}","${r.last_login_at || ''}"`;
+        csvLines.push(line);
+      });
 
-      document.getElementById('statVendorViews').innerText = vViews;
-      document.getElementById('statVendorInstalls').innerText = vInstalls;
-      document.getElementById('statVendorLogins').innerText = vLogins;
-
-      const feedEl = document.getElementById('adminActivityFeed');
-      if (allAnalytics.length === 0) {
-        feedEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ఇంకా యాక్టివిటీ నమోదు కాలేదు.</p>`;
-        return;
-      }
-
-      feedEl.innerHTML = allAnalytics.slice(0, 60).map(a => {
-        const icon = a.event_type === 'install' ? '📲 ఇన్‌స్టాల్' : (a.event_type === 'login' ? '🔐 లాగిన్' : '👀 విజిట్');
-        const appTag = a.app_type === 'vendor' ? '🚚 Vendor App' : '👤 Customer App';
-        const userStr = a.user_phone ? `${a.user_name || ''} (${a.user_phone})` : 'Guest / Browser';
-        return `
-          <div class="flex items-center justify-between text-[11px] py-1.5 border-b border-slate-100 last:border-0">
-            <div>
-              <span class="font-extrabold text-slate-800">${icon}</span>
-              <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold ml-1">${appTag}</span>
-              <p class="text-[10px] text-slate-500 mt-0.5">${userStr}</p>
-            </div>
-            <span class="text-[9px] text-slate-400 shrink-0">${formatDateTime(a.created_at)}</span>
-          </div>
-        `;
-      }).join('');
+      const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MilkCount_${type}_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`${isVendor ? 'వెండర్ల' : 'కస్టమర్ల'} CSV డౌన్‌లోడ్ అయ్యింది!`);
     }
+
+    let analyticsListMode = 'all'; // 'all' | 'vendor' | 'customer'
+
+function setAnalyticsListMode(mode) {
+  analyticsListMode = mode;
+  ['all', 'vendor', 'customer'].forEach(k => {
+    const btnId = 'aMode' + k.charAt(0).toUpperCase() + k.slice(1);
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.className = (k === mode)
+      ? 'px-2.5 py-1 rounded-full bg-indigo-600 text-white'
+      : 'px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+  });
+  renderAdminAnalytics();
+}
+
+// TAB 4: ANALYTICS & RECENT ACTIVITY (Vendors & Customers Switchable List)
+function renderAdminAnalytics() {
+  const cViews = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'visit').length;
+  const cInstalls = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'install').length;
+  const cLogins = allAnalytics.filter(a => a.app_type === 'customer' && a.event_type === 'login').length;
+
+  const vViews = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'visit').length;
+  const vInstalls = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'install').length;
+  const vLogins = allAnalytics.filter(a => a.app_type === 'vendor' && a.event_type === 'login').length;
+
+  document.getElementById('statCustViews').innerText = cViews;
+  document.getElementById('statCustInstalls').innerText = cInstalls;
+  document.getElementById('statCustLogins').innerText = cLogins;
+
+  document.getElementById('statVendorViews').innerText = vViews;
+  document.getElementById('statVendorInstalls').innerText = vInstalls;
+  document.getElementById('statVendorLogins').innerText = vLogins;
+
+  const feedEl = document.getElementById('adminActivityFeed');
+  const filteredList = allAnalytics.filter(a => {
+    if (analyticsListMode === 'vendor') return a.app_type === 'vendor';
+    if (analyticsListMode === 'customer') return a.app_type !== 'vendor';
+    return true;
+  });
+
+  if (filteredList.length === 0) {
+    const emptyMsg = analyticsListMode === 'vendor'
+      ? 'వెండర్ యాక్టివిటీ ఏమీ లేదు.'
+      : (analyticsListMode === 'customer' ? 'కస్టమర్ యాక్టివిటీ ఏమీ లేదు.' : 'ఇంకా యాక్టివిటీ నమోదు కాలేదు.');
+    feedEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">${emptyMsg}</p>`;
+    return;
+  }
+
+  feedEl.innerHTML = filteredList.slice(0, 60).map(a => {
+    const icon = a.event_type === 'install' ? '📲 ఇన్‌స్టాల్' : (a.event_type === 'login' ? '🔐 లాగిన్' : '👀 విజిట్');
+    const appTag = a.app_type === 'vendor' ? '🚚 Vendor App' : '👤 Customer App';
+    const userStr = a.user_phone ? `${a.user_name || ''} (${a.user_phone})` : 'Guest / Browser';
+    return `
+      <div class="flex items-center justify-between text-[11px] py-1.5 border-b border-slate-100 last:border-0">
+        <div>
+          <span class="font-extrabold text-slate-800">${icon}</span>
+          <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold ml-1">${appTag}</span>
+          <p class="text-[10px] text-slate-500 mt-0.5">${userStr}</p>
+        </div>
+        <span class="text-[9px] text-slate-400 shrink-0">${formatDateTime(a.created_at)}</span>
+      </div>
+    `;
+  }).join('');
+}
+
   </script>
 </body>
 </html>
-
