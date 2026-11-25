@@ -1425,64 +1425,79 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
     }
 
     async function toggleDeliveredCheck(userId) {
-      const iso = formatDateISO(selectedRouteDate);
-      const doneMap = getDeliveredDoneMap(iso);
-      const cust = allCustomers.find(c => c.id === userId);
-      const info = cust ? getCustomerDayStatus(cust, selectedRouteDate) : null;
-      const currentDone = info ? Boolean(info.isDone || doneMap[userId]) : Boolean(doneMap[userId]);
-      const newDoneState = !currentDone;
+  const iso = formatDateISO(selectedRouteDate);
+  const doneMap = getDeliveredDoneMap(iso);
+  const cust = allCustomers.find(c => c.id === userId);
+  if (!cust) return;
 
-      doneMap[userId] = newDoneState;
-      localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
+  const info = getCustomerDayStatus(cust, selectedRouteDate);
+  if (info && info.status === 'skipped') return;
 
-      // Sync live delivery status & shift quantities to customer_milk_logs so Customer sees "Delivered ✓"
-      if (cust && info && info.status === 'active') {
-        await db.from('customer_milk_logs').upsert({
-          user_id: userId,
+  const prefs = getCustShiftPrefs(cust);
+  const currentDone = info ? Boolean(info.isDone || doneMap[userId]) : Boolean(doneMap[userId]);
+  const newDoneState = !currentDone;
+
+  doneMap[userId] = newDoneState;
+  localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
+
+  const qtyToSync = (info && info.qty > 0) ? info.qty : prefs.totalDefault;
+  const mQtyToSync = (info && (info.mQty > 0 || info.eQty > 0)) ? info.mQty : prefs.mQty;
+  const eQtyToSync = (info && (info.mQty > 0 || info.eQty > 0)) ? info.eQty : prefs.eQty;
+
+  if (qtyToSync > 0) {
+    await db.from('customer_milk_logs').upsert({
+      user_id: userId,
+      log_date: iso,
+      quantity: qtyToSync,
+      morning_qty: mQtyToSync,
+      evening_qty: eQtyToSync,
+      status: 'taken',
+      vendor_delivered: newDoneState
+    }, { onConflict: 'user_id,log_date' });
+  }
+  refreshAllVendorData();
+}
+
+async function markAllRouteDelivered() {
+  const iso = formatDateISO(selectedRouteDate);
+  const doneMap = getDeliveredDoneMap(iso);
+  const rows = [];
+
+  allCustomers.forEach(c => {
+    const info = getCustomerDayStatus(c, selectedRouteDate);
+    if (info && info.status !== 'skipped') {
+      const prefs = getCustShiftPrefs(c);
+      const qtyToSync = info.qty > 0 ? info.qty : prefs.totalDefault;
+      const mQtyToSync = (info.mQty > 0 || info.eQty > 0) ? info.mQty : prefs.mQty;
+      const eQtyToSync = (info.mQty > 0 || info.eQty > 0) ? info.eQty : prefs.eQty;
+
+      if (qtyToSync > 0) {
+        doneMap[c.id] = true;
+        rows.push({
+          user_id: c.id,
           log_date: iso,
-          quantity: info.qty,
-          morning_qty: info.mQty,
-          evening_qty: info.eQty,
+          quantity: qtyToSync,
+          morning_qty: mQtyToSync,
+          evening_qty: eQtyToSync,
           status: 'taken',
-          vendor_delivered: newDoneState
-        }, { onConflict: 'user_id,log_date' });
+          vendor_delivered: true
+        });
       }
-      refreshAllVendorData();
     }
+  });
 
-    async function markAllRouteDelivered() {
-      const iso = formatDateISO(selectedRouteDate);
-      const doneMap = getDeliveredDoneMap(iso);
-      const rows = [];
+  localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
+  renderDeliveryTab();
 
-      allCustomers.forEach(c => {
-        const info = getCustomerDayStatus(c, selectedRouteDate);
-        if (info.status === 'active' && info.qty > 0) {
-          doneMap[c.id] = true;
-          rows.push({
-            user_id: c.id,
-            log_date: iso,
-            quantity: info.qty,
-            morning_qty: info.mQty,
-            evening_qty: info.eQty,
-            status: 'taken',
-            vendor_delivered: true
-          });
-        }
-      });
-
-      localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
-      renderDeliveryTab();
-
-      if (rows.length > 0) {
-        const { error } = await db.from('customer_milk_logs').upsert(rows, { onConflict: 'user_id,log_date' });
-        if (error) {
-          return alert('Sync Error: ' + error.message);
-        }
-      }
-      showToast('అందరికీ డెలివరీ Done మార్క్ అయ్యింది & కస్టమర్లకు సింక్ అయ్యింది!');
-      refreshAllVendorData();
+  if (rows.length > 0) {
+    const { error } = await db.from('customer_milk_logs').upsert(rows, { onConflict: 'user_id,log_date' });
+    if (error) {
+      return alert('Sync Error: ' + error.message);
     }
+  }
+  showToast('అందరికీ డెలివరీ Done మార్క్ అయ్యింది & కస్టమర్లకు సింక్ అయ్యింది!');
+  refreshAllVendorData();
+}
 
     function getCustShiftPrefs(cust) {
       const mType = cust.morning_milk_type || cust.milk_type || 'Buffalo';
