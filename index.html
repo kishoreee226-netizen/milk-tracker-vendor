@@ -49,7 +49,7 @@
   <!-- Mobile App Wrapper Frame -->
   <div class="w-full max-w-md bg-slate-50 min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
 
-       <!-- 1. VENDOR AUTH SCREEN (Quick PIN Unlock + Full Login/Sign Up) -->
+    <!-- 1. VENDOR AUTH SCREEN (Quick PIN Unlock + Full Login/Sign Up) -->
     <section id="vendorAuthSection" class="p-6 flex-1 flex flex-col justify-center items-center bg-white">
       <div class="w-20 h-20 rounded-2xl overflow-hidden bg-teal-700 flex items-center justify-center mb-4 shadow-lg shadow-teal-600/20 border-2 border-teal-100">
         <img src="./vendor-logo.png" alt="MilkCount Vendor Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden-force');">
@@ -61,9 +61,9 @@
       <!-- A. Customer-Style Quick PIN Unlock Card (Shows automatically if logged in before) -->
       <div id="vendorQuickPinBox" class="hidden-force w-full bg-slate-50 border border-slate-200/80 p-5 rounded-2xl shadow-xs text-center space-y-3.5">
         <div class="w-14 h-14 mx-auto rounded-full overflow-hidden bg-teal-100 border-2 border-teal-400 flex items-center justify-center text-teal-700 shadow-xs">
-  <img id="quickVendorPhotoImg" src="" class="hidden-force w-full h-full object-cover">
-  <i id="quickVendorPhotoIcon" class="ph-bold ph-user text-2xl"></i>
-</div>
+          <img id="quickVendorPhotoImg" src="" class="hidden-force w-full h-full object-cover">
+          <i id="quickVendorPhotoIcon" class="ph-bold ph-user text-2xl"></i>
+        </div>
 
         <div>
           <h3 id="quickVendorNameDisplay" class="text-base font-extrabold text-slate-900">Vendor Name</h3>
@@ -120,101 +120,101 @@
     </section>
 
     <!-- 2. MAIN VENDOR APP -->
-<div id="vendorAppSection" class="hidden-force flex-1 flex flex-col">
+    <div id="vendorAppSection" class="hidden-force flex-1 flex flex-col">
 
-  <!-- TOP HEADER (ఒకే header ట్యాగ్ లోపల అన్నీ నీట్‌గా సెట్ చేశాము) -->
-  <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white px-3 pt-2.5 pb-2 sticky top-0 z-30 shadow-md">
+      <!-- TOP HEADER -->
+      <header class="bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-900 text-white px-3 pt-2.5 pb-2 sticky top-0 z-30 shadow-md">
 
-  <!-- 3-Row Exact Parallel Grid Layout -->
-  <div class="grid grid-cols-[auto_1fr_auto] gap-x-2.5 gap-y-1 items-center">
+        <!-- 3-Row Exact Parallel Grid Layout -->
+        <div class="grid grid-cols-[auto_1fr_auto] gap-x-2.5 gap-y-1 items-center">
 
-    <!-- Logo / Vendor Profile Photo: 3 వరుసల పూర్తి ఎత్తుకు సమానంగా -->
-    <div onclick="openVendorProfileModal()" title="ప్రొఫైల్ ఫోటో మార్చండి" class="row-span-3 w-11 h-14 rounded-2xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border-2 border-amber-300/70 shadow-md shrink-0 cursor-pointer">
-      <img id="headerVendorBigLogoImg" src="" class="hidden-force w-full h-full object-cover">
-      <i id="headerVendorDefaultTruckIcon" class="ph-fill ph-truck text-3xl text-amber-200"></i>
-    </div>
+          <!-- Logo / Vendor Profile Photo -->
+          <div onclick="openVendorProfileModal()" title="ప్రొఫైల్ ఫోటో మార్చండి" class="row-span-3 w-11 h-14 rounded-2xl overflow-hidden bg-white/15 backdrop-blur-md flex items-center justify-center text-white border-2 border-amber-300/70 shadow-md shrink-0 cursor-pointer">
+            <img id="headerVendorBigLogoImg" src="" class="hidden-force w-full h-full object-cover">
+            <i id="headerVendorDefaultTruckIcon" class="ph-fill ph-truck text-3xl text-amber-200"></i>
+          </div>
 
-    <!-- ROW 1 LEFT: MilkCount (పెద్దగా & స్పష్టంగా) + Vendor + PROFILE -->
-    <div class="flex items-center gap-1 min-w-0 pr-1">
-      <h1 class="text-[17px] font-black tracking-tight leading-none text-white shrink-0">MilkCount</h1>
-      <span class="text-[8px] bg-white/20 px-1.5 py-0.5 rounded-full font-semibold shrink-0">Vendor</span>
-      <button onclick="openVendorProfileModal()" class="text-[7.5px] bg-amber-400/25 hover:bg-amber-400/35 text-amber-200 border border-amber-300/30 px-1 py-0.5 rounded font-bold inline-flex items-center gap-0.5 shrink-0 transition-colors">
-        <i class="ph-bold ph-user-gear text-[8.5px]"></i> PROFILE
-      </button>
-    </div>
+          <!-- ROW 1 LEFT: MilkCount + Vendor + PROFILE -->
+          <div class="flex items-center gap-1 min-w-0 pr-1">
+            <h1 class="text-[17px] font-black tracking-tight leading-none text-white shrink-0">MilkCount</h1>
+            <span class="text-[8px] bg-white/20 px-1.5 py-0.5 rounded-full font-semibold shrink-0">Vendor</span>
+            <button onclick="openVendorProfileModal()" class="text-[7.5px] bg-amber-400/25 hover:bg-amber-400/35 text-amber-200 border border-amber-300/30 px-1 py-0.5 rounded font-bold inline-flex items-center gap-0.5 shrink-0 transition-colors">
+              <i class="ph-bold ph-user-gear text-[8.5px]"></i> PROFILE
+            </button>
+          </div>
 
-    <!-- ROW 1 RIGHT: లాగౌట్ -->
-    <div class="flex justify-end">
-      <button onclick="logoutVendor()" class="text-[10px] bg-rose-500/25 hover:bg-rose-500/40 text-rose-100 border border-rose-300/30 px-2 py-0.5 rounded-md font-semibold flex items-center gap-1 transition-colors shrink-0">
-        <i class="ph-bold ph-sign-out text-[11px]"></i> లాగౌట్
-      </button>
-    </div>
+          <!-- ROW 1 RIGHT: లాగౌట్ -->
+          <div class="flex justify-end">
+            <button onclick="logoutVendor()" class="text-[10px] bg-rose-500/25 hover:bg-rose-500/40 text-rose-100 border border-rose-300/30 px-2 py-0.5 rounded-md font-semibold flex items-center gap-1 transition-colors shrink-0">
+              <i class="ph-bold ph-sign-out text-[11px]"></i> లాగౌట్
+            </button>
+          </div>
 
-        <!-- ROW 2 LEFT: Vendor Name -->
-    <div class="min-w-0">
-      <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="text-[14.5px] leading-tight text-amber-200 hover:text-white font-extrabold flex items-center gap-1 underline decoration-amber-300/50 underline-offset-2 truncate max-w-full">
-        <span id="headerVendorName" class="truncate">Vendor</span>
-        <i class="ph-bold ph-pencil-simple text-xs shrink-0"></i>
-      </button>
-    </div>
+          <!-- ROW 2 LEFT: Vendor Name -->
+          <div class="min-w-0">
+            <button onclick="openVendorProfileModal()" title="పేరు & PIN మార్చండి" class="text-[14.5px] leading-tight text-amber-200 hover:text-white font-extrabold flex items-center gap-1 underline decoration-amber-300/50 underline-offset-2 truncate max-w-full">
+              <span id="headerVendorName" class="truncate">Vendor</span>
+              <i class="ph-bold ph-pencil-simple text-xs shrink-0"></i>
+            </button>
+          </div>
 
-    <!-- ROW 2 RIGHT: Sync + 3-Dot Menu -->
-    <div class="flex items-center justify-end gap-1.5 shrink-0">
-      <button onclick="refreshAllVendorData()" title="సింక్" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
-        <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
-      </button>
+          <!-- ROW 2 RIGHT: Sync + 3-Dot Menu -->
+          <div class="flex items-center justify-end gap-1.5 shrink-0">
+            <button onclick="refreshAllVendorData()" title="సింక్" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
+              <i id="syncIcon" class="ph-bold ph-arrows-clockwise text-sm"></i>
+            </button>
 
-      <button onclick="toggleVendorMenu()" title="మెనూ" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
-        <i class="ph-bold ph-dots-three-vertical text-sm"></i>
-      </button>
-    </div>
+            <button onclick="toggleVendorMenu()" title="మెనూ" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white border border-white/20 transition-all">
+              <i class="ph-bold ph-dots-three-vertical text-sm"></i>
+            </button>
+          </div>
 
-    <!-- ROW 3 LEFT: Phone Number + QR -->
-    <div class="min-w-0 flex items-center text-[11px] text-teal-100 font-semibold">
-      <span id="headerVendorPhone" class=""shrink-0">9876543210</span>
-      <span onclick="openUpiQrModal('', 0, 'quick')" title="Scan QR" role="button" class="inline-flex items-center justify-center text-amber-300 hover:text-white active:scale-90 transition-transform cursor-pointer ml-5 px-1.5">
-        <i class="ph-bold ph-qr-code text-xl"></i>
-      </span>
-        <button onclick="openVendorNotificationsModal()" title="నోటిఫికేషన్లు" class="relative w-6 h-6 rounded-lg bg-amber-300/20 hover:bg-amber-300/30 active:scale-95 flex items-center justify-center text-yellow-300 border border-yellow-300/40 transition-all shrink-0 ml-2">
-    <i class="ph-fill ph-bell text-sm text-yellow-300"></i>
-    <span id="vendorNotifBadge" class="hidden-force absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center">0</span>
-  </button>
-    </div>
+          <!-- ROW 3 LEFT: Phone Number + QR + Notifications Bell -->
+          <div class="min-w-0 flex items-center text-[11px] text-teal-100 font-semibold">
+            <span id="headerVendorPhone" class="shrink-0">9876543210</span>
+            <span onclick="openUpiQrModal('', 0, 'quick')" title="Scan QR" role="button" class="inline-flex items-center justify-center text-amber-300 hover:text-white active:scale-90 transition-transform cursor-pointer ml-5 px-1.5">
+              <i class="ph-bold ph-qr-code text-xl"></i>
+            </span>
+            <button onclick="openVendorNotificationsModal()" title="నోటిఫికేషన్లు" class="relative w-6 h-6 rounded-lg bg-amber-300/20 hover:bg-amber-300/30 active:scale-95 flex items-center justify-center text-yellow-300 border border-yellow-300/40 transition-all shrink-0 ml-2">
+              <i class="ph-fill ph-bell text-sm text-yellow-300"></i>
+              <span id="vendorNotifBadge" class="hidden-force absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center">0</span>
+            </button>
+          </div>
 
-    <!-- ROW 3 RIGHT: Raise Ticket -->
-    <div class="flex justify-end">
-      <button onclick="openVendorSupportModal()" class="text-[10px] bg-sky-400/25 hover:bg-sky-400/35 text-sky-100 border border-sky-300/30 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 transition-colors shrink-0">
-        <i class="ph-bold ph-ticket text-[11px]"></i> Raise Ticket
-      </button>
-    </div>
+          <!-- ROW 3 RIGHT: Raise Ticket -->
+          <div class="flex justify-end">
+            <button onclick="openVendorSupportModal()" class="text-[10px] bg-sky-400/25 hover:bg-sky-400/35 text-sky-100 border border-sky-300/30 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 transition-colors shrink-0">
+              <i class="ph-bold ph-ticket text-[11px]"></i> Raise Ticket
+            </button>
+          </div>
 
-  </div>
+        </div>
 
-  <!-- Date / Month Selector Bar -->
-  <div id="dateSelectorBar" class="mt-2 flex items-center justify-between bg-teal-950/60 backdrop-blur-md rounded-xl px-2 py-1 border border-amber-300/30 shadow-inner">
-    <button onclick="shiftSelectedDate(-1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
-      <i class="ph-bold ph-caret-left text-sm"></i>
-    </button>
+        <!-- Date / Month Selector Bar -->
+        <div id="dateSelectorBar" class="mt-2 flex items-center justify-between bg-teal-950/60 backdrop-blur-md rounded-xl px-2 py-1 border border-amber-300/30 shadow-inner">
+          <button onclick="shiftSelectedDate(-1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
+            <i class="ph-bold ph-caret-left text-sm"></i>
+          </button>
 
-    <div class="text-center px-2">
-      <span id="activePeriodTitle" class="text-xs font-extrabold tracking-wide text-amber-200 block leading-tight">ఈరోజు డెలివరీ</span>
-      <span id="activePeriodSub" class="text-[10px] block text-teal-100 font-medium mt-0.5">Today</span>
-    </div>
+          <div class="text-center px-2">
+            <span id="activePeriodTitle" class="text-xs font-extrabold tracking-wide text-amber-200 block leading-tight">ఈరోజు డెలివరీ</span>
+            <span id="activePeriodSub" class="text-[10px] block text-teal-100 font-medium mt-0.5">Today</span>
+          </div>
 
-    <button onclick="shiftSelectedDate(1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
-      <i class="ph-bold ph-caret-right text-sm"></i>
-    </button>
-  </div>
+          <button onclick="shiftSelectedDate(1)" class="w-7 h-7 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg text-white active:scale-90 transition">
+            <i class="ph-bold ph-caret-right text-sm"></i>
+          </button>
+        </div>
 
-</header>
+      </header>
 
-<!-- MAIN SCROLLABLE CONTENT -->
-<main class="flex-1 overflow-y-auto px-2 pt-1.5 pb-24 space-y-1.5">
+      <!-- MAIN SCROLLABLE CONTENT -->
+      <main class="flex-1 overflow-y-auto px-2 pt-1.5 pb-24 space-y-1.5">
 
- <!-- TAB 1: DAILY DELIVERY ROUTE -->
+        <!-- TAB 1: DAILY DELIVERY ROUTE -->
         <div id="tabDelivery" class="space-y-1.5">
 
-          <!-- FEATURE 6: CUSTOMER QUALITY ALERTS BANNER -->
+          <!-- CUSTOMER QUALITY ALERTS BANNER -->
           <div id="qualityAlertsBanner" class="hidden-force bg-amber-50 border border-amber-300 rounded-2xl p-3 shadow-2xs space-y-1.5">
             <div class="flex items-center justify-between">
               <span class="text-xs font-extrabold text-amber-900 flex items-center gap-1.5">
@@ -233,7 +233,7 @@
                 <div class="text-3xl font-black tracking-tight mt-0.5 flex items-baseline gap-1.5">
                   <span id="totalLitersNeeded">0.0</span> <span class="text-sm font-bold text-teal-200">లీటర్లు</span>
                 </div>
-                <!-- FEATURE 1: BUFFALO VS COW SPLIT -->
+                <!-- BUFFALO VS COW SPLIT -->
                 <div class="flex items-center gap-2 mt-1.5 text-[11px] font-bold">
                   <span class="bg-black/25 px-2 py-0.5 rounded-lg text-amber-200">🐃 గేదె: <span id="buffaloLitersNeeded">0.0</span>L</span>
                   <span class="bg-black/25 px-2 py-0.5 rounded-lg text-sky-200">🐄 ఆవు: <span id="cowLitersNeeded">0.0</span>L</span>
@@ -266,7 +266,7 @@
             </div>
           </div>
 
-          <!-- FEATURE 2 & 3: SHIFT (MORNING/EVENING) & AREA/ROUTE FILTERS -->
+          <!-- SHIFT & AREA/ROUTE FILTERS -->
           <div class="grid grid-cols-2 gap-2">
             <select id="routeShiftFilter" onchange="renderDeliveryTab()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-teal-600 shadow-2xs">
               <option value="all">🕒 అన్ని షిఫ్ట్‌లు (All Shifts)</option>
@@ -303,7 +303,7 @@
           <div id="deliveryRouteList" class="space-y-2.5"></div>
         </div>
 
-        <!-- TAB 2: MONTHLY BILLING & COLLECTIONS (FEATURE 4: CASH/UPI & PREV DUE LEDGER) -->
+        <!-- TAB 2: MONTHLY BILLING & COLLECTIONS -->
         <div id="tabBilling" class="hidden-force space-y-3.5">
           <!-- Collection KPI Cards -->
           <div class="grid grid-cols-2 gap-2.5">
@@ -339,8 +339,7 @@
             </div>
           </div>
 
-          <!-- Billing Filter -->
-                    <!-- Billing Filter & Excel Download -->
+          <!-- Billing Filter & Excel Download -->
           <div class="flex items-center justify-between gap-1.5 flex-wrap">
             <div class="flex gap-1.5 text-[11px] font-bold">
               <button onclick="setBillingFilter('all')" id="billFilterAllBtn" class="px-3 py-1 rounded-full bg-teal-700 text-white">అందరూ</button>
@@ -402,7 +401,7 @@
             </div>
           </div>
 
-          <!-- FEATURE 5: MILK PROCUREMENT & NET PROFIT CALCULATOR -->
+          <!-- MILK PROCUREMENT & NET PROFIT CALCULATOR -->
           <div class="bg-white border border-teal-200 rounded-2xl p-4 shadow-2xs space-y-3">
             <div class="flex items-center justify-between">
               <h3 class="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
@@ -455,31 +454,31 @@
           </div>
 
           <!-- Share Customer App Card -->
-<div class="bg-teal-50 border border-teal-200 rounded-2xl p-4 space-y-2.5">
-  <h3 class="text-xs font-bold text-teal-900 flex items-center gap-1.5">
-    <i class="ph-fill ph-share-network text-teal-700"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
-  </h3>
-  <p class="text-[11px] text-teal-800/80 leading-relaxed">
-    మీ కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ మొబైల్ నంబర్ & PIN తో లాగిన్ అయి రోజువారీ లెక్కలు చూసుకోవచ్చు!
-  </p>
-  <button onclick="shareCustomerAppLink()" class="w-fit mx-auto bg-teal-600 hover:bg-teal-700 text-white font-bold py-1 px-2.5 rounded-lg text-xs flex items-center justify-center gap-1 shadow-xs active:scale-95">
-    <i class="ph-fill ph-share-fat text-sm"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
-  </button>
-</div>
+          <div class="bg-teal-50 border border-teal-200 rounded-2xl p-4 space-y-2.5">
+            <h3 class="text-xs font-bold text-teal-900 flex items-center gap-1.5">
+              <i class="ph-fill ph-share-network text-teal-700"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
+            </h3>
+            <p class="text-[11px] text-teal-800/80 leading-relaxed">
+              మీ కస్టమర్లకు <strong>MilkCount Customer App</strong> లింక్ పంపితే, వాళ్లు తమ మొబైల్ నంబర్ & PIN తో లాగిన్ అయి రోజువారీ లెక్కలు చూసుకోవచ్చు!
+            </p>
+            <button onclick="shareCustomerAppLink()" class="w-fit mx-auto bg-teal-600 hover:bg-teal-700 text-white font-bold py-1 px-2.5 rounded-lg text-xs flex items-center justify-center gap-1 shadow-xs active:scale-95">
+              <i class="ph-fill ph-share-fat text-sm"></i> కస్టమర్ యాప్ లింక్ షేర్ చేయండి
+            </button>
+          </div>
 
-<!-- Share Vendor App Card -->
-<div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5 mt-3">
-  <h3 class="text-xs font-bold text-sky-900 flex items-center gap-1.5">
-    <i class="ph-fill ph-share-network text-sky-700"></i> వెండర్ యాప్ లింక్ షేర్ చేయండి
-  </h3>
-  <p class="text-[11px] text-sky-800/80 leading-relaxed">
-    తోటి డైరీ వ్యాపారులకు లేదా మీ వేరే ఫోన్ కోసం <strong>MilkCount Vendor App</strong> లింక్ పంపండి!
-  </p>
-  <button onclick="shareVendorAppLink()" class="w-fit mx-auto bg-sky-500 hover:bg-sky-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs flex items-center justify-center gap-1 shadow-xs active:scale-95">
-    <i class="ph-fill ph-share-fat text-sm"></i> వెండర్ యాప్ లింక్ షేర్ చేయండి
-  </button>
-</div>
- </div>
+          <!-- Share Vendor App Card -->
+          <div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2.5 mt-3">
+            <h3 class="text-xs font-bold text-sky-900 flex items-center gap-1.5">
+              <i class="ph-fill ph-share-network text-sky-700"></i> వెండర్ యాప్ లింక్ షేర్ చేయండి
+            </h3>
+            <p class="text-[11px] text-sky-800/80 leading-relaxed">
+              తోటి డైరీ వ్యాపారులకు లేదా మీ వేరే ఫోన్ కోసం <strong>MilkCount Vendor App</strong> లింక్ పంపండి!
+            </p>
+            <button onclick="shareVendorAppLink()" class="w-fit mx-auto bg-sky-500 hover:bg-sky-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs flex items-center justify-center gap-1 shadow-xs active:scale-95">
+              <i class="ph-fill ph-share-fat text-sm"></i> వెండర్ యాప్ లింక్ షేర్ చేయండి
+            </button>
+          </div>
+        </div>
       </main>
 
       <!-- BOTTOM NAVIGATION BAR -->
@@ -519,15 +518,14 @@
           <p class="text-2xl font-black text-slate-900 mt-0.5">₹<span id="qrAmountDisplay">0</span></p>
         </div>
         <div class="bg-slate-50 border-2 border-dashed border-teal-300 rounded-2xl p-3 flex justify-center">
-         <div id="upiQrBox" class="bg-white p-2 rounded-lg"></div>
-
+          <div id="upiQrBox" class="bg-white p-2 rounded-lg"></div>
         </div>
         <p id="qrUpiIdLabel" class="text-[11px] font-bold text-teal-800 bg-teal-50 py-1 px-2 rounded-lg"></p>
         <p class="text-[10px] text-slate-500">PhonePe, GPay లేదా Paytm తో స్కాన్ చేసి చెల్లించవచ్చు.</p>
       </div>
     </div>
 
-    <!-- MODAL: MILK COLLECTION FROM FARMERS (పాల సేకరణ) -->
+    <!-- MODAL: MILK COLLECTION FROM FARMERS -->
     <div id="milkCollectionModal" class="fixed inset-0 bg-black/65 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4" onclick="if(event.target===this) this.classList.add('hidden-force')">
       <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl space-y-3 max-h-[88vh] flex flex-col">
         <div class="flex justify-between items-center pb-2 border-b border-slate-100 shrink-0">
@@ -592,7 +590,7 @@
       <span id="toastMsg">అప్‌డేట్ అయ్యింది!</span>
     </div>
 
-    <!-- MODAL: EDIT VENDOR PROFILE (Name & 4-Digit PIN) -->
+    <!-- MODAL: EDIT VENDOR PROFILE -->
     <div id="vendorProfileModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5">
         <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
@@ -610,17 +608,17 @@
             <input type="text" id="editVendorPhoneDisplay" disabled class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-500">
           </div>
 
-<!-- Vendor Profile Photo Uploader -->
-<div class="flex flex-col items-center gap-1.5 mb-2">
-  <div class="w-16 h-16 rounded-full overflow-hidden bg-teal-100 border-2 border-teal-500 flex items-center justify-center shadow-xs">
-    <img id="editVendorPhotoPreview" src="" class="hidden-force w-full h-full object-cover">
-    <i id="editVendorPhotoIcon" class="ph-bold ph-user text-2xl text-teal-700"></i>
-  </div>
-  <label class="text-[11px] font-extrabold text-teal-700 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-full cursor-pointer active:scale-95">
-    📷 ఫోటో మార్చు / అప్‌లోడ్
-    <input type="file" accept="image/*" class="hidden" onchange="handleVendorProfilePhotoUpload(event)">
-  </label>
-</div>
+          <!-- Vendor Profile Photo Uploader -->
+          <div class="flex flex-col items-center gap-1.5 mb-2">
+            <div class="w-16 h-16 rounded-full overflow-hidden bg-teal-100 border-2 border-teal-500 flex items-center justify-center shadow-xs">
+              <img id="editVendorPhotoPreview" src="" class="hidden-force w-full h-full object-cover">
+              <i id="editVendorPhotoIcon" class="ph-bold ph-user text-2xl text-teal-700"></i>
+            </div>
+            <label class="text-[11px] font-extrabold text-teal-700 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-full cursor-pointer active:scale-95">
+              📷 ఫోటో మార్చు / అప్‌లోడ్
+              <input type="file" accept="image/*" class="hidden" onchange="handleVendorProfilePhotoUpload(event)">
+            </label>
+          </div>
 
           <div>
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">డెయిరీ / వెండర్ పేరు (Name):</label>
@@ -634,7 +632,6 @@
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">మీ UPI ID (PhonePe / GPay QR కోసం):</label>
             <input type="text" id="editVendorUpiInput" placeholder="ఉదా: 9876543210@ybl" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
           </div>
-
         </div>
 
         <div class="flex gap-2 pt-1">
@@ -644,7 +641,7 @@
       </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT / REMOVE CUSTOMER (With Milk Type, Shift & Area) -->
+    <!-- MODAL: ADD / EDIT / REMOVE CUSTOMER -->
     <div id="customerModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
@@ -712,7 +709,6 @@
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">ఏరియా / రూట్ (Area / Route):</label>
             <input type="text" id="custAreaInput" placeholder="ఉదా: హన్మకొండ / కాజీపేట" value="General" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold focus:outline-none focus:border-teal-600">
           </div>
- <!-- 🏠 ఇంటి నంబర్ / గుర్తు (Landmark) కోసం వాడుకుందాం -->
           <div>
             <label class="text-[11px] font-bold text-slate-600 mb-1 block">ఇంటి నంబర్ / గుర్తు (Landmark):</label>
             <input type="text" id="custLandmarkInput" placeholder="ఉదా: H.No 2-45, గ్రీన్ గేట్, గుడి పక్కన" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-teal-600">
@@ -745,7 +741,7 @@
       </div>
     </div>
 
-    <!-- MODAL: RECORD BILL PAYMENT (Cash / UPI & Prev Due) -->
+    <!-- MODAL: RECORD BILL PAYMENT -->
     <div id="billingLedgerModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5">
         <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
@@ -825,7 +821,7 @@
       </div>
     </div>
 
-    <!-- MODAL: VENDOR IN-APP SUPPORT TICKET (Raise Ticket to Admin) -->
+    <!-- MODAL: VENDOR IN-APP SUPPORT TICKET -->
     <div id="vendorSupportModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center pb-1.5 border-b border-slate-100">
@@ -891,8 +887,8 @@
     let billingFilter = 'all';
 
     let allCustomers = [];
-    let monthLogsByUser = {}; // { user_id: { 'YYYY-MM-DD': { status, quantity, morning_qty, evening_qty, quality_note, vendor_delivered } } }
-    let billingLedgerByUser = {}; // { customer_id: { prev_due, paid_amount, payment_mode } }
+    let monthLogsByUser = {};
+    let billingLedgerByUser = {};
     let currentMonthExpenses = { milk_purchase_cost: 0, other_expenses: 0 };
     let selectedCustForDayEdit = null;
     let vendorRealtimeChannel = null;
@@ -1020,7 +1016,7 @@
           btn.innerText = origText;
           return alert('Registration Error: ' + insErr.message);
         }
-        vendorProfile = { name: nameInput, phone, pin };
+        vendorProfile = { name: nameInput, phone, pin, upi_id: '', profile_pic: null };
         showToast('Sign Up విజయవంతమైంది! స్వాగతం!');
       } else {
         if (!existingVendor) {
@@ -1035,12 +1031,12 @@
           return alert('మీ 4-అంకెల PIN తప్పుగా నమోదు చేశారు!');
         }
         vendorProfile = {
-  name: existingVendor.name,
-  phone: existingVendor.phone,
-  pin: existingVendor.pin,
-  upi_id: existingVendor.upi_id || '',
-  profile_pic: existingVendor.profile_pic || null
-};
+          name: existingVendor.name,
+          phone: existingVendor.phone,
+          pin: existingVendor.pin,
+          upi_id: existingVendor.upi_id || '',
+          profile_pic: existingVendor.profile_pic || null
+        };
       }
 
       btn.disabled = false;
@@ -1057,14 +1053,14 @@
       document.getElementById('editVendorPinInput').value = vendorProfile.pin;
       document.getElementById('editVendorUpiInput').value = vendorProfile.upi_id || '';
       document.getElementById('vendorProfileModal').classList.remove('hidden-force');
-applyVendorProfilePhotoUI(vendorProfile.phone);
+      applyVendorProfilePhotoUI(vendorProfile.phone);
     }
 
     function closeVendorProfileModal() {
       document.getElementById('vendorProfileModal').classList.add('hidden-force');
     }
 
-        async function saveVendorProfileChanges() {
+    async function saveVendorProfileChanges() {
       const newName = document.getElementById('editVendorNameInput').value.trim();
       const newPin = document.getElementById('editVendorPinInput').value.trim();
       const newUpi = document.getElementById('editVendorUpiInput').value.trim();
@@ -1097,7 +1093,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       showToast('వెండర్ ప్రొఫైల్ & UPI ID అప్‌డేట్ అయ్యాయి! ✓');
     }
 
-
     function stopVendorAutoLiveSync() {
       if (vendorAutoSyncTimer) {
         clearInterval(vendorAutoSyncTimer);
@@ -1113,7 +1108,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       stopVendorAutoLiveSync();
       if (!vendorProfile) return;
 
-      // 1. Supabase Realtime listener for customer logs, quality alerts & profile updates
       try {
         vendorRealtimeChannel = db
           .channel(`vendor-live-${vendorProfile.phone}`)
@@ -1128,7 +1122,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
         console.log('Vendor realtime fallback to polling:', e);
       }
 
-      // 2. Silent background polling every 15 seconds while screen is active
       vendorAutoSyncTimer = setInterval(() => {
         if (vendorProfile && !document.hidden) {
           refreshAllVendorData();
@@ -1161,7 +1154,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       startVendorAutoLiveSync();
     }
 
-           // Show Customer-Style Quick PIN Screen if saved credentials exist
     function checkVendorQuickPinScreen() {
       const creds = JSON.parse(localStorage.getItem('milkcount_vendor_creds') || 'null');
       const quickBox = document.getElementById('vendorQuickPinBox');
@@ -1287,7 +1279,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
         }
       }
 
-      // Fetch Billing Ledger & Expenses for selectedBillingMonth
       const mKey = getMonthKey(selectedBillingMonth);
       const [{ data: ledgerRows }, { data: expRow }] = await Promise.all([
         db.from('vendor_billing_ledger')
@@ -1404,7 +1395,7 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       document.getElementById('activePeriodSub').innerText = `${ENGLISH_MONTHS[m]} ${y}`;
     }
 
-     // 4. TAB 1: DAILY DELIVERY ROUTE LOGIC
+    // 4. TAB 1: DAILY DELIVERY ROUTE LOGIC
     function setDeliveryFilter(f) {
       deliveryFilter = f;
       ['all', 'pending', 'skipped'].forEach(key => {
@@ -1548,7 +1539,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       return { mType, mQty, mRate, eType, eQty, eRate, totalDefault, effectiveShift };
     }
 
-    // 1. FIX: Matches exact property names (status: 'active', qty, quality_note, isExtra, isDone) across all tabs
     function getCustomerDayStatus(cust, dateObj) {
       const iso = formatDateISO(dateObj);
       const dateZero = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
@@ -1604,7 +1594,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
         };
       }
 
-      // ఆటో మోడ్ (Auto Mode) లో ఉన్నప్పుడు డిఫాల్ట్ కోటా
       const isAuto = cust.auto_mode !== false;
       if (isAuto && dateZero >= regDate) {
         return {
@@ -1645,7 +1634,6 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       let skippedCount = 0;
       let doneCount = 0;
 
-      // Check Quality Alerts for selected date
       const qualityAlerts = [];
       allCustomers.forEach(c => {
         const st = getCustomerDayStatus(c, selectedRouteDate);
@@ -1841,7 +1829,6 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*\n` : ''}${shift !== 'all' ? 
       selectedCustForDayEdit = null;
     }
 
-    // 2. FIX: వెండర్ ఒక కస్టమర్‌పై నొక్కి లీటర్లు మార్చినప్పుడు morning_qty, evening_qty మరియు vendor_delivered కూడా DB కి సింక్ అవుతాయి
     async function updateCustomerDayFromVendor(liters) {
       if (!selectedCustForDayEdit) return;
       const cust = selectedCustForDayEdit;
@@ -1905,7 +1892,7 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*\n` : ''}${shift !== 'all' ? 
       if (!isNaN(val) && val >= 0) updateCustomerDayFromVendor(val);
     }
 
-    // 5. TAB 2: MONTHLY BILLING & COLLECTIONS (Cash / UPI & Prev Due Ledger)
+    // 5. TAB 2: MONTHLY BILLING & COLLECTIONS
     function setBillingFilter(f) {
       billingFilter = f;
       ['all', 'unpaid', 'paid'].forEach(key => {
@@ -1917,7 +1904,6 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*\n` : ''}${shift !== 'all' ? 
       renderBillingTab();
     }
 
-    // 3. FIX: ఉదయం (గేదె) & సాయంత్రం (ఆవు) వేర్వేరు ధరలు ఉన్నప్పుడు Customer App తో 100% సరిపోలేలా బిల్లు లెక్క
     function calculateCustomerMonthStats(cust, year, month) {
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const now = new Date();
@@ -2043,22 +2029,22 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*\n` : ''}${shift !== 'all' ? 
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-            <button onclick="openBillingLedgerModal('${cust.id}', ${stats.amount})" class="py-1.5 px-2.5 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 ${
+          <div class="grid grid-cols-3 gap-1.5 pt-1 border-t border-slate-100">
+            <button onclick="openBillingLedgerModal('${cust.id}', ${stats.amount})" class="py-1.5 px-2 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 ${
               isPaid
                 ? 'bg-slate-200 text-slate-700'
                 : 'bg-teal-700 text-white hover:bg-teal-800'
             }">
-              <i class="ph-bold ph-currency-inr"></i> ${isPaid ? 'ఎడిట్ పేమెంట్' : 'పేమెంట్ / బాకీ'}
+              <i class="ph-bold ph-currency-inr"></i> ${isPaid ? 'ఎడిట్' : 'పేమెంట్'}
             </button>
 
-            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, '${stats.rate}', ${stats.amount}, ${ledger.prev_due}, ${ledger.paid_amount}, ${balanceDue})" class="py-1.5 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
-              <i class="ph-fill ph-whatsapp-logo"></i> వాట్సాప్ బిల్
+            <button onclick="sendWhatsAppBillToCustomer('${cust.id}', ${stats.deliveredDays}, ${stats.skippedDays}, ${stats.totalLiters.toFixed(1)}, '${stats.rate}', ${stats.amount}, ${ledger.prev_due}, ${ledger.paid_amount}, ${balanceDue})" class="py-1.5 px-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] font-bold flex items-center justify-center gap-1">
+              <i class="ph-fill ph-whatsapp-logo"></i> బిల్
             </button>
-<button onclick="openUpiQrModal('${(cust.name || cust.phone).replace(/'/g, '')}', ${balanceDue})" class="py-1.5 px-2 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-bold flex items-center justify-center gap-1">
-  <i class="ph-bold ph-qr-code"></i> QR
-</button>
 
+            <button onclick="openUpiQrModal('${(cust.name || cust.phone).replace(/'/g, '')}', ${balanceDue})" class="py-1.5 px-2 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-bold flex items-center justify-center gap-1">
+              <i class="ph-bold ph-qr-code"></i> QR
+            </button>
           </div>
         `;
         listEl.appendChild(card);
@@ -2157,8 +2143,8 @@ ${dueLines}
       window.location.href = `whatsapp://send?phone=91${cust.phone}&text=${encodeURIComponent(msg)}`;
     }
 
-    // 6. TAB 3: CUSTOMERS MANAGEMENT (Add, Edit & Remove with Milk Type, Shift, Area)
-        function renderCustomersTab() {
+    // 6. TAB 3: CUSTOMERS MANAGEMENT
+    function renderCustomersTab() {
       const query = (document.getElementById('customerSearchInput').value || '').toLowerCase();
       const filtered = allCustomers.filter(c =>
         (c.name || '').toLowerCase().includes(query) ||
@@ -2187,8 +2173,8 @@ ${dueLines}
 
         const card = document.createElement('div');
         card.className = 'bg-white border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between gap-2.5 shadow-2xs';
-                    
-                    card.innerHTML = `
+
+        card.innerHTML = `
           <div class="flex items-center gap-2 min-w-0 flex-1">
             ${avatarHtml}
             <div class="min-w-0 flex-1">
@@ -2266,11 +2252,12 @@ ${dueLines}
       document.getElementById('custEveningQuota').value = '0';
       document.getElementById('custEveningRate').value = '55';
       document.getElementById('custAreaInput').value = 'General';
+      document.getElementById('custMapLinkInput').value = '';
+      document.getElementById('custLandmarkInput').value = '';
       document.getElementById('custPinInput').value = '1234';
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.add('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
-document.getElementById('custLandmarkInput').value = '';
     }
 
     function openEditCustomerModal(userId) {
@@ -2289,11 +2276,12 @@ document.getElementById('custLandmarkInput').value = '';
       document.getElementById('custEveningQuota').value = prefs.eQty;
       document.getElementById('custEveningRate').value = prefs.eRate;
       document.getElementById('custAreaInput').value = cust.route_area || 'General';
+      document.getElementById('custMapLinkInput').value = cust.map_link || '';
+      document.getElementById('custLandmarkInput').value = cust.landmark || '';
       document.getElementById('custPinInput').value = cust.pin || '1234';
       document.getElementById('custPinFieldGroup').classList.remove('hidden-force');
       document.getElementById('removeCustFromModalBtn').classList.remove('hidden-force');
       document.getElementById('customerModal').classList.remove('hidden-force');
-document.getElementById('custLandmarkInput').value = cust.landmark || '';
     }
 
     function closeCustomerModal() {
@@ -2305,7 +2293,7 @@ document.getElementById('custLandmarkInput').value = cust.landmark || '';
       const name = document.getElementById('custNameInput').value.trim();
       const phone = document.getElementById('custPhoneInput').value.trim();
       const map_link = document.getElementById('custMapLinkInput').value.trim();
-const landmark = (document.getElementById('custLandmarkInput').value || '').trim();
+      const landmark = (document.getElementById('custLandmarkInput').value || '').trim();
 
       const morning_milk_type = document.getElementById('custMorningMilkType').value;
       const morning_qty = Math.max(0, parseFloat(document.getElementById('custMorningQuota').value) || 0);
@@ -2420,56 +2408,52 @@ const landmark = (document.getElementById('custLandmarkInput').value || '').trim
       document.getElementById('sumTotalRevenue').innerText = grandRevenue.toLocaleString('en-IN');
       document.getElementById('sumDailyAvg').innerText = (grandLiters / daysPassed).toFixed(1);
 
-      // Update Expenses & Net Profit UI
       document.getElementById('expMilkPurchaseInput').value = currentMonthExpenses.milk_purchase_cost || '';
       document.getElementById('expOtherInput').value = currentMonthExpenses.other_expenses || '';
       updateNetProfitDisplay();
 
-        // Render 7-Day Supply Bar Chart (Fixed: Only counts actual delivered/taken milk)
-  const chartEl = document.getElementById('sevenDayBarChart');
-  if (chartEl) {
-    chartEl.innerHTML = '';
-    const last7 = [];
-    let maxVal = 1;
+      const chartEl = document.getElementById('sevenDayBarChart');
+      if (chartEl) {
+        chartEl.innerHTML = '';
+        const last7 = [];
+        let maxVal = 1;
 
-    for (let i = 6; i >= 0; i--) {
-      const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-      const isoDate = formatDateISO(dObj);
-      let daySum = 0;
+        for (let i = 6; i >= 0; i--) {
+          const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+          const isoDate = formatDateISO(dObj);
+          let daySum = 0;
 
-      allCustomers.forEach(c => {
-        const userLogs = monthLogsByUser[c.id] || {};
-        const log = userLogs[isoDate];
-        const doneMap = getDeliveredDoneMap(isoDate);
-        const isDoneMarked = Boolean((log && log.vendor_delivered) || doneMap[c.id]);
+          allCustomers.forEach(c => {
+            const userLogs = monthLogsByUser[c.id] || {};
+            const log = userLogs[isoDate];
+            const doneMap = getDeliveredDoneMap(isoDate, 'all');
+            const isDoneMarked = Boolean((log && log.vendor_delivered) || doneMap[c.id]);
 
-        // రూల్: లాగ్ ఉండి 'skipped' కాకుండా, మరియు వెండర్ 'Done' మార్క్ చేసి ఉంటేనే గ్రాఫ్‌లో కలపాలి
-        if (log && log.status !== 'skipped' && isDoneMarked) {
-          daySum += parseFloat(log.quantity || 0);
+            if (log && log.status !== 'skipped' && isDoneMarked) {
+              daySum += parseFloat(log.quantity || 0);
+            }
+          });
+
+          if (daySum > maxVal) maxVal = daySum;
+          last7.push({
+            label: `${dObj.getDate()}/${dObj.getMonth() + 1}`,
+            val: parseFloat(daySum.toFixed(1))
+          });
         }
-      });
 
-      if (daySum > maxVal) maxVal = daySum;
-      last7.push({ 
-        label: `${dObj.getDate()}/${dObj.getMonth() + 1}`, 
-        val: parseFloat(daySum.toFixed(1)) 
-      });
-    }
+        last7.forEach((item, idx) => {
+          const heightPct = Math.max(12, Math.round((item.val / maxVal) * 100));
+          const isTodayBar = idx === 6;
+          chartEl.innerHTML += `
+            <div class="flex flex-col items-center gap-1 h-full justify-end">
+              <span class="text-[9px] font-extrabold text-slate-600">${item.val}</span>
+              <div class="w-full rounded-t-lg transition-all ${isTodayBar ? 'bg-teal-600' : 'bg-teal-200'}" style="height: ${heightPct}%"></div>
+              <span class="text-[9px] font-semibold text-slate-400">${item.label}</span>
+            </div>
+          `;
+        });
+      }
 
-    last7.forEach((item, idx) => {
-      const heightPct = Math.max(12, Math.round((item.val / maxVal) * 100));
-      const isTodayBar = idx === 6;
-      chartEl.innerHTML += `
-        <div class="flex flex-col items-center gap-1 h-full justify-end">
-          <span class="text-[9px] font-extrabold text-slate-600">${item.val}</span>
-          <div class="w-full rounded-t-lg transition-all ${isTodayBar ? 'bg-teal-600' : 'bg-teal-200'}" style="height: ${heightPct}%"></div>
-          <span class="text-[9px] font-semibold text-slate-400">${item.label}</span>
-        </div>
-      `;
-    });
-  }
-
-      // Render Top Customers
       ranked.sort((a, b) => b.liters - a.liters);
       const topEl = document.getElementById('topCustomersList');
       topEl.innerHTML = '';
@@ -2520,23 +2504,22 @@ const landmark = (document.getElementById('custLandmarkInput').value || '').trim
       showToast('నెలవారీ ఖర్చులు & నికర లాభం సేవ్ అయ్యాయి!');
     }
 
-// కస్టమర్ యాప్ లింక్ షేర్ చేయడానికి (అన్ని షేర్ ఆప్షన్లు వచ్చేలా నేటివ్ షేర్)
-function shareCustomerAppLink() {
-  const customerAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker/'; // మీ కస్టమర్ యాప్ లైవ్ లింక్
-  const shareText = `🥛 *MilkCount Customer App - కస్టమర్ యాప్*\nమీ రోజువారీ పాల లెక్కలు, షిఫ్ట్‌లు మరియు నెలవారీ బిల్లులు చూసుకోవడానికి ఈ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${customerAppUrl}`;
+    function shareCustomerAppLink() {
+      const customerAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker/';
+      const shareText = `🥛 *MilkCount Customer App - కస్టమర్ యాప్*\nమీ రోజువారీ పాల లెక్కలు, షిఫ్ట్‌లు మరియు నెలవారీ బిల్లులు చూసుకోవడానికి ఈ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${customerAppUrl}`;
 
-  if (navigator.share) {
-    navigator.share({
-      title: 'MilkCount Customer App',
-      text: shareText,
-      url: customerAppUrl
-    }).catch(() => {});
-  } else {
-    window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
-  }
-}
+      if (navigator.share) {
+        navigator.share({
+          title: 'MilkCount Customer App',
+          text: shareText,
+          url: customerAppUrl
+        }).catch(() => {});
+      } else {
+        window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
+      }
+    }
 
-    // 8. VENDOR IN-APP SUPPORT TICKETS (Raise Ticket & View Admin Replies)
+    // 8. VENDOR IN-APP SUPPORT TICKETS
     function openVendorSupportModal() {
       if (!vendorProfile) return;
       document.getElementById('vTicketDescInput').value = '';
@@ -2617,11 +2600,30 @@ function shareCustomerAppLink() {
       }).join('');
     }
 
-        // ==========================================    // ==========================================
-    // NEW V12 FEATURES: UPI QR, CSV EXPORT & MILK COLLECTION
     // ==========================================
+    // NEW V12/V13 FEATURES: UPI QR, CSV EXPORT & MILK COLLECTION
+    // ==========================================
+    function uploadVendorQrPhoto(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 300;
+          canvas.height = 300;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, 300, 300);
+          localStorage.setItem('mc_vendor_qr_photo', canvas.toDataURL('image/jpeg', 0.8));
+          showToast('QR ఫోటో సేవ్ అయ్యింది! ✓');
+          openUpiQrModal('', 0, 'card');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
-                    // Unified QR Modal: Handles (1) Header Quick QR, (2) Menu Business Card + Share, (3) Customer Bill QR
     function openUpiQrModal(custName, amount, mode = 'bill') {
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
       const savedQrImg = localStorage.getItem('mc_vendor_qr_photo');
@@ -2636,7 +2638,6 @@ function shareCustomerAppLink() {
       const amtRow = document.getElementById('qrAmountDisplay').parentElement;
       document.getElementById('upiQrModal').classList.remove('hidden-force');
 
-      // UPI URL (with amount only for 'bill' mode)
       const upiUrl = upi
         ? ('upi://pay?pa=' + encodeURIComponent(upi) + '&pn=' + encodeURIComponent(vName) + (mode === 'bill' ? '&am=' + amount : '') + '&cu=INR')
         : '';
@@ -2644,7 +2645,6 @@ function shareCustomerAppLink() {
       const qrBox = document.getElementById('upiQrBox');
 
       if (mode === 'quick') {
-        // 1. HEADER QUICK QR (Only QR Code for instant scan)
         document.getElementById('qrCustomerName').innerText = 'Scan & Pay Any Amount';
         amtRow.style.display = 'none';
         document.getElementById('qrUpiIdLabel').innerText = 'PhonePe / GPay / Paytm స్కాన్ చేయండి';
@@ -2653,7 +2653,6 @@ function shareCustomerAppLink() {
             ${savedQrImg ? `<img src="${savedQrImg}" class="w-44 h-44 object-contain rounded-lg">` : `<span class="text-[10px] text-slate-400 font-bold">QR లోడ్ అవుతోంది...</span>`}
           </div>`;
       } else if (mode === 'card') {
-        // 2. MENU BUSINESS QR CARD (Name + QR + UPI ID + Share Button)
         document.getElementById('qrCustomerName').innerText = 'My Business Payment Card';
         amtRow.style.display = 'none';
         document.getElementById('qrUpiIdLabel').innerText = 'కస్టమర్లకు షేర్ చేయడానికి సిద్ధంగా ఉంది';
@@ -2674,7 +2673,6 @@ function shareCustomerAppLink() {
             </button>
           </div>`;
       } else {
-        // 3. CUSTOMER BILL QR (With exact bill amount)
         document.getElementById('qrCustomerName').innerText = custName;
         amtRow.style.display = 'block';
         document.getElementById('qrAmountDisplay').innerText = amount.toLocaleString('en-IN');
@@ -2714,7 +2712,8 @@ function shareCustomerAppLink() {
         }
       }
     }
-        function buildSvgFromLib(upiUrl) {
+
+    function buildSvgFromLib(upiUrl) {
       const box = document.getElementById('actualQrCanvasBox');
       if (!box || !window.qrcode) return;
       const qr = window.qrcode(0, 'M');
@@ -2723,7 +2722,6 @@ function shareCustomerAppLink() {
       box.innerHTML = qr.createSvgTag(4, 2);
     }
 
-        // Generates complete Business Payment Card JPG (Name + QR + UPI ID) and shares directly
     async function shareCompleteVendorQrCard() {
       const vName = (vendorProfile && vendorProfile.name) ? vendorProfile.name : 'MilkCount Vendor';
       const upi = (vendorProfile && vendorProfile.upi_id) ? vendorProfile.upi_id.trim() : '';
@@ -2734,14 +2732,12 @@ function shareCustomerAppLink() {
         canvas.height = 620;
         const ctx = canvas.getContext('2d');
 
-        // Background & Border
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 500, 620);
         ctx.strokeStyle = '#0d9488';
         ctx.lineWidth = 10;
         ctx.strokeRect(10, 10, 480, 600);
 
-        // Top Header Band
         ctx.fillStyle = '#0f766e';
         ctx.fillRect(10, 10, 480, 85);
         ctx.fillStyle = '#ffffff';
@@ -2749,7 +2745,6 @@ function shareCustomerAppLink() {
         ctx.textAlign = 'center';
         ctx.fillText(vName.toUpperCase(), 250, 62);
 
-        // Draw QR Code in the center
         const savedQrImg = localStorage.getItem('mc_vendor_qr_photo');
         const svgEl = document.querySelector('#actualQrCanvasBox svg');
 
@@ -2770,7 +2765,6 @@ function shareCustomerAppLink() {
           URL.revokeObjectURL(url);
         }
 
-        // Bottom UPI ID Box
         ctx.fillStyle = '#f0fdfa';
         ctx.fillRect(40, 465, 420, 95);
         ctx.strokeStyle = '#99f6e4';
@@ -2785,7 +2779,6 @@ function shareCustomerAppLink() {
         ctx.font = 'bold 24px sans-serif';
         ctx.fillText(upi || 'Scan QR Above', 250, 538);
 
-        // Convert Canvas to JPG File & Share directly
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
         const imageFile = new File([blob], 'MilkCount_Payment_QR.jpg', { type: 'image/jpeg' });
 
@@ -2808,8 +2801,6 @@ function shareCustomerAppLink() {
       }
     }
 
-
-    // 2. Export Monthly Billing Report as Excel (CSV)
     function exportMonthlyBillingCSV() {
       if (!allCustomers || allCustomers.length === 0) return alert('కస్టమర్ల డేటా లేదు.');
       const y = selectedBillingMonth.getFullYear();
@@ -2837,7 +2828,6 @@ function shareCustomerAppLink() {
       showToast('Excel (CSV) బిల్లింగ్ రిపోర్ట్ డౌన్‌లోడ్ అయ్యింది!');
     }
 
-    // 3. Milk Collection from Farmers (పాల సేకరణ)
     function openMilkCollectionModal() {
       document.getElementById('mcDateInput').value = formatDateISO(new Date());
       document.getElementById('mcFarmerInput').value = '';
@@ -2928,371 +2918,355 @@ function shareCustomerAppLink() {
       await db.from('vendor_milk_collections').delete().eq('id', id);
       loadMilkCollections();
     }
+  </script>
 
-</script>
+  <!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
+  <div id="vendorThreeDotMenuModal" class="fixed inset-0 bg-black/40 backdrop-blur-2xs z-50 flex justify-end items-start pt-12 pr-2.5 pb-3 hidden-force transition-opacity duration-200" onclick="closeVendorMenu(event)">
 
-<!-- VERTICAL 3-DOT MENU MODAL & LOGIC FOR VENDOR APP -->
-<div id="vendorThreeDotMenuModal" class="fixed inset-0 bg-black/40 backdrop-blur-2xs z-50 flex justify-end items-start pt-12 pr-2.5 pb-3 hidden-force transition-opacity duration-200" onclick="closeVendorMenu(event)">
+    <div class="w-[265px] max-h-[84vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-3 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
 
-  <!-- Wider (w-[265px]) & Taller (max-h-[84vh]) Floating Box -->
-  <div class="w-[265px] max-h-[84vh] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col p-3 animate-in zoom-in-95 slide-in-from-top-2 duration-200" onclick="event.stopPropagation()">
-
-    <!-- Menu Header -->
-    <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 mb-2 shrink-0">
-      <div class="flex items-center gap-2 min-w-0">
-        <div class="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs shrink-0">
-          <i class="ph-fill ph-truck text-amber-200"></i>
+      <!-- Menu Header -->
+      <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 mb-2 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <i class="ph-fill ph-truck text-amber-200"></i>
+          </div>
+          <div class="min-w-0">
+            <h4 class="text-xs font-extrabold text-slate-900 truncate" id="menuVendorNameDisplay">Vendor Menu</h4>
+            <span class="text-[9px] text-teal-700 font-semibold block">MilkCount Vendor v13.1</span>
+          </div>
         </div>
-        <div class="min-w-0">
-          <h4 class="text-xs font-extrabold text-slate-900 truncate" id="menuVendorNameDisplay">Vendor Menu</h4>
-          <span class="text-[9px] text-teal-700 font-semibold block">MilkCount Vendor v12.5∆</span>
-        </div>
+        <button onclick="toggleVendorMenu()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors shrink-0">
+          <i class="ph-bold ph-x text-xs"></i>
+        </button>
       </div>
-      <button onclick="toggleVendorMenu()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors shrink-0">
-        <i class="ph-bold ph-x text-xs"></i>
-      </button>
+
+      <!-- Scrollable Menu Options List -->
+      <div class="flex-1 min-h-0 space-y-1 overflow-y-auto overscroll-contain custom-scroll pr-0.5">
+
+        <!-- GROUP 0: VENDOR SUPPORT & PROFILE -->
+        <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Vendor Support</div>
+
+        <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-user-gear text-base text-teal-600 shrink-0"></i>
+          <span>ప్రొఫైల్ & PIN మార్పు</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openUpiQrModal('', 0, 'card');" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-indigo-50 text-indigo-800 text-xs font-extrabold transition-all text-left">
+          <i class="ph-bold ph-qr-code text-base text-indigo-600 shrink-0"></i>
+          <span>నా QR కార్డ్ & షేర్ (My QR)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openVendorSupportModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-ticket text-base text-sky-600 shrink-0"></i>
+          <span>సపోర్ట్ & టికెట్లు (Support)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openVendorFeedbackModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-800 text-xs font-extrabold transition-all text-left">
+          <i class="ph-bold ph-star text-base text-amber-500 shrink-0"></i>
+          <span>ఫీడ్‌బ్యాక్ & సలహాలు (Feedback)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-arrows-clockwise text-base text-slate-600 shrink-0"></i>
+          <span>డేటా సింక్ (Sync Data)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openVendorNotificationsModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
+          <i class="ph-fill ph-bell text-base text-amber-500 shrink-0"></i>
+          <span>నోటిఫికేషన్లు (Notifications)</span>
+        </button>
+
+        <!-- GROUP 1: DAILY DELIVERY & ALERTS -->
+        <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">డెలివరీ & అలర్ట్స్</div>
+
+        <button onclick="vendorMenuAction('qualityAlerts')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-rose-50 text-rose-700 text-xs font-bold transition-all text-left">
+          <i class="ph-fill ph-warning-circle text-base text-rose-500 shrink-0"></i>
+          <span>నాణ్యత ఫిర్యాదులు (Quality Alerts)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('deliveryAll')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-list-checks text-base text-emerald-600 shrink-0"></i>
+          <span>డెలివరీ లిస్ట్ (Delivery List)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('deliveryPending')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-hourglass-high text-base text-amber-600 shrink-0"></i>
+          <span>పోయాల్సిన లిస్ట్ (Pending)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('deliverySkipped')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-prohibit text-base text-rose-600 shrink-0"></i>
+          <span>వద్దన్న లిస్ట్ (Skip List)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('areaWise')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-map-pin-line text-base text-teal-600 shrink-0"></i>
+          <span>ఏరియా వారీ లిస్ట్ (Area-wise)</span>
+        </button>
+
+        <!-- GROUP 2: BILLS & COLLECTIONS -->
+        <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-indigo-700 uppercase tracking-wider bg-indigo-50/70 rounded-lg">బిల్లులు & వసూళ్లు</div>
+
+        <button onclick="vendorMenuAction('paidBills')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
+          <i class="ph-fill ph-check-circle text-base text-emerald-600 shrink-0"></i>
+          <span>కట్టిన బిల్లులు (Paid Bills)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('unpaidBills')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-xs font-bold transition-all text-left">
+          <i class="ph-fill ph-clock-countdown text-base text-rose-600 shrink-0"></i>
+          <span>బాకీ బిల్లులు (Unpaid Bills)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('collectedAmount')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-hand-coins text-base text-emerald-700 shrink-0"></i>
+          <span>వసూలైన మొత్తం (Collected ₹)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('pendingAmount')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-wallet text-base text-amber-600 shrink-0"></i>
+          <span>రావాల్సిన బాకీ (Pending ₹)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openMilkCollectionModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-900 text-xs font-extrabold transition-all text-left">
+          <i class="ph-bold ph-drop text-base text-amber-600 shrink-0"></i>
+          <span>పాల సేకరణ (Milk Collection)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); exportMonthlyBillingCSV();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-file-xls text-base text-emerald-600 shrink-0"></i>
+          <span>నెలవారీ బిల్లు Excel డౌన్‌లోడ్</span>
+        </button>
+
+        <!-- GROUP 3: CUSTOMERS & BUSINESS SUMMARY -->
+        <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-purple-700 uppercase tracking-wider bg-purple-50/70 rounded-lg">కస్టమర్లు & సారాంశం</div>
+
+        <button onclick="vendorMenuAction('addCustomer')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-teal-800 text-xs font-extrabold transition-all text-left">
+          <i class="ph-bold ph-user-plus text-base text-teal-600 shrink-0"></i>
+          <span>కొత్త కస్టమర్ చేర్చు (Add Customer)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('summary')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-chart-pie-slice text-base text-sky-600 shrink-0"></i>
+          <span>సారాంశం (Monthly Summary)</span>
+        </button>
+
+        <button onclick="vendorMenuAction('profitLoss')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-purple-50 text-purple-800 text-xs font-extrabold transition-all text-left">
+          <i class="ph-bold ph-trend-up text-base text-purple-600 shrink-0"></i>
+          <span>లాభనష్టాలు (Profit & Loss)</span>
+        </button>
+
+        <!-- GROUP 4: SHARE APP LINKS -->
+        <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider bg-emerald-50/70 rounded-lg">యాప్ లింక్ షేర్ (Share App)</div>
+
+        <button onclick="toggleVendorMenu(); shareCustomerAppLink();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-share-network text-base text-emerald-600 shrink-0"></i>
+          <span>కస్టమర్ యాప్ లింక్ షేర్</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); shareVendorAppLink();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-share-network text-base text-sky-600 shrink-0"></i>
+          <span>వెండర్ యాప్ లింక్ షేర్</span>
+        </button>
+
+        <!-- GROUP 5: INFORMATION & LEGAL -->
+        <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">సమాచారం & నిబంధనలు (Info)</div>
+
+        <button onclick="toggleVendorMenu(); openVendorAboutModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-info text-base text-teal-600 shrink-0"></i>
+          <span>మా గురించి (About Us)</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openVendorWhyChooseModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-sparkle text-base text-amber-600 shrink-0"></i>
+          <span>ఎందుకు మమ్మల్ని ఎంచుకోవాలి?</span>
+        </button>
+
+        <button onclick="toggleVendorMenu(); openVendorContactModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-envelope-simple text-base text-teal-600"></i>
+          <span>సంప్రదించండి (Contact Us)</span>
+        </button>
+
+        <a href="./privacy.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-shield-check text-base text-slate-600 shrink-0"></i>
+          <span>గోప్యతా విధానం (Privacy Policy)</span>
+        </a>
+
+        <a href="./terms.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
+          <i class="ph-bold ph-file-text text-base text-slate-600 shrink-0"></i>
+          <span>నియమ నిబంధనలు (Terms & Conditions)</span>
+        </a>
+
+      </div>
+
+      <!-- Menu Footer / Logout -->
+      <div class="pt-3 border-t border-slate-100 mt-auto">
+        <button onclick="toggleVendorMenu(); logoutVendor();" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition-all">
+          <i class="ph-bold ph-sign-out text-base"></i>
+          <span>లాగౌట్ (Logout)</span>
+        </button>
+      </div>
+
     </div>
-
-    <!-- Scrollable Menu Options List -->
-    <div class="flex-1 min-h-0 space-y-1 overflow-y-auto overscroll-contain custom-scroll pr-0.5">
-
-      <!-- GROUP 0: VENDOR SUPPORT & PROFILE -->
-      <div class="px-2.5 py-1 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">Vendor Support</div>
-
-      <button onclick="toggleVendorMenu(); openVendorProfileModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-user-gear text-base text-teal-600 shrink-0"></i>
-        <span>ప్రొఫైల్ & PIN మార్పు</span>
-      </button>
-
-<button onclick="toggleVendorMenu(); openUpiQrModal('', 0, 'card');" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-indigo-50 text-indigo-800 text-xs font-extrabold transition-all text-left">
-  <i class="ph-bold ph-qr-code text-base text-indigo-600 shrink-0"></i>
-  <span>నా QR కార్డ్ & షేర్ (My QR)</span>
-</button>
-
-      <button onclick="toggleVendorMenu(); openVendorSupportModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-ticket text-base text-sky-600 shrink-0"></i>
-        <span>సపోర్ట్ & టికెట్లు (Support)</span>
-      </button>
-
-<button onclick="toggleVendorMenu(); openVendorFeedbackModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-800 text-xs font-extrabold transition-all text-left">
-  <i class="ph-bold ph-star text-base text-amber-500 shrink-0"></i>
-  <span>ఫీడ్‌బ్యాక్ & సలహాలు (Feedback)</span>
-</button>
-
-      <button onclick="toggleVendorMenu(); refreshAllVendorData();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-arrows-clockwise text-base text-slate-600 shrink-0"></i>
-        <span>డేటా సింక్ (Sync Data)</span>
-      </button>
-
-<button onclick="toggleVendorMenu(); openVendorNotificationsModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
-  <i class="ph-fill ph-bell text-base text-amber-500 shrink-0"></i>
-  <span>నోటిఫికేషన్లు (Notifications)</span>
-</button>
-
-      <!-- GROUP 1: DAILY DELIVERY & ALERTS -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">డెలివరీ & అలర్ట్స్</div>
-
-      <button onclick="vendorMenuAction('qualityAlerts')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-rose-50 text-rose-700 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-warning-circle text-base text-rose-500 shrink-0"></i>
-        <span>నాణ్యత ఫిర్యాదులు (Quality Alerts)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('deliveryAll')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-list-checks text-base text-emerald-600 shrink-0"></i>
-        <span>డెలివరీ లిస్ట్ (Delivery List)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('deliveryPending')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-hourglass-high text-base text-amber-600 shrink-0"></i>
-        <span>పోయాల్సిన లిస్ట్ (Pending)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('deliverySkipped')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-prohibit text-base text-rose-600 shrink-0"></i>
-        <span>వద్దన్న లిస్ట్ (Skip List)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('areaWise')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-map-pin-line text-base text-teal-600 shrink-0"></i>
-        <span>ఏరియా వారీ లిస్ట్ (Area-wise)</span>
-      </button>
-
-      <!-- GROUP 2: BILLS & COLLECTIONS -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-indigo-700 uppercase tracking-wider bg-indigo-50/70 rounded-lg">బిల్లులు & వసూళ్లు</div>
-
-      <button onclick="vendorMenuAction('paidBills')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-check-circle text-base text-emerald-600 shrink-0"></i>
-        <span>కట్టిన బిల్లులు (Paid Bills)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('unpaidBills')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-800 text-xs font-bold transition-all text-left">
-        <i class="ph-fill ph-clock-countdown text-base text-rose-600 shrink-0"></i>
-        <span>బాకీ బిల్లులు (Unpaid Bills)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('collectedAmount')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-hand-coins text-base text-emerald-700 shrink-0"></i>
-        <span>వసూలైన మొత్తం (Collected ₹)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('pendingAmount')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-wallet text-base text-amber-600 shrink-0"></i>
-        <span>రావాల్సిన బాకీ (Pending ₹)</span>
-      </button>
-
-      <!-- 13. Milk Collection from Farmers -->
-      <button onclick="toggleVendorMenu(); openMilkCollectionModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-amber-900 text-xs font-extrabold transition-all text-left">
-        <i class="ph-bold ph-drop text-base text-amber-600 shrink-0"></i>
-        <span>పాల సేకరణ (Milk Collection)</span>
-      </button>
-
-      <!-- 14. Export Excel Report -->
-      <button onclick="toggleVendorMenu(); exportMonthlyBillingCSV();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-file-xls text-base text-emerald-600 shrink-0"></i>
-        <span>నెలవారీ బిల్లు Excel డౌన్‌లోడ్</span>
-      </button>
-
-      <!-- GROUP 3: CUSTOMERS & BUSINESS SUMMARY -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-purple-700 uppercase tracking-wider bg-purple-50/70 rounded-lg">కస్టమర్లు & సారాంశం</div>
-
-      <button onclick="vendorMenuAction('addCustomer')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-teal-800 text-xs font-extrabold transition-all text-left">
-        <i class="ph-bold ph-user-plus text-base text-teal-600 shrink-0"></i>
-        <span>కొత్త కస్టమర్ చేర్చు (Add Customer)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('summary')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-chart-pie-slice text-base text-sky-600 shrink-0"></i>
-        <span>సారాంశం (Monthly Summary)</span>
-      </button>
-
-      <button onclick="vendorMenuAction('profitLoss')" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-purple-50 text-purple-800 text-xs font-extrabold transition-all text-left">
-        <i class="ph-bold ph-trend-up text-base text-purple-600 shrink-0"></i>
-        <span>లాభనష్టాలు (Profit & Loss)</span>
-      </button>
-
-
-      <!-- GROUP 4: SHARE APP LINKS -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider bg-emerald-50/70 rounded-lg">యాప్ లింక్ షేర్ (Share App)</div>
-
-      <button onclick="toggleVendorMenu(); shareCustomerAppLink();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-share-network text-base text-emerald-600 shrink-0"></i>
-        <span>కస్టమర్ యాప్ లింక్ షేర్</span>
-      </button>
-
-      <button onclick="toggleVendorMenu(); shareVendorAppLink();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-sky-50 text-slate-700 hover:text-sky-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-share-network text-base text-sky-600 shrink-0"></i>
-        <span>వెండర్ యాప్ లింక్ షేర్</span>
-      </button>
-
-      <!-- GROUP 5: INFORMATION & LEGAL -->
-      <div class="px-2.5 py-1 mt-2 text-[10px] font-extrabold text-teal-700 uppercase tracking-wider bg-teal-50/70 rounded-lg">సమాచారం & నిబంధనలు (Info)</div>
-
-      <button onclick="toggleVendorMenu(); openVendorAboutModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-info text-base text-teal-600 shrink-0"></i>
-        <span>మా గురించి (About Us)</span>
-      </button>
-
-      <button onclick="toggleVendorMenu(); openVendorWhyChooseModal();" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-sparkle text-base text-amber-600 shrink-0"></i>
-    <span>ఎందుకు మమ్మల్ని ఎంచుకోవాలి?</span>
-      </button>
-
-<button onclick="toggleVendorMenu(); openVendorContactModal();" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-teal-50 text-slate-700 hover:text-teal-800 text-xs font-bold transition-all text-left">
-  <i class="ph-bold ph-envelope-simple text-base text-teal-600"></i>
-  <span>సంప్రదించండి (Contact Us)</span>
-</button>
-
-            <a href="./privacy.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-shield-check text-base text-slate-600 shrink-0"></i>
-        <span>గోప్యతా విధానం (Privacy Policy)</span>
-      </a>
-
-      <a href="./terms.html" target="_blank" onclick="toggleVendorMenu()" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all text-left">
-        <i class="ph-bold ph-file-text text-base text-slate-600 shrink-0"></i>
-        <span>నియమ నిబంధనలు (Terms & Conditions)</span>
-      </a>
-
-   </div>  
-
-    <!-- Menu Footer / Logout -->
-    <div class="pt-3 border-t border-slate-100 mt-auto">
-      <button onclick="toggleVendorMenu(); logoutVendor();" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-extrabold transition-all">
-        <i class="ph-bold ph-sign-out text-base"></i>
-        <span>లాగౌట్ (Logout)</span>
-      </button>
-    </div>
-
   </div>
-</div>
 
-<script>
-// Vendor Vertical 3-Dot Menu Script Logic
-function toggleVendorMenu() {
-  let menuModal = document.getElementById('vendorThreeDotMenuModal');
-  if (!menuModal) return;
+  <script>
+    // Vendor Vertical 3-Dot Menu Script Logic
+    function toggleVendorMenu() {
+      let menuModal = document.getElementById('vendorThreeDotMenuModal');
+      if (!menuModal) return;
 
-  const isHidden = menuModal.classList.contains('hidden-force');
-  if (isHidden) {
-    const nameDisp = document.getElementById('menuVendorNameDisplay');
-    if (nameDisp && window.vendorProfile) {
-      nameDisp.innerText = window.vendorProfile.name || 'Vendor';
-    }
-    menuModal.classList.remove('hidden-force');
-  } else {
-    menuModal.classList.add('hidden-force');
-  }
-}
-
-function closeVendorMenu(event) {
-  const menuModal = document.getElementById('vendorThreeDotMenuModal');
-  if (menuModal && event.target === menuModal) {
-    menuModal.classList.add('hidden-force');
-  }
-}
-
-function openVendorAboutModal() {
-  alert("MilkCount Vendor App: డెయిరీ వ్యాపారులు, పాల సేకరణ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహణ కోసం నోట్ బుక్ లో రాసుకోవాల్సినవసరం లేకుండా ప్రత్యేకంగా రూపొందించబడిన డిజిటల్ స్మార్ట్ మేనేజ్‌మెంట్ ప్లాట్‌ఫారమ్. రియల్-టైమ్ వెండర్ - కస్టమర్ యాప్ ల live సింక్ & without error bill type of milks with shift wise ");
-}
-
-function closeVendorMenu(event) {
-  const menuModal = document.getElementById('vendorThreeDotMenuModal');
-  if (menuModal && event.target === menuModal) {
-    menuModal.classList.add('hidden-force');
-  }
-}
-
-    <!--1 to 12 menu batons open functions-->
-// 1-to-12 Menu Options Navigation Handler (దీనిని కొత్తగా యాడ్ చేయండి)
-function vendorMenuAction(action) {
-  toggleVendorMenu();
-
-  if (action === 'qualityAlerts') {
-    switchVendorTab('delivery');
-    setDeliveryFilter('all');
-    setTimeout(() => {
-      const banner = document.getElementById('qualityAlertsBanner');
-      if (banner && !banner.classList.contains('hidden-force')) {
-        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const isHidden = menuModal.classList.contains('hidden-force');
+      if (isHidden) {
+        const nameDisp = document.getElementById('menuVendorNameDisplay');
+        if (nameDisp && window.vendorProfile) {
+          nameDisp.innerText = window.vendorProfile.name || 'Vendor';
+        }
+        menuModal.classList.remove('hidden-force');
       } else {
-        showToast('ఈరోజు కస్టమర్ నాణ్యత ఫిర్యాదులు ఏవీ లేవు ✓');
+        menuModal.classList.add('hidden-force');
       }
-    }, 300);
-  } 
-  else if (action === 'deliveryAll') {
-    switchVendorTab('delivery');
-    setDeliveryFilter('all');
-  } 
-  else if (action === 'deliveryPending') {
-    switchVendorTab('delivery');
-    setDeliveryFilter('pending');
-  } 
-  else if (action === 'deliverySkipped') {
-    switchVendorTab('delivery');
-    setDeliveryFilter('skipped');
-  } 
-  else if (action === 'areaWise') {
-    switchVendorTab('delivery');
-    setDeliveryFilter('all');
-    setTimeout(() => {
-      const areaSel = document.getElementById('routeAreaFilter');
-      if (areaSel) {
-        areaSel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        areaSel.focus();
-        showToast('పైన ఏరియా డ్రాప్‌డౌన్ నుండి ఏరియా ఎంచుకోండి 📍');
+    }
+
+    function closeVendorMenu(event) {
+      const menuModal = document.getElementById('vendorThreeDotMenuModal');
+      if (menuModal && event.target === menuModal) {
+        menuModal.classList.add('hidden-force');
       }
-    }, 300);
-  } 
-  else if (action === 'paidBills') {
-    switchVendorTab('billing');
-    setBillingFilter('paid');
-  } 
-  else if (action === 'unpaidBills' || action === 'pendingAmount') {
-    switchVendorTab('billing');
-    setBillingFilter('unpaid');
-  } 
-  else if (action === 'collectedAmount') {
-    switchVendorTab('billing');
-    setBillingFilter('all');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } 
-  else if (action === 'addCustomer') {
-    switchVendorTab('customers');
-    setTimeout(() => openAddCustomerModal(), 200);
-  } 
-  else if (action === 'summary') {
-    switchVendorTab('summary');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } 
-  else if (action === 'profitLoss') {
-    switchVendorTab('summary');
-    setTimeout(() => {
-      const expInput = document.getElementById('expMilkPurchaseInput');
-      if (expInput) {
-        expInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        expInput.focus();
+    }
+
+    function openVendorAboutModal() {
+      alert("MilkCount Vendor App: డెయిరీ వ్యాపారులు, పాల సేకరణ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహణ కోసం నోట్ బుక్ లో రాసుకోవాల్సినవసరం లేకుండా ప్రత్యేకంగా రూపొందించబడిన డిజిటల్ స్మార్ట్ మేనేజ్‌మెంట్ ప్లాట్‌ఫారమ్. రియల్-టైమ్ వెండర్ - కస్టమర్ యాప్ ల live సింక్ & without error bill type of milks with shift wise.");
+    }
+
+    // 1-to-12 Menu Options Navigation Handler
+    function vendorMenuAction(action) {
+      toggleVendorMenu();
+
+      if (action === 'qualityAlerts') {
+        switchVendorTab('delivery');
+        setDeliveryFilter('all');
+        setTimeout(() => {
+          const banner = document.getElementById('qualityAlertsBanner');
+          if (banner && !banner.classList.contains('hidden-force')) {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            showToast('ఈరోజు కస్టమర్ నాణ్యత ఫిర్యాదులు ఏవీ లేవు ✓');
+          }
+        }, 300);
       }
-    }, 300);
-  }
-}
-    <!--1 to 12 menu batons closed functions->
+      else if (action === 'deliveryAll') {
+        switchVendorTab('delivery');
+        setDeliveryFilter('all');
+      }
+      else if (action === 'deliveryPending') {
+        switchVendorTab('delivery');
+        setDeliveryFilter('pending');
+      }
+      else if (action === 'deliverySkipped') {
+        switchVendorTab('delivery');
+        setDeliveryFilter('skipped');
+      }
+      else if (action === 'areaWise') {
+        switchVendorTab('delivery');
+        setDeliveryFilter('all');
+        setTimeout(() => {
+          const areaSel = document.getElementById('routeAreaFilter');
+          if (areaSel) {
+            areaSel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            areaSel.focus();
+            showToast('పైన ఏరియా డ్రాప్‌డౌన్ నుండి ఏరియా ఎంచుకోండి 📍');
+          }
+        }, 300);
+      }
+      else if (action === 'paidBills') {
+        switchVendorTab('billing');
+        setBillingFilter('paid');
+      }
+      else if (action === 'unpaidBills' || action === 'pendingAmount') {
+        switchVendorTab('billing');
+        setBillingFilter('unpaid');
+      }
+      else if (action === 'collectedAmount') {
+        switchVendorTab('billing');
+        setBillingFilter('all');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      else if (action === 'addCustomer') {
+        switchVendorTab('customers');
+        setTimeout(() => openAddCustomerModal(), 200);
+      }
+      else if (action === 'summary') {
+        switchVendorTab('summary');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      else if (action === 'profitLoss') {
+        switchVendorTab('summary');
+        setTimeout(() => {
+          const expInput = document.getElementById('expMilkPurchaseInput');
+          if (expInput) {
+            expInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            expInput.focus();
+          }
+        }, 300);
+      }
+    }
 
-function openVendorWhyChooseModal() {
-  alert("ఎందుకు మమ్మల్ని ఎంచుకోవాలి?\n• జీరో ఎర్రర్ లెక్కలు\n• ఆటోమేటిక్ బిల్లింగ్ & లెడ్జర్\n• రియల్-టైమ్ డేటా సింక్\n• రియల్-టైమ్ రూట్ గైడెన్స్\n• రియల్-టైమ్ వెండర్-కస్టమర్ పాల డెలివరీ\n• Zero Hard work Zero expense\n• రియల్-టైమ్ రోజువారీ ఆదాయ-వ్యయం\n• ప్రతిరోజు ఎన్ని లీటర్ పాలు పోయాలి అనేది ముందే తెలియడం\n• కస్టమర్ ల కి ఎవరికి ఏ పాలు ఎప్పుడూ ఎలా shift wise పోస్తున్నాం అనేది easy గ తెలియడం\n• వాట్సాప్ రిపోర్ట్స్ & సపోర్ట్\n• రియల్-టైమ్ Smart payments with UPI & many more");
-}
+    function openVendorWhyChooseModal() {
+      alert("ఎందుకు మమ్మల్ని ఎంచుకోవాలి?\n• జీరో ఎర్రర్ లెక్కలు\n• ఆటోమేటిక్ బిల్లింగ్ & లెడ్జర్\n• రియల్-టైమ్ డేటా సింక్\n• రియల్-టైమ్ రూట్ గైడెన్స్\n• రియల్-టైమ్ వెండర్-కస్టమర్ పాల డెలివరీ\n• Zero Hard work Zero expense\n• రియల్-టైమ్ రోజువారీ ఆదాయ-వ్యయం\n• ప్రతిరోజు ఎన్ని లీటర్ పాలు పోయాలి అనేది ముందే తెలియడం\n• కస్టమర్ ల కి ఎవరికి ఏ పాలు ఎప్పుడూ ఎలా shift wise పోస్తున్నాం అనేది easy గ తెలియడం\n• వాట్సాప్ రిపోర్ట్స్ & సపోర్ట్\n• రియల్-టైమ్ Smart payments with UPI & many more");
+    }
 
-function openVendorContactModal() {
-  alert("సంప్రదించండి (Contact Us)\n\nఏదైనా సమాచారం లేదా సహాయం కోసం మమ్మల్ని సంప్రదించండి:\n📧 Email: milkcount.saport@gmail.com");
-}
+    function openVendorContactModal() {
+      alert("సంప్రదించండి (Contact Us)\n\nఏదైనా సమాచారం లేదా సహాయం కోసం మమ్మల్ని సంప్రదించండి:\n📧 Email: milkcount.saport@gmail.com");
+    }
 
-function shareVendorAppLink() {
-  const vendorAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker-vendor/'; 
-  const shareText = `🚚 *MilkCount Vendor App - పాల వ్యాపారి యాప్*\nడెలివరీ రూట్, ఆటో కలెక్షన్ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహించడానికి ఈ వెండర్ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${vendorAppUrl}`;
+    function shareVendorAppLink() {
+      const vendorAppUrl = 'https://kishoreee226-netizen.github.io/milk-tracker-vendor/';
+      const shareText = `🚚 *MilkCount Vendor App - పాల వ్యాపారి యాప్*\nడెలివరీ రూట్, ఆటో కలెక్షన్ మరియు కస్టమర్ల బిల్లింగ్ నిర్వహించడానికి ఈ వెండర్ యాప్‌ను ఇన్‌స్టాల్ చేసుకోండి:\n${vendorAppUrl}`;
 
-  if (navigator.share) {
-    navigator.share({
-      title: 'MilkCount Vendor App',
-      text: shareText,
-      url: vendorAppUrl
-    }).catch(() => {});
-  } else {
-    window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
-  }
-}
-</script>
-<!-- CUSTOM BRANDED ALERT MODAL (Hides github.io URL & shows 'MilkCount') -->
-<div id="customAppAlertModal" class="hidden-force fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-5">
-  <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
-    <!-- App Brand Header -->
-    <div class="bg-gradient-to-r from-teal-600 to-emerald-700 text-white px-4 py-3 flex items-center gap-2">
-      <div class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
-        <i class="ph-bold ph-drop text-sm text-amber-200"></i>
+      if (navigator.share) {
+        navigator.share({
+          title: 'MilkCount Vendor App',
+          text: shareText,
+          url: vendorAppUrl
+        }).catch(() => {});
+      } else {
+        window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
+      }
+    }
+  </script>
+
+  <!-- CUSTOM BRANDED ALERT MODAL -->
+  <div id="customAppAlertModal" class="hidden-force fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-5">
+    <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      <div class="bg-gradient-to-r from-teal-600 to-emerald-700 text-white px-4 py-3 flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
+          <i class="ph-bold ph-drop text-sm text-amber-200"></i>
+        </div>
+        <span class="text-sm font-extrabold tracking-wide">MilkCount</span>
       </div>
-      <span class="text-sm font-extrabold tracking-wide">MilkCount</span>
-    </div>
-    <!-- Message Body -->
-    <div class="p-4">
-      <p id="customAppAlertText" class="text-xs font-bold text-slate-700 leading-relaxed"></p>
-    </div>
-    <!-- OK Button -->
-    <div class="px-4 pb-3.5 flex justify-end">
-      <button onclick="document.getElementById('customAppAlertModal').classList.add('hidden-force')" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold shadow-xs transition">
-        OK
-      </button>
+      <div class="p-4">
+        <p id="customAppAlertText" class="text-xs font-bold text-slate-700 leading-relaxed"></p>
+      </div>
+      <div class="px-4 pb-3.5 flex justify-end">
+        <button onclick="document.getElementById('customAppAlertModal').classList.add('hidden-force')" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-extrabold shadow-xs transition">
+          OK
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  window.alert = function(message) {
-    const modal = document.getElementById('customAppAlertModal');
-    const textEl = document.getElementById('customAppAlertText');
-    if (modal && textEl) {
-      textEl.innerText = message;
-      modal.classList.remove('hidden-force');
-    }
-  };
+  <script>
+    window.alert = function(message) {
+      const modal = document.getElementById('customAppAlertModal');
+      const textEl = document.getElementById('customAppAlertText');
+      if (modal && textEl) {
+        textEl.innerText = message;
+        modal.classList.remove('hidden-force');
+      }
+    };
 
-          // 1. Capture Current GPS Location for Customer House
+    // 1. Capture Current GPS Location for Customer House
     function captureCustomerCurrentGPS() {
       const input = document.getElementById('custMapLinkInput');
       if (!navigator.geolocation) {
@@ -3333,10 +3307,9 @@ function shareVendorAppLink() {
         window.location.href = 'geo:0,0?q=' + loc;
       }
     }
+  </script>
 
-</script>
-
-  <!-- V12 Vendor Feedback Modal -->
+  <!-- V12/V13 Vendor Feedback Modal -->
   <div id="vendorFeedbackModal" class="hidden-force fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-fade-in">
       <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-4 text-white flex items-center justify-between">
@@ -3374,36 +3347,36 @@ function shareVendorAppLink() {
     </div>
   </div>
 
-<!-- V12.8 Vendor Notifications Modal -->
-<div id="vendorNotificationsModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
-  <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
-    <div class="bg-gradient-to-r from-teal-700 to-emerald-800 text-white px-4 py-3 flex items-center justify-between">
-      <h3 class="text-xs font-extrabold flex items-center gap-1.5">
-        <i class="ph-fill ph-bell text-amber-300 text-base"></i> వెండర్ నోటిఫికేషన్లు
-      </h3>
-      <div class="flex items-center gap-1.5">
-        <button onclick="enableVendorPhoneAlert()" class="text-[10px] bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg font-bold">
-          🔔 Phone Alert
-        </button>
-        <button onclick="markAllVendorNotificationsRead()" class="text-[10px] bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg font-bold">
-          చదివినట్టు ✓
-        </button>
-        <button onclick="clearVendorNotifications()" class="text-[10px] bg-rose-500/30 hover:bg-rose-500/45 px-2 py-1 rounded-lg font-bold">
-          క్లియర్
-        </button>
-        <button onclick="closeVendorNotificationsModal()" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center">
-          <i class="ph-bold ph-x text-xs"></i>
-        </button>
+  <!-- Vendor Notifications Modal -->
+  <div id="vendorNotificationsModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center hidden-force p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+      <div class="bg-gradient-to-r from-teal-700 to-emerald-800 text-white px-4 py-3 flex items-center justify-between">
+        <h3 class="text-xs font-extrabold flex items-center gap-1.5">
+          <i class="ph-fill ph-bell text-amber-300 text-base"></i> వెండర్ నోటిఫికేషన్లు
+        </h3>
+        <div class="flex items-center gap-1.5">
+          <button onclick="enableVendorPhoneAlert()" class="text-[10px] bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg font-bold">
+            🔔 Phone Alert
+          </button>
+          <button onclick="markAllVendorNotificationsRead()" class="text-[10px] bg-white/15 hover:bg-white/25 px-2 py-1 rounded-lg font-bold">
+            చదివినట్టు ✓
+          </button>
+          <button onclick="clearVendorNotifications()" class="text-[10px] bg-rose-500/30 hover:bg-rose-500/45 px-2 py-1 rounded-lg font-bold">
+            క్లియర్
+          </button>
+          <button onclick="closeVendorNotificationsModal()" class="w-7 h-7 rounded-lg bg-white/15 hover:bg-white/25 flex items-center justify-center">
+            <i class="ph-bold ph-x text-xs"></i>
+          </button>
+        </div>
+      </div>
+      <div id="vendorNotificationsList" class="p-3.5 overflow-y-auto space-y-2 text-xs flex-1">
+        <p class="text-center text-slate-400 py-6">కొత్త నోటిఫికేషన్లు ఏవీ లేవు.</p>
       </div>
     </div>
-    <div id="vendorNotificationsList" class="p-3.5 overflow-y-auto space-y-2 text-xs flex-1">
-      <p class="text-center text-slate-400 py-6">కొత్త నోటిఫికేషన్లు ఏవీ లేవు.</p>
-    </div>
   </div>
-</div>
 
-<script>
-             // ==========================================
+  <script>
+    // ==========================================
     // VENDOR FEEDBACK & RATING SYSTEM
     // ==========================================
     let currentFbRating = 5;
@@ -3431,7 +3404,7 @@ function shareVendorAppLink() {
       });
     }
 
-        async function submitVendorFeedback() {
+    async function submitVendorFeedback() {
       const msg = (document.getElementById('fbMessageInput').value || '').trim();
       if (!msg) return alert('దయచేసి మీ అభిప్రాయం లేదా సలహా రాయండి.');
 
@@ -3466,172 +3439,174 @@ function shareVendorAppLink() {
       }
     }
 
- // VENDOR NOTIFICATIONS JAVASCRIPTS SYSTEM
-(function() {
-  function getVendorNotifKey() {
-    const phone = (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone)
-      ? vendorProfile.phone
-      : 'guest';
-    return 'mc_vendor_notifications_' + phone;
-  }
+    // ==========================================
+    // VENDOR NOTIFICATIONS JAVASCRIPT SYSTEM
+    // ==========================================
+    (function() {
+      function getVendorNotifKey() {
+        const phone = (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone)
+          ? vendorProfile.phone
+          : 'guest';
+        return 'mc_vendor_notifications_' + phone;
+      }
 
-  function getVendorNotifications() {
-    try {
-      return JSON.parse(localStorage.getItem(getVendorNotifKey()) || '[]');
-    } catch (e) {
-      return [];
-    }
-  }
+      function getVendorNotifications() {
+        try {
+          return JSON.parse(localStorage.getItem(getVendorNotifKey()) || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
 
-  function saveVendorNotifications(items) {
-    localStorage.setItem(getVendorNotifKey(), JSON.stringify(items.slice(0, 30)));
-    renderVendorNotificationsList();
-renderVendorNotificationBadge();
-  }
+      function saveVendorNotifications(items) {
+        localStorage.setItem(getVendorNotifKey(), JSON.stringify(items.slice(0, 30)));
+        renderVendorNotificationsList();
+        renderVendorNotificationBadge();
+      }
 
-  window.enableVendorPhoneAlert = async function() {
-    if (!('Notification' in window)) return alert('ఈ బ్రౌజర్‌లో ఫోన్ నోటిఫికేషన్ సపోర్ట్ లేదు.');
-    const perm = await Notification.requestPermission();
-    showToast(perm === 'granted' ? 'ఫోన్ నోటిఫికేషన్లు ఆన్ అయ్యాయి! 🔔' : 'Notification అనుమతి ఇవ్వలేదు.');
-  };
+      window.enableVendorPhoneAlert = async function() {
+        if (!('Notification' in window)) return alert('ఈ బ్రౌజర్‌లో ఫోన్ నోటిఫికేషన్ సపోర్ట్ లేదు.');
+        const perm = await Notification.requestPermission();
+        showToast(perm === 'granted' ? 'ఫోన్ నోటిఫికేషన్లు ఆన్ అయ్యాయి! 🔔' : 'Notification అనుమతి ఇవ్వలేదు.');
+      };
 
-  function triggerVendorPhoneBanner(title, message) {
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(reg => {
-        reg.showNotification(title, {
-          body: message,
-          icon: './vendor-logo.png',
-          badge: './vendor-logo.png',
-          vibrate: [200, 100, 200]
+      function triggerVendorPhoneBanner(title, message) {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(title, {
+              body: message,
+              icon: './vendor-logo.png',
+              badge: './vendor-logo.png',
+              vibrate: [200, 100, 200]
+            });
+          }).catch(() => new Notification(title, { body: message, icon: './vendor-logo.png' }));
+        } else {
+          new Notification(title, { body: message, icon: './vendor-logo.png' });
+        }
+      }
+
+      function pushVendorNotification(id, title, message, timeLabel) {
+        if (!id || !message) return;
+        const list = getVendorNotifications();
+        if (list.some(n => n.id === id)) return;
+        list.unshift({
+          id,
+          title: title || 'MilkCount Vendor',
+          message,
+          time: timeLabel || new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+          read: false
         });
-      }).catch(() => new Notification(title, { body: message, icon: './vendor-logo.png' }));
-    } else {
-      new Notification(title, { body: message, icon: './vendor-logo.png' });
-    }
-  }
+        saveVendorNotifications(list);
+        triggerVendorPhoneBanner(title || 'MilkCount Vendor', message);
+      }
 
-  function pushVendorNotification(id, title, message, timeLabel) {
-    if (!id || !message) return;
-    const list = getVendorNotifications();
-    if (list.some(n => n.id === id)) return;
-    list.unshift({
-      id,
-      title: title || 'MilkCount Vendor',
-      message,
-      time: timeLabel || new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-      read: false
-    });
-    saveVendorNotifications(list);
-    triggerVendorPhoneBanner(title || 'MilkCount Vendor', message);
-  }
+      function renderVendorNotificationBadge() {
+        const badge = document.getElementById('vendorNotifBadge');
+        if (!badge) return;
+        const unread = getVendorNotifications().filter(n => !n.read).length;
+        if (unread > 0) {
+          badge.innerText = unread > 9 ? '9+' : String(unread);
+          badge.classList.remove('hidden-force');
+        } else {
+          badge.classList.add('hidden-force');
+        }
+      }
 
-function renderVendorNotificationBadge() {
-  const badge = document.getElementById('vendorNotifBadge');
-  if (!badge) return;
-  const unread = getVendorNotifications().filter(n => !n.read).length;
-  if (unread > 0) {
-    badge.innerText = unread > 9 ? '9+' : String(unread);
-    badge.classList.remove('hidden-force');
-  } else {
-    badge.classList.add('hidden-force');
-  }
-}
-
-    function renderVendorNotificationsList() {
-    const el = document.getElementById('vendorNotificationsList');
-    if (!el) return;
-    const list = getVendorNotifications();
-    if (!list.length) {
-      el.innerHTML = '<p class="text-center text-slate-400 py-6">కొత్త నోటిఫికేషన్లు ఏవీ లేవు.</p>';
-      return;
-    }
-    el.innerHTML = list.map(n => `
-      <div class="border ${n.read ? 'border-slate-200 bg-slate-50/70' : 'border-teal-200 bg-teal-50/60'} rounded-xl p-2.5 space-y-1">
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-extrabold text-slate-800 text-[11px]">${n.title}</span>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <span class="text-[9px] text-slate-400">${n.time}</span>
-            ${n.read
-              ? `<span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">✓ చదివారు</span>`
-              : `<button onclick="markSingleVendorNotificationRead('${String(n.id).replace(/'/g, "\\'")}')" title="చదివినట్టు మార్క్ చేయండి" class="text-[10px] font-extrabold text-teal-800 bg-teal-100 hover:bg-teal-200 active:scale-95 px-1.5 py-0.5 rounded-md transition-all">✓</button>`
-            }
+      function renderVendorNotificationsList() {
+        const el = document.getElementById('vendorNotificationsList');
+        if (!el) return;
+        const list = getVendorNotifications();
+        if (!list.length) {
+          el.innerHTML = '<p class="text-center text-slate-400 py-6">కొత్త నోటిఫికేషన్లు ఏవీ లేవు.</p>';
+          return;
+        }
+        el.innerHTML = list.map(n => `
+          <div class="border ${n.read ? 'border-slate-200 bg-slate-50/70' : 'border-teal-200 bg-teal-50/60'} rounded-xl p-2.5 space-y-1">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-extrabold text-slate-800 text-[11px]">${n.title}</span>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span class="text-[9px] text-slate-400">${n.time}</span>
+                ${n.read
+                  ? `<span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">✓ చదివారు</span>`
+                  : `<button onclick="markSingleVendorNotificationRead('${String(n.id).replace(/'/g, "\\'")}')" title="చదివినట్టు మార్క్ చేయండి" class="text-[10px] font-extrabold text-teal-800 bg-teal-100 hover:bg-teal-200 active:scale-95 px-1.5 py-0.5 rounded-md transition-all">✓</button>`
+                }
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-700 leading-snug">${n.message}</p>
           </div>
-        </div>
-        <p class="text-[11px] text-slate-700 leading-snug">${n.message}</p>
-      </div>
-    `).join('');
-  }
+        `).join('');
+      }
 
-  window.markSingleVendorNotificationRead = function(id) {
-    if (!id) return;
-    const updated = getVendorNotifications().map(n =>
-      n.id === id ? Object.assign({}, n, { read: true }) : n
-    );
-    saveVendorNotifications(updated);
-  };
+      window.markSingleVendorNotificationRead = function(id) {
+        if (!id) return;
+        const updated = getVendorNotifications().map(n =>
+          n.id === id ? Object.assign({}, n, { read: true }) : n
+        );
+        saveVendorNotifications(updated);
+      };
 
-  window.openVendorNotificationsModal = function() {
-    renderVendorNotificationsList();
-    const m = document.getElementById('vendorNotificationsModal');
-    if (m) m.classList.remove('hidden-force');
-  };
+      window.openVendorNotificationsModal = function() {
+        renderVendorNotificationsList();
+        const m = document.getElementById('vendorNotificationsModal');
+        if (m) m.classList.remove('hidden-force');
+      };
 
-  window.closeVendorNotificationsModal = function() {
-    const m = document.getElementById('vendorNotificationsModal');
-    if (m) m.classList.add('hidden-force');
-  };
+      window.closeVendorNotificationsModal = function() {
+        const m = document.getElementById('vendorNotificationsModal');
+        if (m) m.classList.add('hidden-force');
+      };
 
-  window.markAllVendorNotificationsRead = function() {
-    saveVendorNotifications(getVendorNotifications().map(n => Object.assign({}, n, { read: true })));
-  };
+      window.markAllVendorNotificationsRead = function() {
+        saveVendorNotifications(getVendorNotifications().map(n => Object.assign({}, n, { read: true })));
+      };
 
-  window.clearVendorNotifications = function() {
-    localStorage.removeItem(getVendorNotifKey());
-    renderVendorNotificationsList();
-document.getElementById('vendorNotifBadge')?.classList.add('hidden-force');
-  };
+      window.clearVendorNotifications = function() {
+        localStorage.removeItem(getVendorNotifKey());
+        renderVendorNotificationsList();
+        document.getElementById('vendorNotifBadge')?.classList.add('hidden-force');
+      };
 
-  function syncVendorAlertsFromLogs() {
-    if (typeof allCustomers === 'undefined' || typeof monthLogsByUser === 'undefined') return;
-    allCustomers.forEach(cust => {
-      const userLogs = monthLogsByUser[cust.id];
-      if (!userLogs) return;
-      Object.keys(userLogs).forEach(dateStr => {
-        const log = userLogs[dateStr];
-        if (!log) return;
-        if (log.quality_note && String(log.quality_note).trim()) {
-          pushVendorNotification(
-            `v_qual_${cust.id}_${dateStr}_${encodeURIComponent(String(log.quality_note).trim())}`,
-            '⚠️ కస్టమర్ క్వాలిటీ అలర్ట్',
-            `${cust.name} (${dateStr}): ${log.quality_note}`,
-            dateStr
-          );
-        }
-        if (log.status === 'skipped') {
-          pushVendorNotification(
-            `v_skip_${cust.id}_${dateStr}`,
-            '⏸️ కస్టమర్ Skip / సెలవు',
-            `${cust.name} (${dateStr}) రోజు పాలు వద్దు (Skip) అని అప్‌డేట్ చేశారు.`,
-            dateStr
-          );
-        }
-      });
-    });
-renderVendorNotificationBadge();
-  }
+      function syncVendorAlertsFromLogs() {
+        if (typeof allCustomers === 'undefined' || typeof monthLogsByUser === 'undefined') return;
+        allCustomers.forEach(cust => {
+          const userLogs = monthLogsByUser[cust.id];
+          if (!userLogs) return;
+          Object.keys(userLogs).forEach(dateStr => {
+            const log = userLogs[dateStr];
+            if (!log) return;
+            if (log.quality_note && String(log.quality_note).trim()) {
+              pushVendorNotification(
+                `v_qual_${cust.id}_${dateStr}_${encodeURIComponent(String(log.quality_note).trim())}`,
+                '⚠️ కస్టమర్ క్వాలిటీ అలర్ట్',
+                `${cust.name} (${dateStr}): ${log.quality_note}`,
+                dateStr
+              );
+            }
+            if (log.status === 'skipped') {
+              pushVendorNotification(
+                `v_skip_${cust.id}_${dateStr}`,
+                '⏸️ కస్టమర్ Skip / సెలవు',
+                `${cust.name} (${dateStr}) రోజు పాలు వద్దు (Skip) అని అప్‌డేట్ చేశారు.`,
+                dateStr
+              );
+            }
+          });
+        });
+        renderVendorNotificationBadge();
+      }
 
-  if (typeof refreshAllVendorData === 'function') {
-    const _origRefreshVendorNotif = refreshAllVendorData;
-    window.refreshAllVendorData = async function(...args) {
-      const res = await _origRefreshVendorNotif.apply(this, args);
-      syncVendorAlertsFromLogs();
-      return res;
-    };
-  }
-})();
+      if (typeof refreshAllVendorData === 'function') {
+        const _origRefreshVendorNotif = refreshAllVendorData;
+        window.refreshAllVendorData = async function(...args) {
+          const res = await _origRefreshVendorNotif.apply(this, args);
+          syncVendorAlertsFromLogs();
+          return res;
+        };
+      }
+    })();
 
-        // Compress & Save Vendor Profile Photo (Local + Supabase Cloud Sync)
+    // Compress & Save Vendor Profile Photo (Local + Supabase Cloud Sync)
     function handleVendorProfilePhotoUpload(event) {
       const file = event.target.files.item(0);
       if (!file || !vendorProfile) return;
@@ -3728,69 +3703,68 @@ renderVendorNotificationBadge();
         }
       }
     }
-  
-// Auto-hook into showVendorDashboard, openVendorProfileModal & Hold/Unblock check without editing old functions!
-(function() {
-  async function enforceVendorHoldStatus() {
-    if (typeof vendorProfile === 'undefined' || !vendorProfile || !vendorProfile.phone || typeof db === 'undefined') {
-      return false;
-    }
-    try {
-      const { data: vFresh } = await db
-        .from('vendors')
-        .select('is_blocked, block_reason')
-        .eq('phone', vendorProfile.phone)
-        .maybeSingle();
 
-      if (vFresh && vFresh.is_blocked) {
-        alert('⚠️ మీ వెండర్ అకౌంట్ Hold లో ఉంది.' + (vFresh.block_reason ? '\nకారణం: ' + vFresh.block_reason : ''));
-        if (typeof logoutVendor === 'function') logoutVendor();
-        return true;
-      }
-    } catch (e) {}
-    return false;
-  }
-
-  if (typeof showVendorDashboard === 'function') {
-    const _origShowVendorDashboard = showVendorDashboard;
-    window.showVendorDashboard = async function(...args) {
-      const res = await _origShowVendorDashboard.apply(this, args);
-      const isBlocked = await enforceVendorHoldStatus();
-      if (isBlocked) return;
-      if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
-        await applyVendorProfilePhotoUI(vendorProfile.phone);
-      }
-      return res;
-    };
-  }
-
-  if (typeof openVendorProfileModal === 'function') {
-    const _origOpenVendorProfileModal = openVendorProfileModal;
-    window.openVendorProfileModal = function(...args) {
-      _origOpenVendorProfileModal.apply(this, args);
-      enforceVendorHoldStatus().then((isBlocked) => {
-        if (isBlocked) return;
-        if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
-          applyVendorProfilePhotoUI(vendorProfile.phone);
+    // Auto-hook into showVendorDashboard, openVendorProfileModal & Hold/Unblock check
+    (function() {
+      async function enforceVendorHoldStatus() {
+        if (typeof vendorProfile === 'undefined' || !vendorProfile || !vendorProfile.phone || typeof db === 'undefined') {
+          return false;
         }
-      });
-    };
-  }
+        try {
+          const { data: vFresh } = await db
+            .from('vendors')
+            .select('is_blocked, block_reason')
+            .eq('phone', vendorProfile.phone)
+            .maybeSingle();
 
-  if (typeof refreshAllVendorData === 'function') {
-    const _origRefreshAllVendorData = refreshAllVendorData;
-    window.refreshAllVendorData = async function(...args) {
-      const isBlocked = await enforceVendorHoldStatus();
-      if (isBlocked) return;
-      return await _origRefreshAllVendorData.apply(this, args);
-    };
-  }
-})();
+          if (vFresh && vFresh.is_blocked) {
+            alert('⚠️ మీ వెండర్ అకౌంట్ Hold లో ఉంది.' + (vFresh.block_reason ? '\nకారణం: ' + vFresh.block_reason : ''));
+            if (typeof logoutVendor === 'function') logoutVendor();
+            return true;
+          }
+        } catch (e) {}
+        return false;
+      }
+
+      if (typeof showVendorDashboard === 'function') {
+        const _origShowVendorDashboard = showVendorDashboard;
+        window.showVendorDashboard = async function(...args) {
+          const res = await _origShowVendorDashboard.apply(this, args);
+          const isBlocked = await enforceVendorHoldStatus();
+          if (isBlocked) return;
+          if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+            await applyVendorProfilePhotoUI(vendorProfile.phone);
+          }
+          return res;
+        };
+      }
+
+      if (typeof openVendorProfileModal === 'function') {
+        const _origOpenVendorProfileModal = openVendorProfileModal;
+        window.openVendorProfileModal = function(...args) {
+          _origOpenVendorProfileModal.apply(this, args);
+          enforceVendorHoldStatus().then((isBlocked) => {
+            if (isBlocked) return;
+            if (typeof vendorProfile !== 'undefined' && vendorProfile && vendorProfile.phone && typeof applyVendorProfilePhotoUI === 'function') {
+              applyVendorProfilePhotoUI(vendorProfile.phone);
+            }
+          });
+        };
+      }
+
+      if (typeof refreshAllVendorData === 'function') {
+        const _origRefreshAllVendorData = refreshAllVendorData;
+        window.refreshAllVendorData = async function(...args) {
+          const isBlocked = await enforceVendorHoldStatus();
+          if (isBlocked) return;
+          return await _origRefreshAllVendorData.apply(this, args);
+        };
+      }
+    })();
 
     // Run on startup so closed app also opens straight to Quick PIN
     checkVendorQuickPinScreen();
-
-   </script> 
+  </script>
 
 </body>
 </html>
