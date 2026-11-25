@@ -1404,7 +1404,7 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       document.getElementById('activePeriodSub').innerText = `${ENGLISH_MONTHS[m]} ${y}`;
     }
 
-    // 4. TAB 1: DAILY DELIVERY ROUTE LOGIC
+     // 4. TAB 1: DAILY DELIVERY ROUTE LOGIC
     function setDeliveryFilter(f) {
       deliveryFilter = f;
       ['all', 'pending', 'skipped'].forEach(key => {
@@ -1416,8 +1416,16 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
       renderDeliveryTab();
     }
 
-    function getDeliveredDoneMap(isoDate) {
+    function getActiveShiftKey() {
+      const el = document.getElementById('routeShiftFilter');
+      const val = el ? el.value : 'all';
+      return (val === 'Morning' || val === 'Evening') ? val : 'all';
+    }
+
+    function getDeliveredDoneMap(isoDate, shiftKey = getActiveShiftKey()) {
       try {
+        const shiftMap = JSON.parse(localStorage.getItem(`vendor_done_${vendorProfile.phone}_${isoDate}_${shiftKey}`));
+        if (shiftMap && typeof shiftMap === 'object') return shiftMap;
         return JSON.parse(localStorage.getItem(`vendor_done_${vendorProfile.phone}_${isoDate}`)) || {};
       } catch (e) {
         return {};
@@ -1425,79 +1433,102 @@ applyVendorProfilePhotoUI(vendorProfile.phone);
     }
 
     async function toggleDeliveredCheck(userId) {
-  const iso = formatDateISO(selectedRouteDate);
-  const doneMap = getDeliveredDoneMap(iso);
-  const cust = allCustomers.find(c => c.id === userId);
-  if (!cust) return;
+      const iso = formatDateISO(selectedRouteDate);
+      const shiftKey = getActiveShiftKey();
+      const doneMap = getDeliveredDoneMap(iso, shiftKey);
+      const cust = allCustomers.find(c => c.id === userId);
+      if (!cust) return;
 
-  const info = getCustomerDayStatus(cust, selectedRouteDate);
-  if (info && info.status === 'skipped') return;
+      const info = getCustomerDayStatus(cust, selectedRouteDate);
+      if (info && info.status === 'skipped') return;
 
-  const prefs = getCustShiftPrefs(cust);
-  const currentDone = info ? Boolean(info.isDone || doneMap[userId]) : Boolean(doneMap[userId]);
-  const newDoneState = !currentDone;
+      const prefs = getCustShiftPrefs(cust);
+      const currentDone = Boolean(doneMap[userId]);
+      const newDoneState = !currentDone;
 
-  doneMap[userId] = newDoneState;
-  localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
+      doneMap[userId] = newDoneState;
+      localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}_${shiftKey}`, JSON.stringify(doneMap));
 
-  const qtyToSync = (info && info.qty > 0) ? info.qty : prefs.totalDefault;
-  const mQtyToSync = (info && (info.mQty > 0 || info.eQty > 0)) ? info.mQty : prefs.mQty;
-  const eQtyToSync = (info && (info.mQty > 0 || info.eQty > 0)) ? info.eQty : prefs.eQty;
+      const mDone = shiftKey === 'Morning' ? newDoneState : Boolean(getDeliveredDoneMap(iso, 'Morning')[userId]);
+      const eDone = shiftKey === 'Evening' ? newDoneState : Boolean(getDeliveredDoneMap(iso, 'Evening')[userId]);
 
-  if (qtyToSync > 0) {
-    await db.from('customer_milk_logs').upsert({
-      user_id: userId,
-      log_date: iso,
-      quantity: qtyToSync,
-      morning_qty: mQtyToSync,
-      evening_qty: eQtyToSync,
-      status: 'taken',
-      vendor_delivered: newDoneState
-    }, { onConflict: 'user_id,log_date' });
-  }
-  refreshAllVendorData();
-}
+      const mQtyToSync = (info && info.mQty > 0) ? info.mQty : prefs.mQty;
+      const eQtyToSync = (info && info.eQty > 0) ? info.eQty : prefs.eQty;
 
-async function markAllRouteDelivered() {
-  const iso = formatDateISO(selectedRouteDate);
-  const doneMap = getDeliveredDoneMap(iso);
-  const rows = [];
-
-  allCustomers.forEach(c => {
-    const info = getCustomerDayStatus(c, selectedRouteDate);
-    if (info && info.status !== 'skipped') {
-      const prefs = getCustShiftPrefs(c);
-      const qtyToSync = info.qty > 0 ? info.qty : prefs.totalDefault;
-      const mQtyToSync = (info.mQty > 0 || info.eQty > 0) ? info.mQty : prefs.mQty;
-      const eQtyToSync = (info.mQty > 0 || info.eQty > 0) ? info.eQty : prefs.eQty;
-
-      if (qtyToSync > 0) {
-        doneMap[c.id] = true;
-        rows.push({
-          user_id: c.id,
-          log_date: iso,
-          quantity: qtyToSync,
-          morning_qty: mQtyToSync,
-          evening_qty: eQtyToSync,
-          status: 'taken',
-          vendor_delivered: true
-        });
+      let syncM = mDone ? mQtyToSync : 0;
+      let syncE = eDone ? eQtyToSync : 0;
+      if (shiftKey === 'all' || shiftKey === 'Both') {
+        syncM = newDoneState ? mQtyToSync : 0;
+        syncE = newDoneState ? eQtyToSync : 0;
       }
-    }
-  });
 
-  localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}`, JSON.stringify(doneMap));
-  renderDeliveryTab();
+      const totalSyncQty = parseFloat((syncM + syncE).toFixed(2));
+      const anyDelivered = totalSyncQty > 0;
 
-  if (rows.length > 0) {
-    const { error } = await db.from('customer_milk_logs').upsert(rows, { onConflict: 'user_id,log_date' });
-    if (error) {
-      return alert('Sync Error: ' + error.message);
+      await db.from('customer_milk_logs').upsert({
+        user_id: userId,
+        log_date: iso,
+        quantity: anyDelivered ? totalSyncQty : (prefs.totalDefault || 0),
+        morning_qty: anyDelivered ? syncM : prefs.mQty,
+        evening_qty: anyDelivered ? syncE : prefs.eQty,
+        status: 'taken',
+        vendor_delivered: anyDelivered
+      }, { onConflict: 'user_id,log_date' });
+
+      refreshAllVendorData();
     }
-  }
-  showToast('అందరికీ డెలివరీ Done మార్క్ అయ్యింది & కస్టమర్లకు సింక్ అయ్యింది!');
-  refreshAllVendorData();
-}
+
+    async function markAllRouteDelivered() {
+      const iso = formatDateISO(selectedRouteDate);
+      const shiftKey = getActiveShiftKey();
+      const doneMap = getDeliveredDoneMap(iso, shiftKey);
+      const rows = [];
+
+      allCustomers.forEach(c => {
+        const info = getCustomerDayStatus(c, selectedRouteDate);
+        if (info && info.status !== 'skipped') {
+          const prefs = getCustShiftPrefs(c);
+          const mQtyToSync = info.mQty > 0 ? info.mQty : prefs.mQty;
+          const eQtyToSync = info.eQty > 0 ? info.eQty : prefs.eQty;
+
+          let syncM = mQtyToSync;
+          let syncE = eQtyToSync;
+          if (shiftKey === 'Morning') {
+            syncM = mQtyToSync;
+            syncE = Boolean(getDeliveredDoneMap(iso, 'Evening')[c.id]) ? eQtyToSync : 0;
+          } else if (shiftKey === 'Evening') {
+            syncM = Boolean(getDeliveredDoneMap(iso, 'Morning')[c.id]) ? mQtyToSync : 0;
+            syncE = eQtyToSync;
+          }
+
+          const totalSyncQty = parseFloat((syncM + syncE).toFixed(2));
+          if (totalSyncQty > 0) {
+            doneMap[c.id] = true;
+            rows.push({
+              user_id: c.id,
+              log_date: iso,
+              quantity: totalSyncQty,
+              morning_qty: syncM,
+              evening_qty: syncE,
+              status: 'taken',
+              vendor_delivered: true
+            });
+          }
+        }
+      });
+
+      localStorage.setItem(`vendor_done_${vendorProfile.phone}_${iso}_${shiftKey}`, JSON.stringify(doneMap));
+      renderDeliveryTab();
+
+      if (rows.length > 0) {
+        const { error } = await db.from('customer_milk_logs').upsert(rows, { onConflict: 'user_id,log_date' });
+        if (error) {
+          return alert('Sync Error: ' + error.message);
+        }
+      }
+      showToast('అందరికీ డెలివరీ Done మార్క్ అయ్యింది & కస్టమర్లకు సింక్ అయ్యింది!');
+      refreshAllVendorData();
+    }
 
     function getCustShiftPrefs(cust) {
       const mType = cust.morning_milk_type || cust.milk_type || 'Buffalo';
@@ -1528,8 +1559,12 @@ async function markAllRouteDelivered() {
       const regDate = cust.created_at ? new Date(cust.created_at) : new Date(0);
       regDate.setHours(0, 0, 0, 0);
 
-      const doneMap = JSON.parse(localStorage.getItem(`vendor_done_${vendorProfile.phone}_${iso}`) || '{}');
-      const isMarkedDone = Boolean((log && log.vendor_delivered) || doneMap[cust.id]);
+      const shiftKey = getActiveShiftKey();
+      const shiftDoneMap = getDeliveredDoneMap(iso, shiftKey);
+      const baseDoneMap = JSON.parse(localStorage.getItem(`vendor_done_${vendorProfile.phone}_${iso}`) || '{}');
+      const isMarkedDone = shiftKey !== 'all'
+        ? Boolean(shiftDoneMap[cust.id])
+        : Boolean((log && log.vendor_delivered) || baseDoneMap[cust.id]);
 
       if (log) {
         if (log.status === 'skipped' || parseFloat(log.quantity) === 0) {
@@ -1598,9 +1633,9 @@ async function markAllRouteDelivered() {
 
     function renderDeliveryTab() {
       const iso = formatDateISO(selectedRouteDate);
-      const doneMap = getDeliveredDoneMap(iso);
-      const searchQ = (document.getElementById('routeSearchInput').value || '').toLowerCase();
       const shiftFilter = document.getElementById('routeShiftFilter').value;
+      const doneMap = getDeliveredDoneMap(iso, shiftFilter);
+      const searchQ = (document.getElementById('routeSearchInput').value || '').toLowerCase();
       const areaFilter = document.getElementById('routeAreaFilter').value;
 
       let totalLiters = 0;
@@ -1655,7 +1690,6 @@ async function markAllRouteDelivered() {
         if (areaFilter !== 'all' && custArea !== areaFilter) return;
 
         const info = getCustomerDayStatus(cust, selectedRouteDate);
-        // Shift-specific quantity when filtering Morning or Evening
         const displayQty = shiftFilter === 'Morning' ? info.mQty : (shiftFilter === 'Evening' ? info.eQty : info.qty);
 
         if (info.status === 'skipped') skippedCount++;
@@ -1709,14 +1743,13 @@ async function markAllRouteDelivered() {
 
         const badgeHtml = info.status === 'skipped'
           ? `<span class="text-[11px] font-extrabold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded-lg">వద్దు (Skip)</span>`
-
           : info.status === 'none'
             ? `<span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Manual (0L)</span>`
             : `<span class="text-sm font-black ${info.isExtra ? 'text-amber-800 bg-amber-100 border border-amber-300' : 'text-teal-800 bg-teal-50 border border-teal-200'} px-2.5 py-1 rounded-lg">
                 ${displayQty} L ${info.isExtra ? '★' : ''}
                </span>`;
 
-                       const custInitial = (cust.name || 'C').charAt(0).toUpperCase();
+        const custInitial = (cust.name || 'C').charAt(0).toUpperCase();
         const delivAvatarHtml = cust.profile_pic
           ? `<img src="${cust.profile_pic}" alt="${cust.name || 'Customer'}" class="w-9 h-9 rounded-full object-cover border border-teal-500 shrink-0">`
           : `<div class="w-9 h-9 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-extrabold text-xs shrink-0">${custInitial}</div>`;
@@ -1749,7 +1782,7 @@ async function markAllRouteDelivered() {
               ${info.quality_note ? `<div class="text-[10px] text-amber-800 font-bold mt-0.5">⚠️ ${info.quality_note}</div>` : ''}
             </div>
           </div>
-             <div class="flex flex-col items-end gap-1.5 shrink-0">
+          <div class="flex flex-col items-end gap-1.5 shrink-0">
             <div class="flex items-center gap-1 justify-end flex-wrap">
               ${milkBadge}
             </div>
@@ -1760,7 +1793,6 @@ async function markAllRouteDelivered() {
               </button>
             </div>
           </div>
-          
         `;
 
         listEl.appendChild(card);
@@ -1851,8 +1883,10 @@ ${area !== 'all' ? `📍 ఏరియా: *${area}*\n` : ''}${shift !== 'all' ? 
         return alert('Update Error: ' + error.message);
       }
 
-      // Local Done map అప్‌డేట్
-      const doneKey = `vendor_done_${vendorProfile.phone}_${iso}`;
+      const shiftKey = getActiveShiftKey();
+      const doneKey = shiftKey !== 'all'
+        ? `vendor_done_${vendorProfile.phone}_${iso}_${shiftKey}`
+        : `vendor_done_${vendorProfile.phone}_${iso}`;
       const doneMap = JSON.parse(localStorage.getItem(doneKey) || '{}');
       if (isSkipped) {
         delete doneMap[cust.id];
