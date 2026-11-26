@@ -62,3 +62,24 @@ self.addEventListener('push', event => {
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
+// offline saport fetch cached
+self.addEventListener('fetch', (e) => {
+  if (e.request.url.includes('supabase.co') || e.request.method !== 'GET') return;
+
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  e.respondWith(
+    caches.match(e.request).then((cached) => {
+      return cached || fetch(e.request).then((res) => {
+        const resClone = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(e.request, resClone));
+        return res;
+      });
+    })
+  );
+});
