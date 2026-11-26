@@ -167,7 +167,7 @@ tailwind.config = {
   <div id="adminTicketsList" class="space-y-2.5"></div>
 </div>
 
-<!-- TAB 2: VENDORS LIST, CUSTOMER DRILL-DOWN, SUB NOTE, HOLD/UNBLOCK & CSV -->
+<!-- TAB 2: VENDORS LIST, CUSTOMER DRILL-DOWN, SUBSCRIPTION, HOLD/UNBLOCK & CSV -->
 <div id="adminTabVendors" class="hidden-force space-y-3">
   <div class="flex items-center justify-between gap-2">
     <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
@@ -189,7 +189,7 @@ tailwind.config = {
   <div id="adminVendorsList" class="space-y-2.5"></div>
 </div>
 
-<!-- TAB 3: CUSTOMERS LIST, SUB NOTE, HOLD/UNBLOCK & CSV -->
+<!-- TAB 3: CUSTOMERS LIST, SUBSCRIPTION, HOLD/UNBLOCK & CSV -->
 <div id="adminTabCustomers" class="hidden-force space-y-3">
   <div class="flex items-center justify-between gap-2">
     <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
@@ -727,7 +727,72 @@ async function saveTicketReply(ticketId, newStatus) {
   refreshAdminData(false);
 }
 
-// TAB 2: VENDORS LIST, CUSTOMERS DRILL-DOWN, SUB NOTE, HOLD/UNBLOCK & PIN RESET
+// SUBSCRIPTION STATUS + PLAN/EXPIRY NOTE FUNCTIONS (VENDORS & CUSTOMERS)
+async function updateVendorSubscriptionAdmin(phone, currentStatus, currentNote) {
+  const statusInput = prompt(
+    `వెండర్ (${phone}) Subscription Status రాయండి:\n(Active / Trial / Pending / Expired)`,
+    currentStatus || 'Active'
+  );
+  if (statusInput === null) return;
+
+  const noteInput = prompt(
+    `వెండర్ (${phone}) Plan / Expiry Note రాయండి:\n(ఉదా: Monthly - Valid till 23 Dec 2026)`,
+    currentNote || ''
+  );
+  if (noteInput === null) return;
+
+  const cleanStatus = statusInput.trim() || 'Active';
+  const cleanNote = noteInput.trim();
+  const shouldBlock = cleanStatus.toLowerCase() === 'expired';
+
+  const { error } = await db
+    .from('vendors')
+    .update({
+      subscription_status: cleanStatus,
+      subscription_note: cleanNote,
+      is_blocked: shouldBlock,
+      block_reason: shouldBlock ? (cleanNote || 'Subscription Expired') : ''
+    })
+    .eq('phone', phone);
+
+  if (error) return alert('Error: ' + error.message);
+  showToast(`వెండర్ (${phone}) Subscription (${cleanStatus}) అప్‌డేట్ అయ్యింది!`);
+  refreshAdminData(false);
+}
+
+async function updateCustomerSubscriptionAdmin(custId, custLabel, currentStatus, currentNote) {
+  const statusInput = prompt(
+    `కస్టమర్ (${custLabel}) Subscription Status రాయండి:\n(Active / Trial / Pending / Expired)`,
+    currentStatus || 'Active'
+  );
+  if (statusInput === null) return;
+
+  const noteInput = prompt(
+    `కస్టమర్ (${custLabel}) Plan / Expiry Note రాయండి:\n(ఉదా: Monthly - Valid till 23 Dec 2026)`,
+    currentNote || ''
+  );
+  if (noteInput === null) return;
+
+  const cleanStatus = statusInput.trim() || 'Active';
+  const cleanNote = noteInput.trim();
+  const shouldBlock = cleanStatus.toLowerCase() === 'expired';
+
+  const { error } = await db
+    .from('customer_users')
+    .update({
+      subscription_status: cleanStatus,
+      subscription_note: cleanNote,
+      is_blocked: shouldBlock,
+      block_reason: shouldBlock ? (cleanNote || 'Subscription Expired') : ''
+    })
+    .eq('id', custId);
+
+  if (error) return alert('Error: ' + error.message);
+  showToast(`${custLabel} Subscription (${cleanStatus}) అప్‌డేట్ అయ్యింది!`);
+  refreshAdminData(false);
+}
+
+// TAB 2: VENDORS LIST, CUSTOMERS DRILL-DOWN, SUBSCRIPTION, HOLD/UNBLOCK & PIN RESET
 function setVendorHoldFilter(mode) {
   vendorHoldFilter = mode;
   ['all', 'active', 'hold'].forEach(k => {
@@ -764,8 +829,9 @@ function renderAdminVendors() {
 
   listEl.innerHTML = filtered.map(v => {
     const isHold = !!v.is_blocked;
-    const vendorCusts = allCustomers.filter(c => c.vendor_phone === v.phone);
+    const vendorCusts = allCustomers.filter(c => c.vendor_phone === v.phone && !c.family_head_id);
     const isExpanded = !!expandedVendorPhones[v.phone];
+    const subStatus = v.subscription_status || 'Active';
 
     const custListHtml = isExpanded ? `
       <div class="mt-2 pt-2 border-t border-slate-100 bg-slate-50/90 rounded-xl p-2 space-y-1.5">
@@ -798,9 +864,11 @@ function renderAdminVendors() {
                 ${isHold ? 'On Hold' : 'Active'}
               </span>
             </div>
-            <p class="text-[11px] text-slate-600 mt-0.5">📞 ${v.phone}</p>
+            <p class="text-[11px] text-slate-600 mt-0.5">📞 ${v.phone} • 👥 కస్టమర్లు: <strong>${vendorCusts.length}</strong></p>
             <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(v.last_login_at)}</p>
-            ${v.subscription_note ? `<p class="text-[10px] text-indigo-700 font-semibold mt-0.5">📋 Sub: ${v.subscription_note}</p>` : ''}
+            <p class="text-[10px] text-indigo-700 font-semibold mt-0.5">
+              💳 Sub: <strong>${subStatus}</strong>${v.subscription_note ? ` • ${v.subscription_note}` : ''}
+            </p>
             ${isHold && v.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold mt-0.5">కారణం: ${v.block_reason}</p>` : ''}
           </div>
           <div class="text-right shrink-0 space-y-1">
@@ -817,8 +885,11 @@ function renderAdminVendors() {
           <button onclick="toggleVendorCustomersView('${v.phone}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200">
             ${isExpanded ? '▲ కస్టమర్లను దాచు' : `👥 కస్టమర్లను చూడు (${vendorCusts.length})`}
           </button>
-          <div class="flex items-center gap-1.5">
-            <button onclick="editVendorSubNoteAdmin('${v.phone}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="updateVendorSubscriptionAdmin('${v.phone}', '${subStatus.replace(/'/g, '')}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+              💳 Subscription
+            </button>
+            <button onclick="editVendorSubNoteAdmin('${v.phone}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200">
               📋 Sub నోట్
             </button>
             <button onclick="toggleHoldVendorAdmin('${v.phone}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
@@ -872,7 +943,7 @@ async function resetVendorPinAdmin(phone, currentPin) {
   refreshAdminData(false);
 }
 
-// TAB 3: CUSTOMERS LIST, SUB NOTE, HOLD/UNBLOCK & PIN RESET
+// TAB 3: CUSTOMERS LIST, SUBSCRIPTION, HOLD/UNBLOCK & PIN RESET
 function setCustomerHoldFilter(mode) {
   customerHoldFilter = mode;
   ['all', 'active', 'hold'].forEach(k => {
@@ -907,6 +978,7 @@ function renderAdminCustomers() {
 
   listEl.innerHTML = filtered.map(c => {
     const isHold = !!c.is_blocked;
+    const subStatus = c.subscription_status || 'Active';
     return `
       <div class="bg-white border ${isHold ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} rounded-2xl p-3.5 shadow-2xs space-y-2.5">
         <div class="flex items-start justify-between gap-2">
@@ -919,7 +991,9 @@ function renderAdminCustomers() {
             </div>
             <p class="text-[11px] text-slate-600 mt-0.5">📞 ${c.phone} • 🚚 వెండర్: <strong>${c.vendor_phone || 'Unlinked'}</strong></p>
             <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(c.last_login_at)}</p>
-            ${c.subscription_note ? `<p class="text-[10px] text-indigo-700 font-semibold mt-0.5">📋 Sub: ${c.subscription_note}</p>` : ''}
+            <p class="text-[10px] text-indigo-700 font-semibold mt-0.5">
+              💳 Sub: <strong>${subStatus}</strong>${c.subscription_note ? ` • ${c.subscription_note}` : ''}
+            </p>
             ${isHold && c.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold mt-0.5">కారణం: ${c.block_reason}</p>` : ''}
           </div>
           <div class="text-right shrink-0 space-y-1">
@@ -929,8 +1003,11 @@ function renderAdminCustomers() {
             </button>
           </div>
         </div>
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
-          <button onclick="editCustomerSubNoteAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5 flex-wrap">
+          <button type="button" onclick="updateCustomerSubscriptionAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${subStatus.replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+            💳 Subscription
+          </button>
+          <button onclick="editCustomerSubNoteAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200">
             📋 Sub నోట్
           </button>
           <button onclick="toggleHoldCustomerAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
@@ -990,18 +1067,19 @@ function exportAdminUsersCSV(type) {
   if (!rows || rows.length === 0) return alert('ఎగుమతి చేయడానికి డేటా లేదు.');
 
   const headers = isVendor
-    ? ['Name', 'Phone', 'PIN', 'Status', 'SubscriptionNote', 'HoldReason', 'LastLogin']
-    : ['Name', 'Phone', 'VendorPhone', 'PIN', 'Status', 'SubscriptionNote', 'HoldReason', 'LastLogin'];
+    ? ['Name', 'Phone', 'PIN', 'Status', 'SubscriptionStatus', 'SubscriptionNote', 'HoldReason', 'LastLogin']
+    : ['Name', 'Phone', 'VendorPhone', 'PIN', 'Status', 'SubscriptionStatus', 'SubscriptionNote', 'HoldReason', 'LastLogin'];
 
   const csvLines = [headers.join(',')];
   rows.forEach(r => {
     const status = r.is_blocked ? 'On Hold' : 'Active';
+    const subStatus = (r.subscription_status || 'Active').replace(/"/g, '""');
     const subNote = (r.subscription_note || '').replace(/"/g, '""');
     const reason = (r.block_reason || '').replace(/"/g, '""');
     const name = (r.name || '').replace(/"/g, '""');
     const line = isVendor
-      ? `"${name}","${r.phone || ''}","${r.pin || ''}","${status}","${subNote}","${reason}","${r.last_login_at || ''}"`
-      : `"${name}","${r.phone || ''}","${r.vendor_phone || ''}","${r.pin || ''}","${status}","${subNote}","${reason}","${r.last_login_at || ''}"`;
+      ? `"${name}","${r.phone || ''}","${r.pin || ''}","${status}","${subStatus}","${subNote}","${reason}","${r.last_login_at || ''}"`
+      : `"${name}","${r.phone || ''}","${r.vendor_phone || ''}","${r.pin || ''}","${status}","${subStatus}","${subNote}","${reason}","${r.last_login_at || ''}"`;
     csvLines.push(line);
   });
 
