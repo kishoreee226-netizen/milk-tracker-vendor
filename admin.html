@@ -448,6 +448,35 @@ tailwind.config = {
 
 </div>
 
+<!-- UNIVERSAL CUSTOM MILKCOUNT ADMIN MODAL -->
+<div id="mcAdminDialogModal" class="hidden-force fixed inset-0 z-[70] bg-slate-900/65 backdrop-blur-xs flex items-center justify-center p-5">
+  <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+    <!-- Brand Header -->
+    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white px-4 py-3 flex items-center gap-2">
+      <div class="w-6 h-6 rounded-lg bg-indigo-500/30 border border-indigo-400/30 flex items-center justify-center">
+        <i class="ph-fill ph-shield-star text-sm text-amber-300"></i>
+      </div>
+      <span class="text-sm font-extrabold tracking-wide">MilkCount Admin</span>
+    </div>
+
+    <!-- Body -->
+    <div class="p-4 space-y-3">
+      <p id="mcAdminDialogMessage" class="text-xs font-bold text-slate-700 leading-relaxed whitespace-pre-line"></p>
+      <input id="mcAdminDialogInput" type="text" class="hidden-force w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-600">
+    </div>
+
+    <!-- Buttons -->
+    <div class="px-4 pb-3.5 flex items-center justify-end gap-2">
+      <button type="button" id="mcAdminDialogCancelBtn" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+        Cancel
+      </button>
+      <button type="button" id="mcAdminDialogOkBtn" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-extrabold shadow-xs transition">
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://cbemchufrgcvzkbyvfrx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiZW1jaHVmcmdjdnprYnl2ZnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDQzMTEsImV4cCI6MjEwOTg4MDMxMX0.UZOiRzdcIbjS0lWHosZNb9YkKVJ9FNDehNL1Q-JTEqI';
@@ -849,13 +878,13 @@ async function saveTicketReply(ticketId, newStatus) {
 
 // SUBSCRIPTION STATUS + PLAN/EXPIRY NOTE FUNCTIONS (VENDORS & CUSTOMERS)
 async function updateVendorSubscriptionAdmin(phone, currentStatus, currentNote) {
-  const statusInput = prompt(
+  const statusInput = await mcAdminPrompt(
     `వెండర్ (${phone}) Subscription Status రాయండి:\n(Active / Trial / Pending / Expired)`,
     currentStatus || 'Active'
   );
   if (statusInput === null) return;
 
-  const noteInput = prompt(
+  const noteInput = await mcAdminPrompt(
     `వెండర్ (${phone}) Plan / Expiry Note రాయండి:\n(ఉదా: Monthly - Valid till 23 Dec 2026)`,
     currentNote || ''
   );
@@ -875,19 +904,19 @@ async function updateVendorSubscriptionAdmin(phone, currentStatus, currentNote) 
     })
     .eq('phone', phone);
 
-  if (error) return alert('Error: ' + error.message);
+  if (error) return await mcAdminAlert('Error: ' + error.message);
   showToast(`వెండర్ (${phone}) Subscription (${cleanStatus}) అప్‌డేట్ అయ్యింది!`);
-  refreshAdminData(false);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
 }
 
 async function updateCustomerSubscriptionAdmin(custId, custLabel, currentStatus, currentNote) {
-  const statusInput = prompt(
+  const statusInput = await mcAdminPrompt(
     `కస్టమర్ (${custLabel}) Subscription Status రాయండి:\n(Active / Trial / Pending / Expired)`,
     currentStatus || 'Active'
   );
   if (statusInput === null) return;
 
-  const noteInput = prompt(
+  const noteInput = await mcAdminPrompt(
     `కస్టమర్ (${custLabel}) Plan / Expiry Note రాయండి:\n(ఉదా: Monthly - Valid till 23 Dec 2026)`,
     currentNote || ''
   );
@@ -907,9 +936,9 @@ async function updateCustomerSubscriptionAdmin(custId, custLabel, currentStatus,
     })
     .eq('id', custId);
 
-  if (error) return alert('Error: ' + error.message);
+  if (error) return await mcAdminAlert('Error: ' + error.message);
   showToast(`${custLabel} Subscription (${cleanStatus}) అప్‌డేట్ అయ్యింది!`);
-  refreshAdminData(false);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
 }
 
 // TAB 2: VENDORS LIST, CUSTOMERS DRILL-DOWN, SUBSCRIPTION, HOLD/UNBLOCK & PIN RESET
@@ -1023,6 +1052,16 @@ function renderAdminVendors() {
             <button type="button" onclick="copyAdminValue('${v.pin || ''}', 'PIN')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
               🔑 PIN కాపీ
             </button>
+            
+              ${v.payment_utr ? `
+    <span class="text-[9px] font-extrabold text-amber-900 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-lg block mt-1">
+      🧾 UTR: ${v.payment_utr}
+    </span>
+    <button type="button" onclick="approveVendorSubscriptionUtr('${v.phone}', '${(v.payment_utr || '').replace(/'/g, '')}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-2xs">
+      ✅ Approve
+    </button>
+  ` : ''}
+  
           </div>
         </div>
 
@@ -1047,7 +1086,7 @@ function renderAdminVendors() {
 }
 
 async function editVendorSubNoteAdmin(phone, currentNote) {
-  const updated = prompt(`వెండర్ (${phone}) సబ్‌స్క్రిప్షన్ / గడువు నోట్ రాయండి:`, currentNote || '');
+  const updated = await mcAdminPrompt(`వెండర్ (${phone}) సబ్‌స్క్రిప్షన్ / గడువు నోట్ రాయండి:`, currentNote || '');
   if (updated === null) return;
   const { error } = await db.from('vendors')
     .update({ subscription_note: updated.trim() })
@@ -1057,34 +1096,75 @@ async function editVendorSubNoteAdmin(phone, currentNote) {
   refreshAdminData(false);
 }
 
+async function mcAdminPopupAlert(msg) {
+  if (typeof window.mcAdminAlert === 'function') {
+    await window.mcAdminAlert(msg);
+  } else {
+    alert(msg);
+  }
+}
+
+async function mcAdminPopupPrompt(msg, defaultVal) {
+  if (typeof window.mcAdminPrompt === 'function') {
+    return await window.mcAdminPrompt(msg, defaultVal || '');
+  }
+  return prompt(msg, defaultVal || '');
+}
+
+async function mcAdminPopupConfirm(msg) {
+  if (typeof window.mcAdminConfirm === 'function') {
+    return await window.mcAdminConfirm(msg);
+  }
+  return confirm(msg);
+}
+
 async function toggleHoldVendorAdmin(phone, currentlyBlocked) {
   if (!currentlyBlocked) {
-    const reason = prompt(`వెండర్ (${phone}) ను Hold చేయడానికి కారణం రాయండి:`, 'సబ్‌స్క్రిప్షన్ / పేమెంట్ పెండింగ్');
+    const reason = await mcAdminPopupPrompt(
+      `వెండర్ (${phone}) ను Hold చేయడానికి కారణం రాయండి:`,
+      'సబ్‌స్క్రిప్షన్ / పేమెంట్ పెండింగ్'
+    );
     if (reason === null) return;
     const { error } = await db.from('vendors')
       .update({ is_blocked: true, block_reason: reason.trim() || 'Admin Hold' })
       .eq('phone', phone);
-    if (error) return alert('Error: ' + error.message);
-    showToast(`వెండర్ (${phone}) Hold లో పెట్టబడ్డారు!`);
+    if (error) {
+      await mcAdminPopupAlert('Error: ' + error.message);
+      return;
+    }
+    if (typeof showToast === 'function') showToast(`వెండర్ (${phone}) Hold లో పెట్టబడ్డారు!`);
   } else {
-    if (!confirm(`వెండర్ (${phone}) అకౌంట్‌ను తిరిగి Unblock చేయాలా?`)) return;
+    const ok = await mcAdminPopupConfirm(`వెండర్ (${phone}) అకౌంట్‌ను తిరిగి Unblock చేయాలా?`);
+    if (!ok) return;
     const { error } = await db.from('vendors')
       .update({ is_blocked: false, block_reason: '' })
       .eq('phone', phone);
-    if (error) return alert('Error: ' + error.message);
-    showToast(`వెండర్ (${phone}) తిరిగి Active అయ్యారు!`);
+    if (error) {
+      await mcAdminPopupAlert('Error: ' + error.message);
+      return;
+    }
+    if (typeof showToast === 'function') showToast(`వెండర్ (${phone}) తిరిగి Active అయ్యారు!`);
   }
-  refreshAdminData(false);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
 }
 
 async function resetVendorPinAdmin(phone, currentPin) {
-  const newPin = prompt(`వెండర్ (${phone}) కొత్త 4-అంకెల PIN నమోదు చేయండి:`, currentPin);
+  const newPin = await mcAdminPopupPrompt(
+    `వెండర్ (${phone}) కొత్త 4-అంకెల PIN నమోదు చేయండి:`,
+    currentPin
+  );
   if (!newPin) return;
-  if (newPin.length !== 4 || isNaN(newPin)) return alert('4 అంకెల PIN మాత్రమే ఇవ్వండి.');
+  if (newPin.length !== 4 || isNaN(newPin)) {
+    await mcAdminPopupAlert('4 అంకెల PIN మాత్రమే ఇవ్వండి.');
+    return;
+  }
   const { error } = await db.from('vendors').update({ pin: newPin }).eq('phone', phone);
-  if (error) return alert('Error: ' + error.message);
-  showToast(`వెండర్ ${phone} PIN ${newPin} గా మార్చబడింది!`);
-  refreshAdminData(false);
+  if (error) {
+    await mcAdminPopupAlert('Error: ' + error.message);
+    return;
+  }
+  if (typeof showToast === 'function') showToast(`వెండర్ ${phone} PIN ${newPin} గా మార్చబడింది!`);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
 }
 
 // TAB 3: CUSTOMERS LIST, SUBSCRIPTION, HOLD/UNBLOCK & PIN RESET
@@ -1163,6 +1243,16 @@ function renderAdminCustomers() {
                 <button type="button" onclick="copyAdminValue('${c.pin || ''}', 'PIN')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
                   🔑 PIN కాపీ
                 </button>
+                
+                 ${c.payment_utr ? `
+    <span class="text-[9px] font-extrabold text-amber-900 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-lg block mt-1">
+      🧾 UTR: ${c.payment_utr}
+    </span>
+    <button type="button" onclick="approveCustomerSubscriptionUtr('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${(c.payment_utr || '').replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-2xs">
+      ✅ Approve
+    </button>
+  ` : ''}
+  
               </div>
             </div>
 
@@ -1186,7 +1276,7 @@ function renderAdminCustomers() {
 }
 
 async function editCustomerSubNoteAdmin(custId, custLabel, currentNote) {
-  const updated = prompt(`కస్టమర్ (${custLabel}) సబ్‌స్క్రిప్షన్ / గడువు నోట్ రాయండి:`, currentNote || '');
+  const updated = await mcAdminPrompt(`కస్టమర్ (${custLabel}) సబ్‌స్క్రిప్షన్ / గడువు నోట్ రాయండి:`, currentNote || '');
   if (updated === null) return;
   const { error } = await db.from('customer_users')
     .update({ subscription_note: updated.trim() })
@@ -1196,34 +1286,75 @@ async function editCustomerSubNoteAdmin(custId, custLabel, currentNote) {
   refreshAdminData(false);
 }
 
+async function mcCustomerPopupAlert(msg) {
+  if (typeof window.mcAdminAlert === 'function') {
+    await window.mcAdminAlert(msg);
+  } else {
+    alert(msg);
+  }
+}
+
+async function mcCustomerPopupPrompt(msg, defaultVal) {
+  if (typeof window.mcAdminPrompt === 'function') {
+    return await window.mcAdminPrompt(msg, defaultVal || '');
+  }
+  return prompt(msg, defaultVal || '');
+}
+
+async function mcCustomerPopupConfirm(msg) {
+  if (typeof window.mcAdminConfirm === 'function') {
+    return await window.mcAdminConfirm(msg);
+  }
+  return confirm(msg);
+}
+
 async function toggleHoldCustomerAdmin(custId, custLabel, currentlyBlocked) {
   if (!currentlyBlocked) {
-    const reason = prompt(`కస్టమర్ (${custLabel}) ను Hold చేయడానికి కారణం రాయండి:`, 'నియమాల ఉల్లంఘన / అడ్మిన్ రివ్యూ');
+    const reason = await mcCustomerPopupPrompt(
+      `కస్టమర్ (${custLabel}) ను Hold చేయడానికి కారణం రాయండి:`,
+      'నియమాల ఉల్లంఘన / అడ్మిన్ రివ్యూ'
+    );
     if (reason === null) return;
     const { error } = await db.from('customer_users')
       .update({ is_blocked: true, block_reason: reason.trim() || 'Admin Hold' })
       .eq('id', custId);
-    if (error) return alert('Error: ' + error.message);
-    showToast(`${custLabel} Hold లో పెట్టబడ్డారు!`);
+    if (error) {
+      await mcCustomerPopupAlert('Error: ' + error.message);
+      return;
+    }
+    if (typeof showToast === 'function') showToast(`${custLabel} Hold లో పెట్టబడ్డారు!`);
   } else {
-    if (!confirm(`${custLabel} అకౌంట్‌ను తిరిగి Unblock చేయాలా?`)) return;
+    const ok = await mcCustomerPopupConfirm(`${custLabel} అకౌంట్‌ను తిరిగి Unblock చేయాలా?`);
+    if (!ok) return;
     const { error } = await db.from('customer_users')
       .update({ is_blocked: false, block_reason: '' })
       .eq('id', custId);
-    if (error) return alert('Error: ' + error.message);
-    showToast(`${custLabel} తిరిగి Active అయ్యారు!`);
+    if (error) {
+      await mcCustomerPopupAlert('Error: ' + error.message);
+      return;
+    }
+    if (typeof showToast === 'function') showToast(`${custLabel} తిరిగి Active అయ్యారు!`);
   }
-  refreshAdminData(false);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
 }
 
 async function resetCustomerPinAdmin(custId, custLabel, currentPin) {
-  const newPin = prompt(`కస్టమర్ (${custLabel}) కొత్త 4-అంకెల PIN నమోదు చేయండి:`, currentPin);
+  const newPin = await mcCustomerPopupPrompt(
+    `కస్టమర్ (${custLabel}) కొత్త 4-అంకెల PIN నమోదు చేయండి:`,
+    currentPin
+  );
   if (!newPin) return;
-  if (newPin.length !== 4 || isNaN(newPin)) return alert('4 అంకెల PIN మాత్రమే ఇవ్వండి.');
+  if (newPin.length !== 4 || isNaN(newPin)) {
+    await mcCustomerPopupAlert('4 అంకెల PIN మాత్రమే ఇవ్వండి.');
+    return;
+  }
   const { error } = await db.from('customer_users').update({ pin: newPin }).eq('id', custId);
-  if (error) return alert('Error: ' + error.message);
-  showToast(`${custLabel} PIN ${newPin} గా మార్చబడింది!`);
-  refreshAdminData(false);
+  if (error) {
+    await mcCustomerPopupAlert('Error: ' + error.message);
+    return;
+  }
+  if (typeof showToast === 'function') showToast(`${custLabel} PIN ${newPin} గా మార్చబడింది!`);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
 }
 
 // CSV EXPORT (VENDORS & CUSTOMERS)
@@ -1604,7 +1735,7 @@ function renderAdminAnalytics() {
     }
   };
 
-  // 2. BULK HOLD / UNBLOCK FOR CURRENTLY FILTERED USERS
+   // 2. BULK HOLD / UNBLOCK FOR CURRENTLY FILTERED USERS
   function getFilteredVendorsForBulk() {
     const q = (document.getElementById('adminVendorSearch')?.value || '').toLowerCase();
     const holdF = typeof vendorHoldFilter !== 'undefined' ? vendorHoldFilter : 'all';
@@ -1631,39 +1762,81 @@ function renderAdminAnalytics() {
     });
   }
 
+  async function showAdminPopupAlert(msg) {
+    if (typeof window.mcAdminAlert === 'function') {
+      await window.mcAdminAlert(msg);
+    } else {
+      alert(msg);
+    }
+  }
+
+  async function showAdminPopupPrompt(msg, defaultVal) {
+    if (typeof window.mcAdminPrompt === 'function') {
+      return await window.mcAdminPrompt(msg, defaultVal || '');
+    }
+    return prompt(msg, defaultVal || '');
+  }
+
+  async function showAdminPopupConfirm(msg) {
+    if (typeof window.mcAdminConfirm === 'function') {
+      return await window.mcAdminConfirm(msg);
+    }
+    return confirm(msg);
+  }
+
   window.bulkHoldFilteredUsers = async function(targetType, makeBlocked) {
     if (typeof db === 'undefined' || !db) return;
     const targets = targetType === 'vendors' ? getFilteredVendorsForBulk() : getFilteredCustomersForBulk();
     if (targets.length === 0) {
-      return alert('ప్రస్తుత ఫిల్టర్‌లో యూజర్లు ఎవరూ లేరు.');
+      await showAdminPopupAlert('ప్రస్తుత ఫిల్టర్‌లో యూజర్లు ఎవరూ లేరు.');
+      return;
     }
 
     const label = targetType === 'vendors' ? 'వెండర్లను' : 'కస్టమర్లను';
     if (makeBlocked) {
-      const reason = prompt('ఫిల్టర్ చేసిన ' + targets.length + ' ' + label + ' ఒకేసారి Hold చేయడానికి కారణం రాయండి:', 'సబ్‌స్క్రిప్షన్ / అడ్మిన్ రివ్యూ');
+      const reason = await showAdminPopupPrompt(
+        'ఫిల్టర్ చేసిన ' + targets.length + ' ' + label + ' ఒకేసారి Hold చేయడానికి కారణం రాయండి:',
+        'సబ్‌స్క్రిప్షన్ / అడ్మిన్ రివ్యూ'
+      );
       if (reason === null) return;
       const cleanReason = reason.trim() || 'Admin Bulk Hold';
 
       if (targetType === 'vendors') {
         const phones = targets.map(function(v) { return v.phone; }).filter(Boolean);
         const res = await db.from('vendors').update({ is_blocked: true, block_reason: cleanReason }).in('phone', phones);
-        if (res.error) return alert('Error: ' + res.error.message);
+        if (res.error) {
+          await showAdminPopupAlert('Error: ' + res.error.message);
+          return;
+        }
       } else {
         const ids = targets.map(function(c) { return c.id; }).filter(Boolean);
         const res = await db.from('customer_users').update({ is_blocked: true, block_reason: cleanReason }).in('id', ids);
-        if (res.error) return alert('Error: ' + res.error.message);
+        if (res.error) {
+          await showAdminPopupAlert('Error: ' + res.error.message);
+          return;
+        }
       }
       if (typeof showToast === 'function') showToast(targets.length + ' ' + label + ' Bulk Hold చేయబడ్డారు!');
     } else {
-      if (!confirm('ఫిల్టర్ చేసిన ' + targets.length + ' ' + label + ' ఒకేసారి Unblock (Active) చేయాలా?')) return;
+      const ok = await showAdminPopupConfirm(
+        'ఫిల్టర్ చేసిన ' + targets.length + ' ' + label + ' ఒకేసారి Unblock (Active) చేయాలా?'
+      );
+      if (!ok) return;
+
       if (targetType === 'vendors') {
         const phones = targets.map(function(v) { return v.phone; }).filter(Boolean);
         const res = await db.from('vendors').update({ is_blocked: false, block_reason: '' }).in('phone', phones);
-        if (res.error) return alert('Error: ' + res.error.message);
+        if (res.error) {
+          await showAdminPopupAlert('Error: ' + res.error.message);
+          return;
+        }
       } else {
         const ids = targets.map(function(c) { return c.id; }).filter(Boolean);
         const res = await db.from('customer_users').update({ is_blocked: false, block_reason: '' }).in('id', ids);
-        if (res.error) return alert('Error: ' + res.error.message);
+        if (res.error) {
+          await showAdminPopupAlert('Error: ' + res.error.message);
+          return;
+        }
       }
       if (typeof showToast === 'function') showToast(targets.length + ' ' + label + ' తిరిగి Active అయ్యారు!');
     }
@@ -1672,7 +1845,9 @@ function renderAdminAnalytics() {
   };
 
   setTimeout(function() {
-    window.loadAdminBillingSnapshot();
+    if (typeof window.loadAdminBillingSnapshot === 'function') {
+      window.loadAdminBillingSnapshot();
+    }
   }, 700);
 })();
 
@@ -1716,6 +1891,199 @@ window.getAdminContactActionsHtml = function(phone, prefillText) {
     '<a href="https://wa.me/91' + num10 + '?text=' + waMsg + '" target="_blank" rel="noopener" class="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-[9px] font-extrabold shrink-0">💬 WhatsApp</a>' +
     '</div>';
 };
+
+//ADMIN ALLERTS FUNCTION 
+window.mcAdminPrompt = function(message, defaultValue) {
+  return new Promise(function(resolve) {
+    const modal = document.getElementById('mcAdminDialogModal');
+    const msgEl = document.getElementById('mcAdminDialogMessage');
+    const inputEl = document.getElementById('mcAdminDialogInput');
+    const okBtn = document.getElementById('mcAdminDialogOkBtn');
+    const cancelBtn = document.getElementById('mcAdminDialogCancelBtn');
+
+    if (!modal || !msgEl || !inputEl || !okBtn || !cancelBtn) {
+      resolve(window.prompt(message, defaultValue || ''));
+      return;
+    }
+
+    msgEl.innerText = message || '';
+    inputEl.classList.remove('hidden-force');
+    cancelBtn.classList.remove('hidden-force');
+    inputEl.value = defaultValue || '';
+    modal.classList.remove('hidden-force');
+    setTimeout(function() { inputEl.focus(); inputEl.select(); }, 30);
+
+    function cleanup() {
+      modal.classList.add('hidden-force');
+      inputEl.classList.add('hidden-force');
+      cancelBtn.classList.remove('hidden-force');
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+      inputEl.removeEventListener('keydown', onKey);
+    }
+
+    function onOk() {
+      const val = inputEl.value;
+      cleanup();
+      resolve(val);
+    }
+
+    function onCancel() {
+      cleanup();
+      resolve(null);
+    }
+
+    function onKey(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onOk();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        onCancel();
+      }
+    }
+
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+    inputEl.addEventListener('keydown', onKey);
+  });
+};
+
+window.mcAdminConfirm = function(message) {
+  return new Promise(function(resolve) {
+    const modal = document.getElementById('mcAdminDialogModal');
+    const msgEl = document.getElementById('mcAdminDialogMessage');
+    const inputEl = document.getElementById('mcAdminDialogInput');
+    const okBtn = document.getElementById('mcAdminDialogOkBtn');
+    const cancelBtn = document.getElementById('mcAdminDialogCancelBtn');
+
+    if (!modal || !msgEl || !inputEl || !okBtn || !cancelBtn) {
+      resolve(window.confirm(message));
+      return;
+    }
+
+    msgEl.innerText = message || '';
+    inputEl.classList.add('hidden-force');
+    cancelBtn.classList.remove('hidden-force');
+    modal.classList.remove('hidden-force');
+
+    function cleanup() {
+      modal.classList.add('hidden-force');
+      cancelBtn.classList.remove('hidden-force');
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+    }
+
+    function onOk() {
+      cleanup();
+      resolve(true);
+    }
+
+    function onCancel() {
+      cleanup();
+      resolve(false);
+    }
+
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+  });
+};
+
+window.mcAdminAlert = function(message) {
+  return new Promise(function(resolve) {
+    const modal = document.getElementById('mcAdminDialogModal');
+    const msgEl = document.getElementById('mcAdminDialogMessage');
+    const inputEl = document.getElementById('mcAdminDialogInput');
+    const okBtn = document.getElementById('mcAdminDialogOkBtn');
+    const cancelBtn = document.getElementById('mcAdminDialogCancelBtn');
+
+    if (!modal || !msgEl || !inputEl || !okBtn || !cancelBtn) {
+      window.alert(message);
+      resolve();
+      return;
+    }
+
+    msgEl.innerText = message || '';
+    inputEl.classList.add('hidden-force');
+    cancelBtn.classList.add('hidden-force');
+    modal.classList.remove('hidden-force');
+
+    function onOk() {
+      modal.classList.add('hidden-force');
+      cancelBtn.classList.remove('hidden-force');
+      okBtn.removeEventListener('click', onOk);
+      resolve();
+    }
+
+    okBtn.addEventListener('click', onOk);
+  });
+};
+
+// PAYMENTS CONFIRMATION FUNCTION 
+async function mcSubPopupAlert(msg) {
+  if (typeof window.mcAdminAlert === 'function') {
+    await window.mcAdminAlert(msg);
+  } else {
+    alert(msg);
+  }
+}
+
+async function mcSubPopupConfirm(msg) {
+  if (typeof window.mcAdminConfirm === 'function') {
+    return await window.mcAdminConfirm(msg);
+  }
+  return confirm(msg);
+}
+
+// A.Vendor UTR Verification & 1-Click Approve (Active + Unblock)
+async function approveVendorSubscriptionUtr(phone, utrCode, currentNote) {
+  const ok = await mcSubPopupConfirm(
+    `వెండర్ (${phone}) పేమెంట్ UTR: ${utrCode || 'N/A'}\nపేమెంట్ మీ UPI లో వచ్చిందని నిర్ధారించి Subscription ను ACTIVE చేయాలా?`
+  );
+  if (!ok) return;
+
+  const { error } = await db
+    .from('vendors')
+    .update({
+      subscription_status: 'Active',
+      subscription_note: currentNote || ('UTR Verified: ' + (utrCode || '')),
+      is_blocked: false,
+      block_reason: ''
+    })
+    .eq('phone', phone);
+
+  if (error) {
+    await mcSubPopupAlert('Error: ' + error.message);
+    return;
+  }
+  if (typeof showToast === 'function') showToast(`వెండర్ (${phone}) Subscription ACTIVE అయ్యింది!`);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
+}
+
+// B.Customer UTR Verification & 1-Click Approve (Active + Unblock)
+async function approveCustomerSubscriptionUtr(custId, custLabel, utrCode, currentNote) {
+  const ok = await mcSubPopupConfirm(
+    `${custLabel} పేమెంట్ UTR: ${utrCode || 'N/A'}\nపేమెంట్ మీ UPI లో వచ్చిందని నిర్ధారించి Subscription ను ACTIVE చేయాలా?`
+  );
+  if (!ok) return;
+
+  const { error } = await db
+    .from('customer_users')
+    .update({
+      subscription_status: 'Active',
+      subscription_note: currentNote || ('UTR Verified: ' + (utrCode || '')),
+      is_blocked: false,
+      block_reason: ''
+    })
+    .eq('id', custId);
+
+  if (error) {
+    await mcSubPopupAlert('Error: ' + error.message);
+    return;
+  }
+  if (typeof showToast === 'function') showToast(`${custLabel} Subscription ACTIVE అయ్యింది!`);
+  if (typeof refreshAdminData === 'function') refreshAdminData(false);
+}
 
 </script>
 </body>
