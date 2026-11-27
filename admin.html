@@ -148,6 +148,7 @@ tailwind.config = {
     <div class="flex gap-1 text-[10px] font-bold">
       <button onclick="setTicketFilter('all')" id="tFilterAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
       <button onclick="setTicketFilter('Open')" id="tFilterOpen" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Open</button>
+      <button type="button" onclick="setTicketFilter('PendingReply')" id="tFilterPendingReply" class="px-2.5 py-1 rounded-full bg-white border border-amber-200 text-amber-800">Reply Pending</button>
       <button onclick="setTicketFilter('Resolved')" id="tFilterResolved" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Resolved</button>
     </div>
   </div>
@@ -186,28 +187,73 @@ tailwind.config = {
     <button onclick="setVendorHoldFilter('active')" id="vFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
     <button onclick="setVendorHoldFilter('hold')" id="vFilterHold" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">On Hold</button>
   </div>
+  <div class="flex gap-1.5 text-[10px] font-bold flex-wrap" id="vendorSubFilterBar">
+  <button type="button" onclick="setVendorSubFilter('all')" id="vSubFilterAll" class="px-2.5 py-1 rounded-full bg-teal-700 text-white">Sub: అన్నీ</button>
+  <button type="button" onclick="setVendorSubFilter('active')" id="vSubFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
+  <button type="button" onclick="setVendorSubFilter('trial')" id="vSubFilterTrial" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Trial</button>
+  <button type="button" onclick="setVendorSubFilter('pending')" id="vSubFilterPending" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Pending</button>
+  <button type="button" onclick="setVendorSubFilter('expired')" id="vSubFilterExpired" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Expired</button>
+</div>
+
+<!-- Vendors ట్యాబ్ ఫిల్టర్ కింద -->
+<div class="flex items-center gap-1.5 flex-wrap">
+  <button type="button" onclick="bulkHoldFilteredUsers('vendors', true)"
+    class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold active:scale-95">
+    ⛔ ఫిల్టర్ చేసిన వెండర్లను Bulk Hold
+  </button>
+  <button type="button" onclick="bulkHoldFilteredUsers('vendors', false)"
+    class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-extrabold active:scale-95">
+    ✅ Bulk Unblock
+  </button>
+</div>
+
   <div id="adminVendorsList" class="space-y-2.5"></div>
 </div>
 
 <!-- TAB 3: CUSTOMERS LIST, SUBSCRIPTION, HOLD/UNBLOCK & CSV -->
-<div id="adminTabCustomers" class="hidden-force space-y-3">
+<div id="adminTabCustomers" class="hidden-force space-y-2.5">
   <div class="flex items-center justify-between gap-2">
     <h2 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
       <i class="ph-fill ph-users text-sky-600 text-base"></i> రిజిస్టర్డ్ కస్టమర్లు (<span id="customerCountBadge">0</span>)
     </h2>
-    <button onclick="exportAdminUsersCSV('customers')" class="px-2.5 py-1 rounded-full bg-sky-700 hover:bg-sky-800 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-2xs active:scale-95">
+    <button type="button" onclick="exportAdminUsersCSV('customers')" class="px-2.5 py-1 rounded-full bg-sky-700 hover:bg-sky-800 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-2xs active:scale-95">
       <i class="ph-bold ph-download-simple text-xs"></i> CSV డౌన్‌లోడ్
     </button>
   </div>
+
+  <!-- Search -->
   <div class="relative">
     <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
     <input type="text" id="adminCustomerSearch" onkeyup="renderAdminCustomers()" placeholder="కస్టమర్ పేరు, ఫోన్ లేదా వెండర్ నంబర్ వెతకండి..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-indigo-600">
   </div>
-  <div class="flex gap-1.5 text-[10px] font-bold">
-    <button onclick="setCustomerHoldFilter('all')" id="cFilterAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
-    <button onclick="setCustomerHoldFilter('active')" id="cFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
-    <button onclick="setCustomerHoldFilter('hold')" id="cFilterHold" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">On Hold</button>
+
+  <!-- Row 1: Hold Filter -->
+  <div class="flex gap-1.5 text-[10px] font-bold flex-wrap">
+    <button type="button" onclick="setCustomerHoldFilter('all')" id="cFilterAll" class="px-2.5 py-1 rounded-full bg-indigo-600 text-white">అన్నీ</button>
+    <button type="button" onclick="setCustomerHoldFilter('active')" id="cFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
+    <button type="button" onclick="setCustomerHoldFilter('hold')" id="cFilterHold" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">On Hold</button>
   </div>
+
+  <!-- Row 2: Subscription Status Filter -->
+  <div class="flex gap-1.5 text-[10px] font-bold flex-wrap" id="customerSubFilterBar">
+    <button type="button" onclick="setCustomerSubFilter('all')" id="cSubFilterAll" class="px-2.5 py-1 rounded-full bg-sky-700 text-white">Sub: అన్నీ</button>
+    <button type="button" onclick="setCustomerSubFilter('active')" id="cSubFilterActive" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Active</button>
+    <button type="button" onclick="setCustomerSubFilter('trial')" id="cSubFilterTrial" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Trial</button>
+    <button type="button" onclick="setCustomerSubFilter('pending')" id="cSubFilterPending" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Pending</button>
+    <button type="button" onclick="setCustomerSubFilter('expired')" id="cSubFilterExpired" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">Expired</button>
+  </div>
+
+  <!-- Row 3: Bulk Hold / Unblock -->
+  <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+    <button type="button" onclick="bulkHoldFilteredUsers('customers', true)" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold active:scale-95">
+      ⛔ ఫిల్టర్ చేసిన కస్టమర్లను Bulk Hold
+    </button>
+    <button type="button" onclick="bulkHoldFilteredUsers('customers', false)" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-extrabold active:scale-95">
+      ✅ Bulk Unblock
+    </button>
+  </div>
+
+  <!-- Customers Cards List -->
   <div id="adminCustomersList" class="space-y-2.5"></div>
 </div>
 
@@ -290,6 +336,61 @@ tailwind.config = {
     </div>
   </div>
 
+<!-- FEATURE 4: INACTIVE / DORMANT USERS ALERT -->
+<div class="bg-white border border-amber-200 rounded-2xl p-3.5 shadow-2xs space-y-2">
+  <div class="flex items-center justify-between gap-2">
+    <span class="text-xs font-extrabold text-amber-900">💤 Inactive / Dormant Users</span>
+    <select id="dormantDaysSelect" onchange="renderDormantUsersAdmin()"
+      class="px-2 py-1 text-[10px] font-bold bg-amber-50 border border-amber-200 rounded-lg text-amber-900">
+      <option value="3">3+ రోజులు</option>
+      <option value="7" selected>7+ రోజులు</option>
+      <option value="15">15+ రోజులు</option>
+      <option value="30">30+ రోజులు</option>
+    </select>
+  </div>
+  
+    <div class="flex items-center justify-between gap-2 flex-wrap">
+  
+  <div class="flex items-center gap-1.5 flex-wrap">
+    <div class="flex gap-1 text-[10px] font-bold" id="dormantRoleFilterBar">
+      <button type="button" onclick="setDormantRoleFilter('all')" id="dormRoleAll" class="px-2 py-0.5 rounded-full bg-amber-700 text-white">అన్నీ</button>
+      <button type="button" onclick="setDormantRoleFilter('vendor')" id="dormRoleVendor" class="px-2 py-0.5 rounded-full bg-white border border-amber-200 text-amber-900">🚚 Vendors</button>
+      <button type="button" onclick="setDormantRoleFilter('customer')" id="dormRoleCustomer" class="px-2 py-0.5 rounded-full bg-white border border-amber-200 text-amber-900">👤 Customers</button>
+    </div>
+    <select id="dormantDaysSelect" onchange="renderDormantUsersAdmin()"
+      class="px-2 py-0.5 text-[10px] font-bold bg-amber-50 border border-amber-200 rounded-lg text-amber-900">
+      <option value="3">3+ రోజులు</option>
+      <option value="7" selected>7+ రోజులు</option>
+      <option value="15">15+ రోజులు</option>
+      <option value="30">30+ రోజులు</option>
+    </select>
+  </div>
+</div>
+  <div id="adminDormantUsersList" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
+</div>
+
+<!-- FEATURE 2: LIVE MILK LOGS INSPECTOR (customer_milk_logs) -->
+<div class="bg-white border border-emerald-200 rounded-2xl p-3.5 shadow-2xs space-y-2">
+  <div class="flex items-center justify-between gap-2">
+    <span class="text-xs font-extrabold text-emerald-900">🥛 Live Milk Logs Inspector</span>
+    <button type="button" onclick="loadAdminMilkLogs()"
+      class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold active:scale-95">
+      ↻ లోడ్ చేయి
+    </button>
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    <input id="adminMilkLogSearch" type="text" onkeyup="renderAdminMilkLogs()" placeholder="ఫోన్ లేదా తేదీ (YYYY-MM-DD)..."
+      class="px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-600">
+    <select id="adminMilkLogStatusFilter" onchange="renderAdminMilkLogs()"
+      class="px-2 py-1.5 text-[11px] font-bold bg-slate-50 border border-slate-200 rounded-xl text-slate-700">
+      <option value="all">అన్ని స్టేటస్‌లు</option>
+      <option value="delivered">Delivered</option>
+      <option value="skip">Skip / ఆపినవి</option>
+    </select>
+  </div>
+  <div id="adminMilkLogsList" class="space-y-1.5 max-h-56 overflow-y-auto text-xs"></div>
+</div>
+
   <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
     <div class="flex items-center justify-between gap-2 flex-wrap">
       <span class="text-xs font-extrabold text-slate-800">🕒 తాజా యాక్టివిటీ లిస్ట్</span>
@@ -301,8 +402,20 @@ tailwind.config = {
     </div>
     <div id="adminActivityFeed" class="space-y-2 max-h-96 overflow-y-auto"></div>
   </div>
+  
+  <!-- VENDOR BILLING & DUE SNAPSHOT -->
+<div class="bg-white border border-teal-200 rounded-2xl p-3.5 shadow-2xs space-y-2">
+  <div class="flex items-center justify-between gap-2">
+    <span class="text-xs font-extrabold text-teal-900">💰 Vendor Billing & Due Snapshot</span>
+    <button type="button" onclick="loadAdminBillingSnapshot()"
+      class="px-2.5 py-1 rounded-lg bg-teal-700 hover:bg-teal-800 text-white text-[10px] font-bold active:scale-95">
+      ↻ లోడ్ చేయి
+    </button>
+  </div>
+  <div id="adminBillingSnapshotList" class="space-y-1.5 max-h-56 overflow-y-auto text-xs"></div>
 </div>
 
+</div>
 </main>
 
 <!-- BOTTOM NAVIGATION BAR -->
@@ -622,9 +735,11 @@ function renderAllAdminViews() {
 // TAB 1: SUPPORT TICKETS + QUICK REPLY TEMPLATES
 function setTicketFilter(f) {
   ticketFilter = f;
-  ['all', 'Open', 'Resolved'].forEach(k => {
+  ['all', 'Open', 'PendingReply', 'Resolved'].forEach(k => {
     const id = 'tFilter' + (k === 'all' ? 'All' : k);
-    document.getElementById(id).className = (k === f)
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = (k === f)
       ? 'px-2.5 py-1 rounded-full bg-indigo-600 text-white'
       : 'px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
   });
@@ -645,7 +760,11 @@ function renderAdminTickets() {
   const roleFilter = document.getElementById('adminTicketRoleFilter')?.value || 'all';
 
   const filtered = allTickets.filter(t => {
-    const matchesStatus = ticketFilter === 'all' ? true : t.status === ticketFilter;
+        const matchesStatus =
+      ticketFilter === 'all' ? true :
+      ticketFilter === 'PendingReply' ? (t.status !== 'Resolved' && !String(t.admin_reply || '').trim()) :
+      t.status === ticketFilter;
+
     const matchesRole = roleFilter === 'all' ? true : (t.user_role || 'customer') === roleFilter;
     const matchesSearch = !q ||
       (t.ticket_code || '').toLowerCase().includes(q) ||
@@ -675,7 +794,8 @@ function renderAdminTickets() {
               ${roleBadge}
               <span class="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">${t.category}</span>
             </div>
-            <p class="text-[11px] font-bold text-slate-700 mt-1">${t.user_name || 'User'} • 📞 ${t.user_phone}</p>
+            <p class="text-[11px] font-bold text-slate-700 mt-1">${t.user_name || 'User'} • 📞 ${t.user_phone}</p>${getAdminContactActionsHtml(t.user_phone, 'నమస్కారం ' + (t.user_name || '') + ', మీ టికెట్ #' + (t.ticket_code || '') + ' గురించి మాట్లాడుతున్నాము.')}
+            
             <span class="text-[9px] text-slate-400">${formatDateTime(t.created_at)}</span>
           </div>
           <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${isResolved ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
@@ -827,11 +947,14 @@ function renderAdminVendors() {
     return;
   }
 
-  listEl.innerHTML = filtered.map(v => {
+      listEl.innerHTML = filtered.map(v => {
     const isHold = !!v.is_blocked;
     const vendorCusts = allCustomers.filter(c => c.vendor_phone === v.phone && !c.family_head_id);
-    const isExpanded = !!expandedVendorPhones[v.phone];
+    const isExpanded = !!(typeof expandedVendorPhones !== 'undefined' && expandedVendorPhones[v.phone]);
     const subStatus = v.subscription_status || 'Active';
+    const safeLabel = (v.name || v.phone || 'Vendor').replace(/'/g, '');
+    const safeSubStatus = subStatus.replace(/'/g, '');
+    const safeSubNote = (v.subscription_note || '').replace(/'/g, '');
 
     const custListHtml = isExpanded ? `
       <div class="mt-2 pt-2 border-t border-slate-100 bg-slate-50/90 rounded-xl p-2 space-y-1.5">
@@ -839,13 +962,13 @@ function renderAdminVendors() {
         ${vendorCusts.length === 0
           ? `<p class="text-[10px] text-slate-400">ఇంకా కస్టమర్లు లింక్ అవ్వలేదు.</p>`
           : vendorCusts.map((c, idx) => `
-            <div class="flex items-center justify-between text-[10px] bg-white border border-slate-200/80 rounded-lg px-2 py-1.5">
-              <div>
+            <div class="flex items-center justify-between gap-2 text-[10px] bg-white border border-slate-200/80 rounded-lg px-2 py-1.5">
+              <div class="min-w-0 flex-1">
                 <span class="font-bold text-slate-800">${idx + 1}. ${c.name || 'Customer'}</span>
                 <span class="text-slate-500 ml-1">• 📞 ${c.phone}</span>
                 ${c.route_area ? `<span class="text-[9px] text-teal-700 ml-1">(${c.route_area})</span>` : ''}
               </div>
-              <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${c.is_blocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
+              <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${c.is_blocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
                 ${c.is_blocked ? 'Hold' : 'Active'}
               </span>
             </div>
@@ -854,52 +977,73 @@ function renderAdminVendors() {
       </div>
     ` : '';
 
+    const contactActionsHtml = (typeof window.getAdminContactActionsHtml === 'function')
+      ? window.getAdminContactActionsHtml(v.phone, 'నమస్కారం ' + (v.name || '') + ' గారు, MilkCount Admin నుండి మాట్లాడుతున్నాము.')
+      : '';
+
     return `
       <div class="bg-white border ${isHold ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+        <!-- Top Row: Left Info + Right PIN -->
         <div class="flex items-start justify-between gap-2">
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1 space-y-1">
             <div class="flex items-center gap-1.5 flex-wrap">
-              <h4 class="font-bold text-slate-800 text-sm truncate">${v.name || 'Vendor'}</h4>
-              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${isHold ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
+              <h4 class="font-bold text-slate-800 text-sm break-words">${v.name || 'Vendor'}</h4>
+              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ${isHold ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
                 ${isHold ? 'On Hold' : 'Active'}
               </span>
             </div>
-            <p class="text-[11px] text-slate-600 mt-0.5">📞 ${v.phone} • 👥 కస్టమర్లు: <strong>${vendorCusts.length}</strong></p>
-            <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(v.last_login_at)}</p>
-            <p class="text-[10px] text-indigo-700 font-semibold mt-0.5">
+
+            <p class="text-[11px] text-slate-700 font-semibold">📞 ${v.phone}</p>
+
+            <!-- Customer Count + View Customers Button Side by Side -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <p class="text-[11px] text-slate-600">👥 కస్టమర్లు: <strong>${vendorCusts.length}</strong></p>
+              <button type="button" onclick="toggleVendorCustomersView('${v.phone}')" class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200">
+                ${isExpanded ? '▲ దాచు' : `👥 కస్టమర్లను చూడు (${vendorCusts.length})`}
+              </button>
+            </div>
+
+            ${contactActionsHtml ? `<div class="pt-0.5">${contactActionsHtml}</div>` : ''}
+
+            <p class="text-[10px] text-slate-400">🕒 చివరి లాగిన్: ${formatDateTime(v.last_login_at)}</p>
+            <p class="text-[10px] text-indigo-700 font-semibold">
               💳 Sub: <strong>${subStatus}</strong>${v.subscription_note ? ` • ${v.subscription_note}` : ''}
             </p>
-            ${isHold && v.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold mt-0.5">కారణం: ${v.block_reason}</p>` : ''}
+            ${isHold && v.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold">కారణం: ${v.block_reason}</p>` : ''}
           </div>
-          <div class="text-right shrink-0 space-y-1">
-            <span class="text-[10px] bg-amber-50 border border-amber-200 text-amber-900 font-black px-2 py-0.5 rounded block">PIN: ${v.pin || '----'}</span>
-            <button onclick="resetVendorPinAdmin('${v.phone}', '${v.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
+
+          <!-- Right Side: Compact PIN Box + PIN Actions -->
+          <div class="shrink-0 flex flex-col items-end gap-1.5">
+            <span class="text-[10px] bg-amber-50 border border-amber-200 text-amber-900 font-black px-2 py-0.5 rounded inline-block w-fit">
+              PIN: ${v.pin || '----'}
+            </span>
+            <button type="button" onclick="resetVendorPinAdmin('${v.phone}', '${v.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg whitespace-nowrap">
               PIN మార్చు
+            </button>
+            <button type="button" onclick="copyAdminValue('${v.pin || ''}', 'PIN')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
+              🔑 PIN కాపీ
             </button>
           </div>
         </div>
 
         ${custListHtml}
 
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 flex-wrap">
-          <button onclick="toggleVendorCustomersView('${v.phone}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200">
-            ${isExpanded ? '▲ కస్టమర్లను దాచు' : `👥 కస్టమర్లను చూడు (${vendorCusts.length})`}
+        <!-- Bottom Action Bar (Starts from Left) -->
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-start gap-1.5 flex-wrap">
+          <button type="button" onclick="updateVendorSubscriptionAdmin('${v.phone}', '${safeSubStatus}', '${safeSubNote}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+            💳 Subscription
           </button>
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <button type="button" onclick="updateVendorSubscriptionAdmin('${v.phone}', '${subStatus.replace(/'/g, '')}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
-              💳 Subscription
-            </button>
-            <button onclick="editVendorSubNoteAdmin('${v.phone}', '${(v.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200">
-              📋 Sub నోట్
-            </button>
-            <button onclick="toggleHoldVendorAdmin('${v.phone}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
-              ${isHold ? 'Unblock' : 'Hold / ఆపు'}
-            </button>
-          </div>
+          <button type="button" onclick="editVendorSubNoteAdmin('${v.phone}', '${safeSubNote}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200">
+            📋 Sub నోట్
+          </button>
+          <button type="button" onclick="toggleHoldVendorAdmin('${v.phone}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
+            ${isHold ? 'Unblock' : 'Hold / ఆపు'}
+          </button>
         </div>
       </div>
     `;
   }).join('');
+  
 }
 
 async function editVendorSubNoteAdmin(phone, currentNote) {
@@ -976,47 +1120,69 @@ function renderAdminCustomers() {
     return;
   }
 
-  listEl.innerHTML = filtered.map(c => {
-    const isHold = !!c.is_blocked;
-    const subStatus = c.subscription_status || 'Active';
-    return `
-      <div class="bg-white border ${isHold ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} rounded-2xl p-3.5 shadow-2xs space-y-2.5">
-        <div class="flex items-start justify-between gap-2">
-          <div class="min-w-0">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <h4 class="font-bold text-slate-800 text-sm truncate">${c.name || 'Customer'}</h4>
-              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${isHold ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
-                ${isHold ? 'On Hold' : 'Active'}
-              </span>
+        listEl.innerHTML = filtered.map(c => {
+        const isHold = !!c.is_blocked;
+        const safeLabel = (c.name || c.phone || 'Customer').replace(/'/g, '');
+        const safeSubStatus = (c.subscription_status || 'Active').replace(/'/g, '');
+        const safeSubNote = (c.subscription_note || '').replace(/'/g, '');
+
+        return `
+          <div class="bg-white border ${isHold ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+            <!-- Top Row: Left Info + Right PIN -->
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0 flex-1 space-y-1">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h4 class="font-bold text-slate-800 text-sm break-words">${c.name || 'Customer'}</h4>
+                  <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ${isHold ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
+                    ${isHold ? 'On Hold' : 'Active'}
+                  </span>
+                </div>
+
+                <p class="text-[11px] text-slate-700 font-semibold">📞 ${c.phone}</p>
+                <p class="text-[11px] text-slate-600 break-all">🚚 వెండర్: <strong>${c.vendor_phone || 'Unlinked'}</strong></p>
+
+                <div class="pt-0.5">
+                  ${getAdminContactActionsHtml(c.phone, 'నమస్కారం ' + (c.name || '') + ' గారు, MilkCount Admin నుండి మాట్లాడుతున్నాము.')}
+                </div>
+
+                <p class="text-[10px] text-slate-400">🕒 చివరి లాగిన్: ${formatDateTime(c.last_login_at)}</p>
+                <p class="text-[10px] text-indigo-700 font-semibold">
+                  💳 Sub: <strong>${c.subscription_status || 'Active'}</strong>${c.subscription_note ? ` • ${c.subscription_note}` : ''}
+                </p>
+                ${isHold && c.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold">కారణం: ${c.block_reason}</p>` : ''}
+              </div>
+
+              <!-- Right Side: Compact PIN Box + PIN Actions -->
+              <div class="shrink-0 flex flex-col items-end gap-1.5">
+                <span class="text-[10px] bg-sky-50 border border-sky-200 text-sky-900 font-black px-2 py-0.5 rounded inline-block w-fit">
+                  PIN: ${c.pin || '----'}
+                </span>
+                <button type="button" onclick="resetCustomerPinAdmin('${c.id}', '${safeLabel}', '${c.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg whitespace-nowrap">
+                  PIN మార్చు
+                </button>
+                <button type="button" onclick="copyAdminValue('${c.pin || ''}', 'PIN')" class="text-[9px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
+                  🔑 PIN కాపీ
+                </button>
+              </div>
             </div>
-            <p class="text-[11px] text-slate-600 mt-0.5">📞 ${c.phone} • 🚚 వెండర్: <strong>${c.vendor_phone || 'Unlinked'}</strong></p>
-            <p class="text-[10px] text-slate-400 mt-0.5">🕒 చివరి లాగిన్: ${formatDateTime(c.last_login_at)}</p>
-            <p class="text-[10px] text-indigo-700 font-semibold mt-0.5">
-              💳 Sub: <strong>${subStatus}</strong>${c.subscription_note ? ` • ${c.subscription_note}` : ''}
-            </p>
-            ${isHold && c.block_reason ? `<p class="text-[10px] text-rose-700 font-semibold mt-0.5">కారణం: ${c.block_reason}</p>` : ''}
+
+            <!-- Bottom Action Bar -->
+           <div class="pt-2 border-t border-slate-100 flex items-center justify-start gap-1.5 flex-wrap">
+  <button type="button" onclick="updateCustomerSubscriptionAdmin('${c.id}', '${safeLabel}', '${safeSubStatus}', '${safeSubNote}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
+    💳 Subscription
+  </button>
+  <button type="button" onclick="editCustomerSubNoteAdmin('${c.id}', '${safeLabel}', '${safeSubNote}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200">
+    📋 Sub నోట్
+  </button>
+  <button type="button" onclick="toggleHoldCustomerAdmin('${c.id}', '${safeLabel}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
+    ${isHold ? 'Unblock (Active చేయి)' : 'Hold / ఆపు'}
+  </button>
+</div>
+
           </div>
-          <div class="text-right shrink-0 space-y-1">
-            <span class="text-[10px] bg-sky-50 border border-sky-200 text-sky-900 font-black px-2 py-0.5 rounded block">PIN: ${c.pin || '----'}</span>
-            <button onclick="resetCustomerPinAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${c.pin || '1234'}')" class="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-lg">
-              PIN మార్చు
-            </button>
-          </div>
-        </div>
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5 flex-wrap">
-          <button type="button" onclick="updateCustomerSubscriptionAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${subStatus.replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200">
-            💳 Subscription
-          </button>
-          <button onclick="editCustomerSubNoteAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', '${(c.subscription_note || '').replace(/'/g, '')}')" class="text-[10px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200">
-            📋 Sub నోట్
-          </button>
-          <button onclick="toggleHoldCustomerAdmin('${c.id}', '${(c.name || c.phone).replace(/'/g, '')}', ${isHold})" class="text-[10px] font-extrabold px-3 py-1.5 rounded-xl ${isHold ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'}">
-            ${isHold ? 'Unblock (Active చేయి)' : 'Hold / ఆపు'}
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
+        `;
+      }).join('');
+      
 }
 
 async function editCustomerSubNoteAdmin(custId, custLabel, currentNote) {
@@ -1159,6 +1325,398 @@ function renderAdminAnalytics() {
     `;
   }).join('');
 }
+
+(function() {
+  window.vendorSubFilter = window.vendorSubFilter || 'all';
+  window.customerSubFilter = window.customerSubFilter || 'all';
+
+  function updateSubFilterBtnStyles(prefix, activeMode) {
+    ['all', 'active', 'trial', 'pending', 'expired'].forEach(k => {
+      const btn = document.getElementById(prefix + k.charAt(0).toUpperCase() + k.slice(1));
+      if (!btn) return;
+      btn.className = (k === activeMode)
+        ? 'px-2.5 py-1 rounded-full bg-indigo-600 text-white'
+        : 'px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600';
+    });
+  }
+
+  window.setVendorSubFilter = function(mode) {
+    window.vendorSubFilter = mode;
+    updateSubFilterBtnStyles('vSubFilter', mode);
+    if (typeof renderAdminVendors === 'function') renderAdminVendors();
+  };
+
+  window.setCustomerSubFilter = function(mode) {
+    window.customerSubFilter = mode;
+    updateSubFilterBtnStyles('cSubFilter', mode);
+    if (typeof renderAdminCustomers === 'function') renderAdminCustomers();
+  };
+
+  if (typeof renderAdminVendors === 'function') {
+    const _origVendors = renderAdminVendors;
+    window.renderAdminVendors = function() {
+      const origAll = allVendors;
+      if (window.vendorSubFilter && window.vendorSubFilter !== 'all') {
+        allVendors = origAll.filter(v =>
+          String(v.subscription_status || 'Active').trim().toLowerCase() === window.vendorSubFilter
+        );
+      }
+      try {
+        return _origVendors.apply(this, arguments);
+      } finally {
+        allVendors = origAll;
+      }
+    };
+  }
+
+  if (typeof renderAdminCustomers === 'function') {
+    const _origCustomers = renderAdminCustomers;
+    window.renderAdminCustomers = function() {
+      const origAll = allCustomers;
+      if (window.customerSubFilter && window.customerSubFilter !== 'all') {
+        allCustomers = origAll.filter(c =>
+          String(c.subscription_status || 'Active').trim().toLowerCase() === window.customerSubFilter
+        );
+      }
+      try {
+        return _origCustomers.apply(this, arguments);
+      } finally {
+        allCustomers = origAll;
+      }
+    };
+  }
+})();
+
+// future 4&2 dormat& milk log functions
+(function() {
+  let _dormantRole = 'all';
+  window._adminMilkLogs = window._adminMilkLogs || [];
+
+  window.setDormantRoleFilter = function(role) {
+    _dormantRole = role;
+    ['all', 'vendor', 'customer'].forEach(function(r) {
+      const btn = document.getElementById('dormRole' + r.charAt(0).toUpperCase() + r.slice(1));
+      if (!btn) return;
+      btn.className = (r === role)
+        ? 'px-2 py-0.5 rounded-full bg-amber-700 text-white'
+        : 'px-2 py-0.5 rounded-full bg-white border border-amber-200 text-amber-900';
+    });
+    window.renderDormantUsersAdmin();
+  };
+
+  window.renderDormantUsersAdmin = function() {
+    const box = document.getElementById('adminDormantUsersList');
+    const daysEl = document.getElementById('dormantDaysSelect');
+    const days = daysEl ? parseInt(daysEl.value || '7', 10) : 7;
+    if (!box) return;
+
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    const vList = (typeof allVendors !== 'undefined' && Array.isArray(allVendors) ? allVendors : []).map(function(v) {
+      return { roleKey: 'vendor', role: '🚚 Vendor', name: v.name || 'Vendor', phone: v.phone || '', lastLogin: v.last_login_at };
+    });
+    const cList = (typeof allCustomers !== 'undefined' && Array.isArray(allCustomers) ? allCustomers : []).map(function(c) {
+      return { roleKey: 'customer', role: '👤 Customer', name: c.name || 'Customer', phone: c.phone || '', lastLogin: c.last_login_at };
+    });
+
+    const combined = vList.concat(cList).filter(function(u) {
+      if (_dormantRole !== 'all' && u.roleKey !== _dormantRole) return false;
+      if (!u.lastLogin) return true;
+      const t = new Date(u.lastLogin).getTime();
+      return !isNaN(t) && t < cutoff;
+    });
+
+    if (combined.length === 0) {
+      box.innerHTML = '<p class="text-[11px] text-slate-400 text-center py-2">' + days + '+ రోజులుగా లాగిన్ కాని యూజర్లు ఎవరూ లేరు.</p>';
+      return;
+    }
+
+    box.innerHTML = combined.slice(0, 40).map(function(u) {
+      const dtStr = u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('en-IN') : 'Never';
+      return '<div class="flex items-center justify-between py-1.5 border-b border-slate-100 last:border-0 gap-2">' +
+        '<div class="min-w-0"><span class="font-bold text-slate-800">' + u.role + ': ' + u.name + '</span>' +
+        '<span class="text-[10px] text-slate-500 ml-1">• 📞 ' + u.phone + '</span></div>' +
+        '<span class="text-[9px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded font-bold shrink-0">' + dtStr + '</span></div>';
+    }).join('');
+  };
+
+  window.loadAdminMilkLogs = async function() {
+    if (typeof db === 'undefined' || !db) return;
+    try {
+      const res = await db
+        .from('customer_milk_logs')
+        .select('*')
+        .order('log_date', { ascending: false })
+        .limit(120);
+      if (res && !res.error) {
+        window._adminMilkLogs = res.data || [];
+        window.renderAdminMilkLogs();
+      }
+    } catch (e) {}
+  };
+
+  window.renderAdminMilkLogs = function() {
+    const box = document.getElementById('adminMilkLogsList');
+    if (!box) return;
+
+    const logsArr = Array.isArray(window._adminMilkLogs) ? window._adminMilkLogs : [];
+    const custMap = new Map((typeof allCustomers !== 'undefined' && Array.isArray(allCustomers) ? allCustomers : []).map(function(c) { return [String(c.id), c]; }));
+    const vendMap = new Map((typeof allVendors !== 'undefined' && Array.isArray(allVendors) ? allVendors : []).map(function(v) { return [String(v.phone), v]; }));
+
+    const searchEl = document.getElementById('adminMilkLogSearch');
+    const filterEl = document.getElementById('adminMilkLogStatusFilter');
+    const q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+    const statusFilter = filterEl ? filterEl.value : 'all';
+
+    const rows = logsArr.map(function(r) {
+      const cust = custMap.get(String(r.user_id)) || {};
+      const vPhone = r.vendor_phone || cust.vendor_phone || '';
+      const vend = vendMap.get(String(vPhone)) || {};
+      return {
+        raw: r,
+        custName: cust.name || 'Customer',
+        custPhone: cust.phone || r.customer_phone || r.user_id || '-',
+        vendName: vend.name || 'Vendor',
+        vendPhone: vPhone || '-'
+      };
+    }).filter(function(item) {
+      const r = item.raw;
+      const st = String(r.status || '').toLowerCase();
+      const okStatus = statusFilter === 'all' ? true : (statusFilter === 'skip' ? st.includes('skip') : !st.includes('skip'));
+      const okSearch = !q ||
+        item.custName.toLowerCase().includes(q) ||
+        String(item.custPhone).toLowerCase().includes(q) ||
+        item.vendName.toLowerCase().includes(q) ||
+        String(item.vendPhone).toLowerCase().includes(q) ||
+        String(r.log_date || '').toLowerCase().includes(q);
+      return okStatus && okSearch;
+    });
+
+    if (rows.length === 0) {
+      box.innerHTML = '<p class="text-[11px] text-slate-400 text-center py-2">లాగ్స్ ఏవీ కనిపించలేదు.</p>';
+      return;
+    }
+
+    box.innerHTML = rows.slice(0, 40).map(function(item) {
+      const r = item.raw;
+      const isSkip = String(r.status || '').toLowerCase().includes('skip');
+      const litersVal = (r.quantity !== undefined && r.quantity !== null) ? r.quantity : r.liters;
+      const badgeCls = isSkip ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700';
+      return '<div class="py-1.5 border-b border-slate-100 last:border-0 flex items-start justify-between gap-2">' +
+        '<div class="min-w-0 space-y-0.5">' +
+        '<div class="text-[11px] font-extrabold text-slate-800">👤 ' + item.custName +
+        ' <span class="text-[10px] font-semibold text-slate-500">(' + item.custPhone + ')</span>' +
+        (litersVal ? ' <span class="text-[10px] font-bold text-emerald-700 ml-1">• ' + litersVal + 'L</span>' : '') +
+        '</div>' +
+        '<div class="text-[10px] text-teal-800 font-semibold">🚚 పోసినవారు: <strong>' + item.vendName + '</strong> (' + item.vendPhone + ') • 📅 ' + (r.log_date || '-') + '</div>' +
+        '</div>' +
+        '<span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full shrink-0 ' + badgeCls + '">' + (r.status || 'Delivered') + '</span>' +
+        '</div>';
+    }).join('');
+  };
+
+  if (typeof window.renderAllAdminViews === 'function') {
+    const _origRenderAll = window.renderAllAdminViews;
+    window.renderAllAdminViews = function() {
+      const res = _origRenderAll.apply(this, arguments);
+      window.renderDormantUsersAdmin();
+      window.renderAdminMilkLogs();
+      return res;
+    };
+  }
+
+  setTimeout(function() {
+    window.renderDormantUsersAdmin();
+    window.loadAdminMilkLogs();
+  }, 600);
+})();
+
+(function() {
+  // 1. VENDOR BILLING & DUE SNAPSHOT (vendor_billing_ledger)
+  window.loadAdminBillingSnapshot = async function() {
+    const box = document.getElementById('adminBillingSnapshotList');
+    if (!box || typeof db === 'undefined' || !db) return;
+
+    box.innerHTML = '<p class="text-[11px] text-slate-400 text-center py-2">లోడ్ అవుతోంది...</p>';
+    try {
+      const res = await db
+        .from('vendor_billing_ledger')
+        .select('vendor_phone, month_key, prev_due, paid_amount, payment_mode')
+        .limit(500);
+
+      if (res.error) {
+        box.innerHTML = '<p class="text-[11px] text-rose-600 text-center py-2">Error: ' + res.error.message + '</p>';
+        return;
+      }
+
+      const rows = res.data || [];
+      if (rows.length === 0) {
+        box.innerHTML = '<p class="text-[11px] text-slate-400 text-center py-2">బిల్లింగ్ లెడ్జర్ డేటా ఇంకా నమోదు కాలేదు.</p>';
+        return;
+      }
+
+      const vendMap = new Map(
+        (typeof allVendors !== 'undefined' && Array.isArray(allVendors) ? allVendors : [])
+          .map(function(v) { return [String(v.phone), v.name || 'Vendor']; })
+      );
+
+      const summaryByVendor = {};
+      rows.forEach(function(r) {
+        const vp = String(r.vendor_phone || 'Unknown');
+        if (!summaryByVendor[vp]) {
+          summaryByVendor[vp] = {
+            phone: vp,
+            name: vendMap.get(vp) || 'Vendor',
+            paidTotal: 0,
+            prevDueTotal: 0,
+            cashTotal: 0,
+            upiTotal: 0,
+            entries: 0
+          };
+        }
+        const paid = parseFloat(r.paid_amount) || 0;
+        const due = parseFloat(r.prev_due) || 0;
+        summaryByVendor[vp].paidTotal += paid;
+        summaryByVendor[vp].prevDueTotal += due;
+        if (String(r.payment_mode || '').toUpperCase() === 'UPI') {
+          summaryByVendor[vp].upiTotal += paid;
+        } else {
+          summaryByVendor[vp].cashTotal += paid;
+        }
+        summaryByVendor[vp].entries += 1;
+      });
+
+      const list = Object.values(summaryByVendor);
+      box.innerHTML = list.map(function(s) {
+        return '<div class="py-2 border-b border-slate-100 last:border-0 space-y-1">' +
+          '<div class="flex items-center justify-between">' +
+          '<span class="font-extrabold text-slate-800">🚚 ' + s.name + ' <span class="text-[10px] font-semibold text-slate-500">(' + s.phone + ')</span></span>' +
+          '<span class="text-[10px] font-bold text-slate-500">' + s.entries + ' ఎంట్రీలు</span>' +
+          '</div>' +
+          '<div class="flex items-center gap-2 flex-wrap text-[10px] font-bold">' +
+          '<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">✅ కలెక్షన్: ₹' + s.paidTotal.toLocaleString('en-IN') + '</span>' +
+          '<span class="px-2 py-0.5 rounded bg-sky-50 text-sky-700">UPI: ₹' + s.upiTotal.toLocaleString('en-IN') + ' | Cash: ₹' + s.cashTotal.toLocaleString('en-IN') + '</span>' +
+          '<span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800">📌 పాత బాకీ: ₹' + s.prevDueTotal.toLocaleString('en-IN') + '</span>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    } catch (e) {
+      box.innerHTML = '<p class="text-[11px] text-rose-600 text-center py-2">డేటా లోడ్ కాలేదు.</p>';
+    }
+  };
+
+  // 2. BULK HOLD / UNBLOCK FOR CURRENTLY FILTERED USERS
+  function getFilteredVendorsForBulk() {
+    const q = (document.getElementById('adminVendorSearch')?.value || '').toLowerCase();
+    const holdF = typeof vendorHoldFilter !== 'undefined' ? vendorHoldFilter : 'all';
+    const subF = typeof window.vendorSubFilter !== 'undefined' ? window.vendorSubFilter : 'all';
+
+    return (typeof allVendors !== 'undefined' && Array.isArray(allVendors) ? allVendors : []).filter(function(v) {
+      const mSearch = (v.name || '').toLowerCase().includes(q) || (v.phone || '').includes(q);
+      const mHold = holdF === 'all' ? true : (holdF === 'hold' ? !!v.is_blocked : !v.is_blocked);
+      const mSub = subF === 'all' ? true : (String(v.subscription_status || 'Active').trim().toLowerCase() === subF);
+      return mSearch && mHold && mSub;
+    });
+  }
+
+  function getFilteredCustomersForBulk() {
+    const q = (document.getElementById('adminCustomerSearch')?.value || '').toLowerCase();
+    const holdF = typeof customerHoldFilter !== 'undefined' ? customerHoldFilter : 'all';
+    const subF = typeof window.customerSubFilter !== 'undefined' ? window.customerSubFilter : 'all';
+
+    return (typeof allCustomers !== 'undefined' && Array.isArray(allCustomers) ? allCustomers : []).filter(function(c) {
+      const mSearch = (c.name || '').toLowerCase().includes(q) || (c.phone || '').includes(q) || (c.vendor_phone || '').includes(q);
+      const mHold = holdF === 'all' ? true : (holdF === 'hold' ? !!c.is_blocked : !c.is_blocked);
+      const mSub = subF === 'all' ? true : (String(c.subscription_status || 'Active').trim().toLowerCase() === subF);
+      return mSearch && mHold && mSub;
+    });
+  }
+
+  window.bulkHoldFilteredUsers = async function(targetType, makeBlocked) {
+    if (typeof db === 'undefined' || !db) return;
+    const targets = targetType === 'vendors' ? getFilteredVendorsForBulk() : getFilteredCustomersForBulk();
+    if (targets.length === 0) {
+      return alert('ప్రస్తుత ఫిల్టర్‌లో యూజర్లు ఎవరూ లేరు.');
+    }
+
+    const label = targetType === 'vendors' ? 'వెండర్లను' : 'కస్టమర్లను';
+    if (makeBlocked) {
+      const reason = prompt('ఫిల్టర్ చేసిన ' + targets.length + ' ' + label + ' ఒకేసారి Hold చేయడానికి కారణం రాయండి:', 'సబ్‌స్క్రిప్షన్ / అడ్మిన్ రివ్యూ');
+      if (reason === null) return;
+      const cleanReason = reason.trim() || 'Admin Bulk Hold';
+
+      if (targetType === 'vendors') {
+        const phones = targets.map(function(v) { return v.phone; }).filter(Boolean);
+        const res = await db.from('vendors').update({ is_blocked: true, block_reason: cleanReason }).in('phone', phones);
+        if (res.error) return alert('Error: ' + res.error.message);
+      } else {
+        const ids = targets.map(function(c) { return c.id; }).filter(Boolean);
+        const res = await db.from('customer_users').update({ is_blocked: true, block_reason: cleanReason }).in('id', ids);
+        if (res.error) return alert('Error: ' + res.error.message);
+      }
+      if (typeof showToast === 'function') showToast(targets.length + ' ' + label + ' Bulk Hold చేయబడ్డారు!');
+    } else {
+      if (!confirm('ఫిల్టర్ చేసిన ' + targets.length + ' ' + label + ' ఒకేసారి Unblock (Active) చేయాలా?')) return;
+      if (targetType === 'vendors') {
+        const phones = targets.map(function(v) { return v.phone; }).filter(Boolean);
+        const res = await db.from('vendors').update({ is_blocked: false, block_reason: '' }).in('phone', phones);
+        if (res.error) return alert('Error: ' + res.error.message);
+      } else {
+        const ids = targets.map(function(c) { return c.id; }).filter(Boolean);
+        const res = await db.from('customer_users').update({ is_blocked: false, block_reason: '' }).in('id', ids);
+        if (res.error) return alert('Error: ' + res.error.message);
+      }
+      if (typeof showToast === 'function') showToast(targets.length + ' ' + label + ' తిరిగి Active అయ్యారు!');
+    }
+
+    if (typeof refreshAdminData === 'function') refreshAdminData(false);
+  };
+
+  setTimeout(function() {
+    window.loadAdminBillingSnapshot();
+  }, 700);
+})();
+
+ // ONE TAP COPY AND CALL / WATSAPP 
+window.copyAdminValue = function(val, label) {
+  if (!val) return;
+  const text = String(val).trim();
+  if (!text) return;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof showToast === 'function') showToast((label || 'వివరాలు') + ' కాపీ అయ్యాయి!');
+    }).catch(function() {
+      fallbackAdminCopy(text, label);
+    });
+  } else {
+    fallbackAdminCopy(text, label);
+  }
+};
+
+function fallbackAdminCopy(text, label) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  if (typeof showToast === 'function') showToast((label || 'వివరాలు') + ' కాపీ అయ్యాయి!');
+}
+
+window.getAdminContactActionsHtml = function(phone, prefillText) {
+  const clean = String(phone || '').replace(/\D/g, '');
+  if (!clean) return '';
+  const num10 = clean.length === 10 ? clean : clean.slice(-10);
+  const safeMsg = String(prefillText || 'నమస్కారం, MilkCount Support నుండి మాట్లాడుతున్నాము.').replace(/'/g, '');
+  const waMsg = encodeURIComponent(safeMsg);
+
+  return '<div class="inline-flex items-center gap-1 whitespace-nowrap">' +
+    '<button type="button" onclick="copyAdminValue(\'' + num10 + '\', \'ఫోన్ నంబర్\')" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-bold shrink-0">📋 కాపీ</button>' +
+    '<a href="tel:+91' + num10 + '" class="px-1.5 py-0.5 rounded bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-[9px] font-extrabold shrink-0">📞 కాల్</a>' +
+    '<a href="https://wa.me/91' + num10 + '?text=' + waMsg + '" target="_blank" rel="noopener" class="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-[9px] font-extrabold shrink-0">💬 WhatsApp</a>' +
+    '</div>';
+};
+
 </script>
 </body>
 </html>
